@@ -6,15 +6,15 @@ session_start();
 
 if(isset($_POST['submit'])){
 
-   $username = mysqli_real_escape_string($conn, $_POST['username']);
-   $name = mysqli_real_escape_string($conn, $_POST['name']);
-   $surname = mysqli_real_escape_string($conn, $_POST['surname']);
-   $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-   $latitude = mysqli_real_escape_string($conn, $_POST['latitude']);
-   $longtitude = mysqli_real_escape_string($conn, $_POST['longtitude']);
-   $pass = md5($_POST['password']);
-   $cpass = md5($_POST['cpassword']);
-   $user_type = $_POST['user_type'];
+   $username = isset($_POST['username']) ? mysqli_real_escape_string($conn, $_POST['username']) : "";
+   $name = isset($_POST['name']) ? mysqli_real_escape_string($conn, $_POST['name']) : "";
+   $surname = isset($_POST['surname']) ? mysqli_real_escape_string($conn, $_POST['surname']) : "";
+   $phone = isset($_POST['phone']) ? mysqli_real_escape_string($conn, $_POST['phone']) : "";
+   $latitude = isset($_POST['latitude']) ? mysqli_real_escape_string($conn, $_POST['latitude']) : "";
+   $longtitude = isset($_POST['longtitude']) ? mysqli_real_escape_string($conn, $_POST['longtitude']) : "";
+   $pass = isset($_POST['password']) ? md5($_POST['password']) : "";
+   $cpass = isset($_POST['cpassword']) ? md5($_POST['cpassword']) : "";
+   $user_type = isset($_POST['user_type']) ? $_POST['user_type'] : "";
 
    $select = " SELECT * FROM users WHERE username = '$username' && password = '$pass' ";
 
