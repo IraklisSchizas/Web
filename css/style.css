@@ -76,7 +76,7 @@
    box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
    background: #FFF; /* White */
    text-align: center;
-   max-width: 100%;
+   max-width: 80%;
 }
 
 .form-container form h3 {
