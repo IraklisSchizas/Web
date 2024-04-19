@@ -19,7 +19,7 @@ if(isset($_POST['submit'])){
 
    if(mysqli_num_rows($result) > 0){
 
-      $error[] = 'Rescuer already exists!';
+      $error[] = 'User already exists!';
 
    }else{
 
@@ -28,9 +28,9 @@ if(isset($_POST['submit'])){
       }elseif($latitude == null){
          $error[] = 'Location Denied!';
       }else{
-         $insert = "INSERT INTO users(username, name, surname, phone, latitude, longitude, password, user_type) VALUES('$username','$name','$surname','$phone','$latitude','$longitude','$pass','rescuer')";
+         $insert = "INSERT INTO users(username, name, surname, phone, latitude, longitude, password, user_type) VALUES('$username','$name','$surname','$phone','$latitude','$longitude','$pass','civilian')";
          mysqli_query($conn, $insert);
-         header('location:admin_page.php');
+         header('location:login.php');
       }
    }
 };
@@ -44,7 +44,7 @@ if(isset($_POST['submit'])){
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Εγγραφή Διασώστη</title>
+   <title>Εγγραφή</title>
 
    <!-- custom css file link  -->
    <link rel="stylesheet" href="css/style.css">
@@ -55,7 +55,7 @@ if(isset($_POST['submit'])){
 <div class="form-container">
 
    <form action="" method="post">
-      <h3>Εγγραφή Διασώστη</h3>
+      <h3>Εγγραφή</h3>
       <?php
       if(isset($error)){
          foreach($error as $error){
@@ -72,8 +72,8 @@ if(isset($_POST['submit'])){
       <input type="text" name="longitude" id="longitude" required placeholder="Γεωγραφικό Μήκος" readonly>
       <input type="password" name="password" required placeholder="Κωδικός πρόσβασης">
       <input type="password" name="cpassword" required placeholder="Επιβεβαίωση Κωδικού">
-      <input type="submit" name="submit" value="Εγγραφή Διασώστη" class="form-btn">
-      <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
+      <input type="submit" name="submit" value="Εγγραφή" class="form-btn">
+      <p>Έχετε ήδη λογαριασμό; <a href="login.php">Σύνδεση</a></p>
    </form>
 
 </div>
