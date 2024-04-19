@@ -24,7 +24,7 @@ if (!isset($_SESSION['user_name'])) {
 <body>
   <div class="form-container">
     <form action="" method="post">
-      <input type="button" id="j_button" class="form-btn" onclick="initialize()" required value="Load JSON Data">
+      <input type="button" id="j_button" class="form-btn" onclick="initialize()" required value="Αρχικοποίηση">
       <!-- Display JSON data in a table -->
       <table id="jsonItemsTable"></table>
       <br>
