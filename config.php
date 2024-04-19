@@ -3,7 +3,7 @@
 $host = '127.0.0.1';
 $username = 'root';
 $password = '';
-$database = 'user_db';
+$database = 'user_db';  
 
 // Σύνδεση στη βάση δεδομένων
 $conn = new mysqli($host, $username, $password, $database);
