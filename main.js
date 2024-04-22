@@ -19,6 +19,8 @@ const initialize = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+      // Φόρτωση πινάκων μετά την επιτυχή ολοκλήρωση του initialize.php
+      loadTables();
       console.log('Data stored successfully.');
     })
     .catch(error => {
