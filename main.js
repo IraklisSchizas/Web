@@ -25,3 +25,18 @@ const initialize = () => {
       console.error('There was a problem with the fetch operation: ', error);
     });
 }
+
+// Προστέθηκε 22/4
+const loadTables = () => {
+  // Καλείται το PHP script για να φορτώσει τους πίνακες
+  fetch('load_tables.php')
+    .then(response => response.text())
+    .then(data => {
+      // Εισαγωγή HTML περιεχομένου στα στοιχεία των πινάκων
+      document.getElementById('jsonItemsTable').innerHTML = data;
+      document.getElementById('jsonCategoriesTable').innerHTML = data;
+    })
+    .catch(error => {
+      console.error('There was a problem with the fetch operation: ', error);
+    });
+}

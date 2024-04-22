@@ -16,9 +16,7 @@ foreach ($data['items'] as $item) {
 
     $sql = "INSERT INTO items (id, name, category, details) VALUES ('$id', '$name', '$category', '$details')";
 
-    if ($conn->query($sql) === TRUE) {
-        echo "New record created successfully";
-    } else {
+    if ($conn->query($sql) !== TRUE) {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
 }
@@ -30,11 +28,24 @@ foreach ($data['categories'] as $category) {
 
     $sql = "INSERT INTO categories (id, name) VALUES ('$category_id', '$category_name')";
 
-    if ($conn->query($sql) === TRUE) {
-        echo "New record created successfully";
-    } else {
+    if ($conn->query($sql) !== TRUE) {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
+}
+
+// Επιστροφή των δεδομένων που εισήχθησαν στη βάση (αυτά προστέθηκαν 22/4)
+$sql = "SELECT * FROM items";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    echo "<table>";
+    echo "<tr><th>ID</th><th>Name</th><th>Category</th><th>Details</th></tr>";
+    while($row = $result->fetch_assoc()) {
+        echo "<tr><td>".$row["id"]."</td><td>".$row["name"]."</td><td>".$row["category"]."</td><td>".$row["details"]."</td></tr>";
+    }
+    echo "</table>";
+} else {
+    echo "0 results";
 }
 
 // Κλείσιμο σύνδεσης
