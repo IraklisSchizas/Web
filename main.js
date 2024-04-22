@@ -13,14 +13,12 @@ const getLocation = () => {
 }
 
 const initialize = () => {
-  // Καλείται το PHP script χρησιμοποιώντας ένα αίτημα AJAX
   fetch('initialize.php')
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      // Φόρτωση πινάκων μετά την επιτυχή ολοκλήρωση του initialize.php
-      loadTables();
+      loadTables(); // Φόρτωση των πινάκων μετά την επιτυχή ολοκλήρωση του initialize.php
       console.log('Data stored successfully.');
     })
     .catch(error => {
@@ -28,17 +26,17 @@ const initialize = () => {
     });
 }
 
-// Προστέθηκε 22/4
 const loadTables = () => {
-  // Καλείται το PHP script για να φορτώσει τους πίνακες
   fetch('load_tables.php')
     .then(response => response.text())
     .then(data => {
-      // Εισαγωγή HTML περιεχομένου στα στοιχεία των πινάκων
-      document.getElementById('jsonItemsTable').innerHTML = data;
-      document.getElementById('jsonCategoriesTable').innerHTML = data;
+      document.getElementById('jsonItemsTable').innerHTML = data; // Εισαγωγή HTML περιεχομένου στον πίνακα jsonItemsTable
+      document.getElementById('jsonCategoriesTable').innerHTML = data; // Εισαγωγή HTML περιεχομένου στον πίνακα jsonCategoriesTable
     })
     .catch(error => {
       console.error('There was a problem with the fetch operation: ', error);
     });
 }
+
+// Κλήση της initialize() όταν φορτώνει η σελίδα
+window.onload = initialize;
