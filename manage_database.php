@@ -24,11 +24,11 @@ if (!isset($_SESSION['user_name'])) {
 <body>
   <div class="form-container">
     <form action="" method="post">
-      <input type="button" id="j_button" class="form-btn" onclick="initialize()" required value="Αρχικοποίηση">
+      <input type="button" id="j_button" class="form-btn" onclick="initialize()" required value="Initialize">
       <!-- Display JSON data in a table -->
-      <table id="jsonItemsTable"></table>
+      <!--table id="jsonItemsTable"></table>
       <br>
-      <table id="jsonCategoriesTable"></table>
+      <table id="jsonCategoriesTable"></table-->
       <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
     </form>
   </div>
