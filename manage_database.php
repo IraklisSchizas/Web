@@ -1,11 +1,10 @@
 <?php
-@include 'config.php';
-
 session_start();
 
-// Redirect to login page if not logged in
+// Ελέγχουμε αν ο χρήστης είναι συνδεδεμένος
 if (!isset($_SESSION['user_name'])) {
     header('location:login.php');
+    exit(); // Τερματίζουμε την εκτέλεση του κώδικα
 }
 ?>
 
@@ -16,52 +15,26 @@ if (!isset($_SESSION['user_name'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Σελίδα Διαχειριστή</title>
-
-    <!-- custom css file link  -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css"> <!-- Σύνδεση με το αρχείο CSS -->
 </head>
 <body>
   <div class="form-container">
     <form action="" method="post">
-      <input type="button" id="j_button" class="form-btn" onclick="initialize()" required value="Initialize">
-      <!-- Display JSON data in a table -->
+      <!-- Προσθέστε ένα κουμπί για να εκτελεί τη συνάρτηση initialize -->
+      <input type="button" id="j_button" class="form-btn" onclick="initialize()" value="Initialize">
+      
+      <!-- Πίνακας για τα items -->
+      <h2>Items Table</h2>
       <table id="jsonItemsTable"></table>
-      <br>
+      
+      <!-- Πίνακας για τα categories -->
+      <h2>Categories Table</h2>
       <table id="jsonCategoriesTable"></table>
+      
       <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
     </form>
   </div>
 
-  <script>
-    const initialize = () => {
-      // Καλείται το PHP script χρησιμοποιώντας ένα αίτημα AJAX
-      fetch('initialize.php')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          loadTables(); // Φόρτωση των πινάκων μετά την επιτυχή ολοκλήρωση του initialize.php
-          console.log('Data stored successfully.');
-        })
-        .catch(error => {
-          console.error('There was a problem with the fetch operation: ', error);
-        });
-    }
-
-    const loadTables = () => {
-      fetch('load_tables.php')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('jsonItemsTable').innerHTML = data; // Εισαγωγή HTML περιεχομένου στον πίνακα jsonItemsTable
-          document.getElementById('jsonCategoriesTable').innerHTML = data; // Εισαγωγή HTML περιεχομένου στον πίνακα jsonCategoriesTable
-        })
-        .catch(error => {
-          console.error('There was a problem with the fetch operation: ', error);
-        });
-    }
-
-    // Κλήση της initialize() όταν φορτώνει η σελίδα
-    window.onload = initialize;
-  </script>
+  <script src="main.js"></script> <!-- Σύνδεση με το αρχείο JavaScript -->
 </body>
 </html>
