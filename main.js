@@ -13,7 +13,7 @@ const getLocation = () => {
 }
 
 const initialize = () => {
-  // Καλείτε το PHP script χρησιμοποιώντας ένα αίτημα AJAX
+  // Καλείται το PHP script χρησιμοποιώντας ένα αίτημα AJAX
   fetch('initialize.php')
     .then(response => {
       if (!response.ok) {
