@@ -1,5 +1,5 @@
 <?php
-include 'config.php';
+@include 'config.php';
 
 // Φόρτωση του περιεχομένου του JSON αρχείου
 $json_data = file_get_contents('export.json');
