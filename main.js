@@ -37,6 +37,3 @@ const loadTables = () => {
       console.error('There was a problem with the fetch operation: ', error);
     });
 }
-
-// Κλήση της initialize() όταν φορτώνει η σελίδα
-window.onload = initialize;
