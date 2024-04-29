@@ -41,7 +41,7 @@ if(!isset($_SESSION['user_name'])){
 
 <script>
    // Initialize the map
-   var map = L.map('map').setView([37.9838, 23.7275], 13);
+   var map = L.map('map').setView([38.24664, 21.734574], 13);
 
    // Add the OpenStreetMap layer
    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
