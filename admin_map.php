@@ -47,6 +47,23 @@ if(!isset($_SESSION['user_name'])){
    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
    }).addTo(map);
+// Vehicles Markers
+   var vehicles = [
+       { location: [38.24664, 21.734574], username: "Όχημα 1", cargo: "Νερό", status: "Διαθέσιμο" },
+       { location: [38.250, 21.742], username: "Όχημα 2", cargo: "Φάρμακα", status: "Κατειλημμένο" }
+       // Προσθέστε περισσότερα οχήματα αν χρειάζεται
+   ];
+
+   vehicles.forEach(function(vehicle) {
+       var marker = L.marker(vehicle.location).addTo(map);
+       marker.bindPopup(
+           "<b>Όχημα:</b> " + vehicle.username +
+           "<br><b>Φορτίο:</b> " + vehicle.cargo +
+           "<br><b>Κατάσταση:</b> " + vehicle.status
+       );
+   });
+
+
 </script>
 
 </body>
