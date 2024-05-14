@@ -150,10 +150,11 @@ td table {
 }
 
 .form-container form button.form-btn {
-   width: 50%;
+   width: 30%;
    padding: 10px 15px;
    font-size: 17px;
    margin: 8px 0;
-   background: #E0F7FA; /* Light green */
+   background: #66BB6A; /* Dark green */
+   color: #FFF; /* White */   
    border-radius: 5px;
 }
