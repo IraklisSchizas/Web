@@ -148,3 +148,12 @@ th, td {
 td table {
    margin: 0 auto;
 }
+
+.form-container form button.form-btn {
+   background: #66BB6A; /* Dark green */
+   color: #FFF; /* White */
+   text-transform: capitalize;
+   font-size: 20px;
+   cursor: pointer;
+   padding: 6px;
+}

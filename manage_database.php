@@ -21,9 +21,9 @@ if (!isset($_SESSION['user_name'])) {
   <div class="form-container">
     <form action="" method="post">
       <!-- Προσθήκη κουμπιού προσθήκης αντικειμένων -->
-      <button onclick="showAddItemForm()">Προσθήκη Αντικειμένου</button>
+      <button class="form-btn" onclick="showAddItemForm()">Προσθήκη Αντικειμένου</button>
       <!-- Προσθήκη κουμπιού προσθήκης κατηγοριών -->
-      <button onclick="showAddCategoryForm()">Προσθήκη Κατηγορίας</button>
+      <button class="form-btn" onclick="showAddCategoryForm()">Προσθήκη Κατηγορίας</button>
       
       <!-- Πίνακας για τα items -->
       <h2>Items Table</h2>
