@@ -49,7 +49,7 @@ const populateItemsTable = (items) => {
 
   items.forEach(item => {
     const row = tableBody.insertRow();
-    row.innerHTML = `<td>${item.id}</td><td>${item.name}</td><td>${item.category}</td><td>${item.details}</td>`;
+    row.innerHTML = `<td>${item.id}</td><td>${item.name}</td><td>${item.category}</td><td>${item.details}</td><td>${item.quantity}</td>`;
   });
 }
 
