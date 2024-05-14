@@ -79,11 +79,12 @@ const editRow = (id) => {
     <button onclick="cancelEdit(${id})">Cancel</button>
   `;
   
-  // Get the row and replace its contents with the edit form
+  // Εύρεση της γραμμής και αντικατάσταση του περιεχομένου της με τη φόρμα επεξεργασίας
   const row = document.querySelector(`#jsonItemsTable tr[data-id="${id}"]`);
   row.innerHTML = '';
   row.appendChild(editForm);
 }
+
 
 const saveChanges = (id) => {
   const newName = document.getElementById(`editName_${id}`).value;
