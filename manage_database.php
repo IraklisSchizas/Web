@@ -20,7 +20,7 @@ if (!isset($_SESSION['user_name'])) {
 <body>
   <div class="form-container">
     <form action="" method="post">
-    <input type="button" id="j_button" class="form-btn" onclick="initialize()" value="Αρχικοποίηση"><br>
+      <input type="button" id="j_button" class="form-btn" onclick="initialize()" value="Αρχικοποίηση"><br>
       <!-- Προσθήκη κουμπιού προσθήκης αντικειμένων -->
       <button class="form-btn" onclick="showAddItemForm()">Προσθήκη Αντικειμένου</button>
       <!-- Προσθήκη κουμπιού προσθήκης κατηγοριών -->
@@ -39,5 +39,9 @@ if (!isset($_SESSION['user_name'])) {
   </div>
 
   <script src="main.js"></script> <!-- Σύνδεση με το αρχείο JavaScript -->
+  <script>
+    // Καλούμε τη συνάρτηση loadTables για να φορτώσουμε τους πίνακες κατά τη φόρτωση της σελίδας
+    window.onload = loadTables;
+  </script>
 </body>
 </html>

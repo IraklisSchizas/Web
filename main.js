@@ -80,10 +80,15 @@ const editRow = (id) => {
   `;
   
   // Εύρεση της γραμμής και αντικατάσταση του περιεχομένου της με τη φόρμα επεξεργασίας
-  const row = document.querySelector(`#jsonItemsTable tr[id="${id}"]`);
-  row.innerHTML = '';
-  row.appendChild(editForm);
+  const row = document.querySelector(`.editRow[data-id="${id}"]`);
+  if (row) {
+    row.innerHTML = '';
+    row.appendChild(editForm);
+  } else {
+    console.error(`Row with ID ${id} not found.`);
+  }
 }
+
 
 const saveChanges = (id) => {
   const newName = document.getElementById(`editName_${id}`).value;
@@ -113,6 +118,24 @@ const saveChanges = (id) => {
 const cancelEdit = (id) => {
   // Reload the tables without saving changes
   loadTables();
+}
+
+function getCurrentDateTime() {
+  // Δημιουργία ενός αντικειμένου Date που αντιστοιχεί στην τρέχουσα ημερομηνία και ώρα
+  let currentDate = new Date();
+
+  // Λήψη της ημερομηνίας
+  let year = currentDate.getFullYear();
+  let month = ('0' + (currentDate.getMonth() + 1)).slice(-2); // προσθέτει τυχόν πρόσθετο "0" στους μήνες από 1 έως 9
+  let day = ('0' + currentDate.getDate()).slice(-2); // προσθέτει τυχόν πρόσθετο "0" στις ημέρες από 1 έως 9
+
+  // Λήψη της ώρας
+  let hours = ('0' + currentDate.getHours()).slice(-2); // προσθέτει τυχόν πρόσθετο "0" στις ώρες από 0 έως 9
+  let minutes = ('0' + currentDate.getMinutes()).slice(-2); // προσθέτει τυχόν πρόσθετο "0" στα λεπτά από 0 έως 9
+  let seconds = ('0' + currentDate.getSeconds()).slice(-2); // προσθέτει τυχόν πρόσθετο "0" στα δευτερόλεπτα από 0 έως 9
+
+  // Επιστροφή της ημερομηνίας και ώρας σε μορφή κειμένου
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 // Καλούμε τη συνάρτηση loadTables για να φορτώσουμε τους πίνακες κατά τη φόρτωση της σελίδας

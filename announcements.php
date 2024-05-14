@@ -37,19 +37,13 @@ if(!isset($_SESSION['user_name'])){
             };
         };
         ?>
-        <input type="text" name="username" required placeholder="Όνομα Χρήστη">
-        <input type="text" name="name" required placeholder="Όνομα">
-        <input type="text" name="surname" required placeholder="Επίθετο">
-        <input type="tel" name="phone" pattern="[0-9]{10}" required placeholder="Τηλέφωνο">
-        <input type="button" name="position" onclick="getLocation()" required value="Τοποθεσία" class="form-btn">
-        <input type="text" name="latitude" id="latitude" required placeholder="Γεωγραφικό Πλάτος" readonly>
-        <input type="text" name="longitude" id="longitude" required placeholder="Γεωγραφικό Μήκος" readonly>
-        <input type="password" name="password" required placeholder="Κωδικός πρόσβασης">
-        <input type="password" name="cpassword" required placeholder="Επιβεβαίωση Κωδικού">
-        <input type="submit" name="submit" value="Εγγραφή" class="form-btn">
+        <input type="text" name="title" required placeholder="Τίτλος Ανακοίνωσης">
+        <input type="text" name="details" required placeholder="Γράψτε το κείμενό σας εδώ.">
+        <input type="button" name="submit" onclick="getCurrentDateTime()" required value="Δημιουργία Ανακοίνωησς" class="form-btn">
         <p>Έχετε ήδη λογαριασμό; <a href="login.php">Σύνδεση</a></p>
     </form>
 </div>
 
+<script src="main.js"></script>
 
 </body>

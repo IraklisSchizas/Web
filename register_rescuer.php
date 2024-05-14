@@ -28,7 +28,7 @@ if(isset($_POST['submit'])){
       }elseif($latitude == null){
          $error[] = 'Location Denied!';
       }else{
-         $insert = "INSERT INTO users(username, name, surname, phone, latitude, longitude, password, user_type) VALUES('$username','$name','$surname','$phone','$latitude','$longitude','$pass','rescuer')";
+         $insert   = "INSERT INTO users(username, name, surname, phone, latitude, longitude, password, user_type) VALUES('$username','$name','$surname','$phone','$latitude','$longitude','$pass','rescuer')";
          mysqli_query($conn, $insert);
          header('location:admin_page.php');
       }
