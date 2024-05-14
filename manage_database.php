@@ -20,6 +20,7 @@ if (!isset($_SESSION['user_name'])) {
 <body>
   <div class="form-container">
     <form action="" method="post">
+    <input type="button" id="j_button" class="form-btn" onclick="initialize()" value="Initialize"><br>
       <!-- Προσθήκη κουμπιού προσθήκης αντικειμένων -->
       <button class="form-btn" onclick="showAddItemForm()">Προσθήκη Αντικειμένου</button>
       <!-- Προσθήκη κουμπιού προσθήκης κατηγοριών -->
