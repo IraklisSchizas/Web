@@ -68,8 +68,8 @@ if(isset($_POST['submit'])){
       <input type="text" name="surname" required placeholder="Επίθετο">
       <input type="tel" name="phone" pattern="[0-9]{10}" required placeholder="Τηλέφωνο">
       <input type="button" name="position" onclick="getLocation()" required value="Τοποθεσία" class="form-btn">
-      <input type="text" name="latitude" id="latitude" required placeholder="Γεωγραφικό Πλάτος" readonly>
-      <input type="text" name="longitude" id="longitude" required placeholder="Γεωγραφικό Μήκος" readonly>
+      <input type="text" name="latitude" id="latitude" required placeholder="Γεωγραφικό Πλάτος">
+      <input type="text" name="longitude" id="longitude" required placeholder="Γεωγραφικό Μήκος">
       <input type="password" name="password" required placeholder="Κωδικός πρόσβασης">
       <input type="password" name="cpassword" required placeholder="Επιβεβαίωση Κωδικού">
       <input type="submit" name="submit" value="Εγγραφή Διασώστη" class="form-btn">
