@@ -9,6 +9,12 @@ $items = array();
 // Επεξεργασία των αποτελεσμάτων για τη δημιουργία του JSON
 if ($result_items->num_rows > 0) {
     while($row = $result_items->fetch_assoc()) {
+        $details = json_decode($row['details'], true);
+        $formatted_details = array();
+        foreach ($details as $detail) {
+            $formatted_details[] = $detail['detail_name'] . ' ' . $detail['detail_value'];
+        }
+        $row['details'] = implode('<br>', $formatted_details);
         $items[] = $row;
     }
 }
@@ -35,3 +41,4 @@ echo json_encode($data);
 
 $conn->close();
 ?>
+  
