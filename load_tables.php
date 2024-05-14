@@ -1,7 +1,7 @@
 <?php
 include 'config.php';
 
-// Επιλέξτε τα αντικείμενα και τις κατηγορίες από τη βάση δεδομένων
+// Επιλέξτε τα αντικείμενα από τη βάση δεδομένων
 $sql_items = "SELECT * FROM items";
 $result_items = $conn->query($sql_items);
 $items = array();
@@ -15,6 +15,10 @@ if ($result_items->num_rows > 0) {
             $formatted_details[] = $detail['detail_name'] . ' ' . $detail['detail_value'];
         }
         $row['details'] = implode('<br>', $formatted_details);
+
+        // Κουμπί επεξεργασίας για κάθε εγγραφή
+        $row['edit_button'] = '<button onclick="editRow('.$row['id'].')">Επεξεργασία</button>';
+
         $items[] = $row;
     }
 }
@@ -41,4 +45,3 @@ echo json_encode($data);
 
 $conn->close();
 ?>
-  
