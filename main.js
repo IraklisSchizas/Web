@@ -31,18 +31,38 @@ const initialize = () => {
 const loadTables = () => {
   // Καλούμε το PHP script για να φορτώσει τους πίνακες
   fetch('load_tables.php')
-    .then(response => response.text())
+    .then(response => response.json())
     .then(data => {
-      // Εισάγουμε το HTML περιεχόμενο στα στοιχεία των πινάκων
-      document.getElementById('jsonItemsTable').innerHTML = data;
-      document.getElementById('jsonCategoriesTable').innerHTML = data;
+      // Εισάγουμε τα δεδομένα στους πίνακες χρησιμοποιώντας το JSON
+      populateItemsTable(data.items);
+      populateCategoriesTable(data.categories);
     })
     .catch(error => {
-      console.error('There was a problem with the fetch operation: ', error);
+      console.error('Υπήρξε πρόβλημα με τη φόρτωση των πινάκων: ', error);
     });
 }
 
-// Καλούμε τη συνάρτηση initialize() όταν φορτώνει η σελίδα
-//window.onload = () => {
-//  document.getElementById('j_button').addEventListener('click', initialize);
-//};
+const populateItemsTable = (items) => {
+  const tableBody = document.getElementById('jsonItemsTable');
+  // Καθαρίζουμε τον πίνακα πριν την εισαγωγή των νέων δεδομένων
+  tableBody.innerHTML = '';
+
+  items.forEach(item => {
+    const row = tableBody.insertRow();
+    row.innerHTML = `<td>${item.id}</td><td>${item.name}</td><td>${item.category}</td><td>${item.details}</td>`;
+  });
+}
+
+const populateCategoriesTable = (categories) => {
+  const tableBody = document.getElementById('jsonCategoriesTable');
+  // Καθαρίζουμε τον πίνακα πριν την εισαγωγή των νέων δεδομένων
+  tableBody.innerHTML = '';
+
+  categories.forEach(category => {
+    const row = tableBody.insertRow();
+    row.innerHTML = `<td>${category.id}</td><td>${category.name}</td>`;
+  });
+}
+
+// Καλούμε τη συνάρτηση loadTables για να φορτώσουμε τους πίνακες κατά τη φόρτωση της σελίδας
+window.onload = loadTables;

@@ -20,8 +20,10 @@ if (!isset($_SESSION['user_name'])) {
 <body>
   <div class="form-container">
     <form action="" method="post">
-      <!-- Προσθέστε ένα κουμπί για να εκτελεί τη συνάρτηση initialize -->
-      <input type="button" id="j_button" class="form-btn" onclick="initialize()" value="Initialize">
+      <!-- Προσθήκη κουμπιού προσθήκης αντικειμένων -->
+      <button onclick="showAddItemForm()">Προσθήκη Αντικειμένου</button>
+      <!-- Προσθήκη κουμπιού προσθήκης κατηγοριών -->
+      <button onclick="showAddCategoryForm()">Προσθήκη Κατηγορίας</button>
       
       <!-- Πίνακας για τα items -->
       <h2>Items Table</h2>

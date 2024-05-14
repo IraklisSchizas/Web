@@ -22,7 +22,10 @@ if ($result->num_rows > 0) {
             echo "No details available";
         }
         
-        echo "</td></tr>";
+        echo "</td>";
+        // Προσθήκη κουμπιού επεξεργασίας
+        echo "<td><button onclick='editItem(".$row["id"].")'>Επεξεργασία</button></td>";
+        echo "</tr>";
     }
     echo "</table>";
 } else {
@@ -36,8 +39,7 @@ if ($result->num_rows > 0) {
     echo "<table>";
     echo "<tr><th>ID</th><th>Name</th></tr>";
     while($row = $result->fetch_assoc()) {
-        echo "<tr><td>".$row["id"]."</td><td>".$row["name"]."</td><td>";
-        echo "</td></tr>";
+        echo "<tr><td>".$row["id"]."</td><td>".$row["name"]."</td></tr>";
     }
     echo "</table>";
 } else {
