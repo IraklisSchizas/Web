@@ -32,22 +32,22 @@ if(!isset($_SESSION['user_name'])){
       <h3>Χάρτης Διαχειριστή</h3>
       
       <!-- Leaflet Map Container -->
-      <div id="map" style="height: 400px;"></div>
-
-      <a href="admin_page.php" class="btn">Επιστροφή στην Αρχική Σελίδα Διαχειριστή</a>
+      <div id="map" style="height: 400px; width: 700px;"></div>
+      <br>
+      <a href="admin_page.php" class="btn">Πίσω στη σελίδα Διαχειριστή</a>
    </div>
 
 </div>
 
 <script>
    // Initialize the map
-   var map = L.map('map').setView([38.24664, 21.734574], 13);
+   var map = L.map('map').setView([38.24664, 21.734574], 14);
 
    // Add the OpenStreetMap layer
    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
    }).addTo(map);
-// Vehicles Markers
+    // Vehicles Markers
    var vehicles = [
        { location: [38.24664, 21.734574], username: "Όχημα 1", cargo: "Νερό", status: "Διαθέσιμο" },
        { location: [38.250, 21.742], username: "Όχημα 2", cargo: "Φάρμακα", status: "Κατειλημμένο" }
