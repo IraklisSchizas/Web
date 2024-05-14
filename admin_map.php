@@ -34,7 +34,7 @@ if(!isset($_SESSION['user_name'])){
       <!-- Leaflet Map Container -->
       <div id="map" style="height: 400px;"></div>
 
-      <a href="named_admin_page.php" class="btn">Επιστροφή στην Αρχική Σελίδα Διαχειριστή</a>
+      <a href="admin_page.php" class="btn">Επιστροφή στην Αρχική Σελίδα Διαχειριστή</a>
    </div>
 
 </div>
