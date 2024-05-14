@@ -80,7 +80,7 @@ const editRow = (id) => {
   `;
   
   // Εύρεση της γραμμής και αντικατάσταση του περιεχομένου της με τη φόρμα επεξεργασίας
-  const row = document.querySelector(`.editRow[data-id="${id}"]`);
+  const row = document.querySelector(`.editRow[id="${id}"]`);
   if (row) {
     row.innerHTML = '';
     row.appendChild(editForm);
