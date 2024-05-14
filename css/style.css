@@ -158,3 +158,11 @@ td table {
    color: #FFF; /* White */   
    border-radius: 5px;
 }
+
+button {
+   padding: 8px 12px;
+   margin: 8px 0;
+   background: #66BB6A; /* Dark green */
+   color: #FFF; /* White */   
+   border-radius: 5px;
+}
