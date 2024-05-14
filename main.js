@@ -85,7 +85,6 @@ const editRow = (id) => {
   row.appendChild(editForm);
 }
 
-
 const saveChanges = (id) => {
   const newName = document.getElementById(`editName_${id}`).value;
   const newCategory = document.getElementById(`editCategory_${id}`).value;
