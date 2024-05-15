@@ -1,48 +1,47 @@
 <?php
 include 'config.php';
 
-$sql = "SELECT * FROM items";
-$result = $conn->query($sql);
+// Επιλέξτε τα αντικείμενα από τη βάση δεδομένων
+$sql_items = "SELECT * FROM items";
+$result_items = $conn->query($sql_items);
+$items = array();
 
-if ($result->num_rows > 0) {
-    echo "<table>";
-    echo "<tr><th>ID</th><th>Name</th><th>Category</th><th>Details</th></tr>";
-    while($row = $result->fetch_assoc()) {
-        echo "<tr><td>".$row["id"]."</td><td>".$row["name"]."</td><td>".$row["category"]."</td><td>";
-        
-        // Μετατροπή του JSON string σε πίνακα PHP
-        $details_array = json_decode($row["details"], true);
-        
-        // Έλεγχος αν υπάρχουν λεπτομέρειες και εμφάνιση σε μορφή "key: value"
-        if (!empty($details_array)) {
-            foreach ($details_array as $detail) {
-                echo $detail["detail_name"] . ": " . $detail["detail_value"] . "<br>";
-            }
-        } else {
-            echo "No details available";
+// Επεξεργασία των αποτελεσμάτων για τη δημιουργία του JSON
+if ($result_items->num_rows > 0) {
+    while($row = $result_items->fetch_assoc()) {
+        $details = json_decode($row['details'], true);
+        $formatted_details = array();
+        foreach ($details as $detail) {
+            $formatted_details[] = $detail['detail_name'] . ' ' . $detail['detail_value'];
         }
-        
-        echo "</td></tr>";
+        $row['details'] = implode('<br>', $formatted_details);
+
+        // Κουμπί επεξεργασίας για κάθε εγγραφή
+        $row['edit_button'] = '<button onclick="editRow('.$row['id'].')">Επεξεργασία</button>';
+
+        $items[] = $row;
     }
-    echo "</table>";
-} else {
-    echo "0 results";
 }
 
-$sql = "SELECT * FROM categories";
-$result = $conn->query($sql);
+$sql_categories = "SELECT * FROM categories";
+$result_categories = $conn->query($sql_categories);
+$categories = array();
 
-if ($result->num_rows > 0) {
-    echo "<table>";
-    echo "<tr><th>ID</th><th>Name</th></tr>";
-    while($row = $result->fetch_assoc()) {
-        echo "<tr><td>".$row["id"]."</td><td>".$row["name"]."</td><td>";
-        echo "</td></tr>";
+if ($result_categories->num_rows > 0) {
+    while($row = $result_categories->fetch_assoc()) {
+        $categories[] = $row;
     }
-    echo "</table>";
-} else {
-    echo "0 results";
 }
+
+// Συνδυασμός των δεδομένων σε έναν συνολικό πίνακα JSON
+$data = array(
+    'items' => $items,
+    'categories' => $categories
+);
+
+// Επιστροφή των δεδομένων ως JSON
+header('Content-Type: application/json');
+echo json_encode($data);
 
 $conn->close();
 ?>

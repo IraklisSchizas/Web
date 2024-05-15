@@ -3,10 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Εξυπηρετητής: 127.0.0.1
--- Χρόνος δημιουργίας: 19 Απρ 2024 στις 18:49:17
+-- Χρόνος δημιουργίας: 14 Μάη 2024 στις 17:51:11
 -- Έκδοση διακομιστή: 10.4.32-MariaDB
 -- Έκδοση PHP: 8.2.12
-
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -21,6 +20,20 @@ SET time_zone = "+00:00";
 --
 -- Βάση δεδομένων: `user_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Δομή πίνακα για τον πίνακα `announcements`
+--
+
+CREATE TABLE `announcements` (
+  `id` int(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `details` text NOT NULL,
+  `date` datetime(6) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -412,11 +425,17 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `name`, `surname`, `phone`, `latitude`, `longitude`, `password`, `user_type`) VALUES
 (1, 'admin', 'Admin', 'Adminas', 6912345678, '123.1', '124.5', '21232f297a57a5a743894a0e4a801fc3', 'admin'),
 (2, 'r1', 'r1', 'r1', 1234567890, '38.2204974', '21.7310703', '202cb962ac59075b964b07152d234b70', 'rescuer'),
-(3, 'civ1', 'Civi', 'Lian', 2610123456, '38.220588', '21.731126', '202cb962ac59075b964b07152d234b70', 'civilian');
+(3, 'c1', 'Civi', 'Lian', 2610123456, '38.220588', '21.731126', '202cb962ac59075b964b07152d234b70', 'civilian');
 
 --
 -- Ευρετήρια για άχρηστους πίνακες
 --
+
+--
+-- Ευρετήρια για πίνακα `announcements`
+--
+ALTER TABLE `announcements`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Ευρετήρια για πίνακα `categories`
