@@ -28,7 +28,7 @@ if (!isset($_SESSION['user_name'])) {
       
       <!-- Πίνακας για τα items -->
       <h2>Items Table</h2>
-      <table id="jsonItemsTable"></table>
+      <table id="jsonItemsTable"><tbody></table>
       
       <!-- Πίνακας για τα categories -->
       <h2>Categories Table</h2>
