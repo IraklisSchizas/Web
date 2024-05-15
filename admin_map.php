@@ -105,7 +105,7 @@ if(!isset($_SESSION['user_name'])){
     // Vehicles Markers
    var vehicles = [
        { location: [38.24664, 21.734574], username: "Όχημα 1", cargo: "Νερό", status: "Διαθέσιμο" },
-       { location: [38.250, 21.742], username: "Όχημα 2", cargo: "Φάρμακα", status: "Κατειλημμένο" }
+       { location: [38.251, 21.742], username: "Όχημα 2", cargo: "Φάρμακα", status: "Κατειλημμένο" }
        // Προσθέστε περισσότερα οχήματα αν χρειάζεται
    ];
 
