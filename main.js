@@ -28,18 +28,41 @@ const initialize = () => {
     });
 }
 
-const loadTables = () => {
-  // Καλούμε το PHP script για να φορτώσει τους πίνακες
+// Φορτώνει τους πίνακες με τα δεδομένα από τη βάση δεδομένων
+function loadTables() {
   fetch('load_tables.php')
-    .then(response => response.json())
-    .then(data => {
-      // Εισάγουμε τα δεδομένα στους πίνακες χρησιμοποιώντας το JSON
-      populateItemsTable(data.items);
-      populateCategoriesTable(data.categories);
-    })
-    .catch(error => {
-      console.error('Υπήρξε πρόβλημα με τη φόρτωση των πινάκων: ', error);
-    });
+      .then(response => response.json())
+      .then(data => {
+          const itemsTableBody = document.querySelector('#jsonItemsTable tbody');
+          const categoriesTable = document.querySelector('#jsonCategoriesTable');
+
+          // Φορτώνει τον πίνακα με τα αντικείμενα
+          itemsTableBody.innerHTML = '';
+          data.items.forEach(item => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                  <td>${item.id}</td>
+                  <td>${item.name}</td>
+                  <td>${item.category}</td>
+                  <td>${item.details}</td>
+                  <td>${item.quantity}</td>
+                  <td><button onclick="editRow(${item.id})">Επεξεργασία</button></td>
+              `;
+              itemsTableBody.appendChild(row);
+          });
+
+          // Φορτώνει τον πίνακα με τις κατηγορίες
+          categoriesTable.innerHTML = '';
+          data.categories.forEach(category => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                  <td>${category.id}</td>
+                  <td>${category.name}</td>
+              `;
+              categoriesTable.appendChild(row);
+          });
+      })
+      .catch(error => console.error('Υπήρξε πρόβλημα με τη φόρτωση των πινάκων: ', error));
 }
 
 const populateItemsTable = (items) => {
@@ -64,31 +87,60 @@ const populateCategoriesTable = (categories) => {
   });
 }
 
-const editRow = (id) => {
-  const editForm = document.createElement('form');
-  editForm.innerHTML = `
-    <label for="editName_${id}">Name:</label><br>
-    <input type="text" id="editName_${id}" name="editName_${id}" value=""><br>
-    <label for="editCategory_${id}">Category:</label><br>
-    <input type="text" id="editCategory_${id}" name="editCategory_${id}" value=""><br>
-    <label for="editDetails_${id}">Details:</label><br>
-    <input type="text" id="editDetails_${id}" name="editDetails_${id}" value=""><br>
-    <label for="editQuantity_${id}">Quantity:</label><br>
-    <input type="text" id="editQuantity_${id}" name="editQuantity_${id}" value=""><br>
-    <button onclick="saveChanges(${id})">Save</button>
-    <button onclick="cancelEdit(${id})">Cancel</button>
-  `;
-  
-  // Εύρεση της γραμμής και αντικατάσταση του περιεχομένου της με τη φόρμα επεξεργασίας
-  const row = document.querySelector(`#jsonItemsTable tr[id="${id}"]`);
-  if (row) {
-    row.innerHTML = '';
-    row.appendChild(editForm);
-  } else {
-    console.error(`Row with ID ${id} not found.`);
-  }
+// Εμφανίζει τη φόρμα επεξεργασίας για το επιλεγμένο αντικείμενο
+function editRow(id) {
+  console.log(id);
+  const cell = document.querySelector(`#jsonItemsTable tbody tr td:first-child`).textContent;
+  const row = cell.parentNode;
+
+  document.getElementById('editItemId').value = cells[0].textContent;
+  document.getElementById('editItemName').value = cells[1].textContent;
+  document.getElementById('editItemCategory').value = cells[2].textContent;
+  document.getElementById('editItemDetails').value = cells[3].textContent;
+  document.getElementById('editItemQuantity').value = cells[4].textContent;
+
+  document.getElementById('editForm').style.display = 'block';
 }
 
+// Ακυρώνει τη φόρμα επεξεργασίας και επαναφέρει τα αρχικά δεδομένα
+document.getElementById('cancelEditButton').addEventListener('click', function() {
+  document.getElementById('editForm').style.display = 'none';
+});
+
+// Αποθηκεύει τις αλλαγές που έγιναν στη φόρμα επεξεργασίας
+document.getElementById('saveEditButton').addEventListener('click', function() {
+  const id = document.getElementById('editItemId').value;
+  const name = document.getElementById('editItemName').value;
+  const category = document.getElementById('editItemCategory').value;
+  const details = document.getElementById('editItemDetails').value;
+  const quantity = document.getElementById('editItemQuantity').value;
+
+  fetch('update_item.php', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          id: id,
+          name: name,
+          category: category,
+          details: details,
+          quantity: quantity
+      })
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Υπήρξε πρόβλημα κατά την αποθήκευση των δεδομένων.');
+      }
+      return response.json();
+  })
+  .then(data => {
+      console.log('Τα δεδομένα αποθηκεύτηκαν με επιτυχία: ', data);
+      document.getElementById('editForm').style.display = 'none';
+      loadTables(); // Φορτώνει εκ νέου τους πίνακες με τα δεδομένα
+  })
+  .catch(error => console.error('Υπήρξε πρόβλημα κατά την αποθήκευση των δεδομένων: ', error));
+});
 
 const saveChanges = (id) => {
   const newName = document.getElementById(`editName_${id}`).value;
