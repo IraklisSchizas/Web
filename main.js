@@ -28,41 +28,22 @@ const initialize = () => {
     });
 }
 
-// Φορτώνει τους πίνακες με τα δεδομένα από τη βάση δεδομένων
-function loadTables() {
-  fetch('load_tables.php')
-      .then(response => response.json())
-      .then(data => {
-          const itemsTableBody = document.querySelector('#jsonItemsTable tbody');
-          const categoriesTable = document.querySelector('#jsonCategoriesTable');
+// Φορτώνει τους πίνακες από τη βάση δεδομένων
+async function loadTables() {
+  try {
+    const response = await fetch('load_tables.php');
+    if (!response.ok) {
+      throw new Error('Υπήρξε πρόβλημα με τη φόρτωση των πινάκων: ' + response.statusText);
+    }
+    const data = await response.json();
+    console.log(data); // Εδώ ελέγχουμε το JSON που λαμβάνουμε από τον server
 
-          // Φορτώνει τον πίνακα με τα αντικείμενα
-          itemsTableBody.innerHTML = '';
-          data.items.forEach(item => {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                  <td>${item.id}</td>
-                  <td>${item.name}</td>
-                  <td>${item.category}</td>
-                  <td>${item.details}</td>
-                  <td>${item.quantity}</td>
-                  <td><button onclick="editRow(${item.id})">Επεξεργασία</button></td>
-              `;
-              itemsTableBody.appendChild(row);
-          });
-
-          // Φορτώνει τον πίνακα με τις κατηγορίες
-          categoriesTable.innerHTML = '';
-          data.categories.forEach(category => {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                  <td>${category.id}</td>
-                  <td>${category.name}</td>
-              `;
-              categoriesTable.appendChild(row);
-          });
-      })
-      .catch(error => console.error('Υπήρξε πρόβλημα με τη φόρτωση των πινάκων: ', error));
+    // Εμφάνιση των πινάκων στη σελίδα
+    displayItems(data.items);
+    displayCategories(data.categories);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 const populateItemsTable = (items) => {
@@ -90,8 +71,7 @@ const populateCategoriesTable = (categories) => {
 // Εμφανίζει τη φόρμα επεξεργασίας για το επιλεγμένο αντικείμενο
 function editRow(id) {
   console.log(id);
-  const cell = document.querySelector(`#jsonItemsTable tbody tr td:first-child`).textContent;
-  const row = cell.parentNode;
+  const row = document.querySelector(`#${id}`).parentNode;
   const cells = row.querySelectorAll('td');
 
   document.getElementById('editItemId').value = cells[0].textContent;
