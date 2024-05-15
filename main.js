@@ -71,7 +71,7 @@ const populateCategoriesTable = (categories) => {
 // Εμφανίζει τη φόρμα επεξεργασίας για το επιλεγμένο αντικείμενο
 function editRow(id) {
   console.log(id);
-  const row = document.querySelector(`#${id}`).parentNode;
+  const row = document.querySelector(`#jsonItemsTable tbody tr[id="${id}"]`);
   const cells = row.querySelectorAll('td');
 
   document.getElementById('editItemId').value = cells[0].textContent;
@@ -172,4 +172,4 @@ function getCurrentDateTime() {
 }
 
 // Καλούμε τη συνάρτηση loadTables για να φορτώσουμε τους πίνακες κατά τη φόρτωση της σελίδας
-window.onload = loadTables;
+//window.onload = loadTables;
