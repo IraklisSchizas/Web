@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-// Ελέγχουμε αν ο χρήστης είναι συνδεδεμένος
+// Ελέγχουμε αν ο χρήστης είναι συνδεδεμένος, αλλιώς τον κατευθύνουμε στη σελίδα σύνδεσης
 if (!isset($_SESSION['user_name'])) {
-    header('location:login.php');
-    exit(); // Τερματίζουμε την εκτέλεση του κώδικα
+    header('location: login.php');
+    exit();
 }
 ?>
 
@@ -25,7 +25,8 @@ if (!isset($_SESSION['user_name'])) {
       <button class="form-btn" onclick="showAddItemForm()">Προσθήκη Αντικειμένου</button>
       <!-- Προσθήκη κουμπιού προσθήκης κατηγοριών -->
       <button class="form-btn" onclick="showAddCategoryForm()">Προσθήκη Κατηγορίας</button>
-      
+      <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
+      <br>
       <!-- Πίνακας για τα items -->
       <h2>Items Table</h2>
       <table id="jsonItemsTable"><tbody>
@@ -35,8 +36,6 @@ if (!isset($_SESSION['user_name'])) {
       <!-- Πίνακας για τα categories -->
       <h2>Categories Table</h2>
       <table id="jsonCategoriesTable"></table>
-      
-      <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
     </form>
   </div>
 

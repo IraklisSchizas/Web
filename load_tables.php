@@ -1,30 +1,29 @@
 <?php
 include 'config.php';
 
-// Επιλέξτε τα αντικείμενα από τη βάση δεδομένων
+// Επιλογή αντικειμένων από τη βάση δεδομένων
 $sql_items = "SELECT * FROM items";
 $result_items = $conn->query($sql_items);
-$items = array();
+$items = [];
 
-// Επεξεργασία των αποτελεσμάτων για τη δημιουργία του HTML πίνακα
+// Δημιουργία HTML πίνακα από τα αποτελέσματα
 if ($result_items->num_rows > 0) {
-    while($row = $result_items->fetch_assoc()) {
+    while ($row = $result_items->fetch_assoc()) {
         $details = json_decode($row['details'], true);
-        $formatted_details = array();
-        foreach ($details as $detail) {
-            $formatted_details[] = $detail['detail_name'] . ' ' . $detail['detail_value'];
-        }
+        $formatted_details = array_map(function ($detail) {
+            return $detail['detail_name'] . ' ' . $detail['detail_value'];
+        }, $details);
         $row['details'] = implode('<br>', $formatted_details);
 
         // Κουμπί επεξεργασίας για κάθε εγγραφή
         $row['edit_button'] = '<button onclick="editRow('.$row['id'].')">Επεξεργασία</button>';
 
-        // Δημιουργία του HTML για κάθε γραμμή του πίνακα με ID
+        // Δημιουργία γραμμής πίνακα με ID
         $items[] = '<tr id="item_'.$row['id'].'"><td>'.$row['id'].'</td><td>'.$row['name'].'</td><td>'.$row['category'].'</td><td>'.$row['details'].'</td><td>'.$row['quantity'].'</td><td>'.$row['edit_button'].'</td></tr>';
     }
 }
 
-// Επιστροφή του HTML πίνακα ως αποτέλεσμα
+// Επιστροφή HTML πίνακα ως αποτέλεσμα
 echo implode('', $items);
 
 $conn->close();
