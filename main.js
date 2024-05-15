@@ -11,103 +11,107 @@ const getLocation = () => {
   navigator.geolocation.getCurrentPosition(success, error);
 };
 
-const initialize = async () => {
-  try {
-      const response = await fetch('initialize.php');
+const initialize = () => {
+  fetch('initialize.php')
+    .then(response => {
       if (!response.ok) {
-          throw new Error('Network response was not ok');
+        throw new Error('Network response was not ok');
       }
       loadTables();
       console.log('Data stored successfully.');
-  } catch (error) {
+    })
+    .catch(error => {
       console.error('There was a problem with the fetch operation: ', error);
-  }
-};
+    });
+}
 
-const loadTables = async () => {
+async function loadTables() {
   try {
-      const response = await fetch('load_tables.php');
-      if (!response.ok) {
-          throw new Error('There was a problem loading the tables: ' + response.statusText);
-      }
-      const data = await response.json();
-      console.log(data);
-      displayItems(data.items);
-      displayCategories(data.categories);
+    const response = await fetch('load_tables.php');
+    if (!response.ok) {
+      throw new Error('There was a problem loading the tables: ' + response.statusText);
+    }
+    const data = await response.json();
+    console.log(data);
+
+    populateItemsTable(data);
+    populateCategoriesTable(data);
   } catch (error) {
-      console.error(error);
+    console.error(error);
   }
-};
+}
 
-const editRow = (id) => {
-  console.log(id);
-  const row = document.querySelector(`#jsonItemsTable tbody tr[id="${id}"]`);
+function editRow(id) {
+  const row = document.getElementById(`item_${id}`);
   const cells = row.querySelectorAll('td');
 
-  cells[1].setAttribute('contenteditable', 'true');
-  cells[2].setAttribute('contenteditable', 'true');
-  cells[3].setAttribute('contenteditable', 'true');
-  cells[4].setAttribute('contenteditable', 'true');
+  document.getElementById('editItemId').value = cells[0].textContent;
+  document.getElementById('editItemName').value = cells[1].textContent;
+  document.getElementById('editItemCategory').value = cells[2].textContent;
+  document.getElementById('editItemDetails').value = cells[3].textContent;
+  document.getElementById('editItemQuantity').value = cells[4].textContent;
 
-  const saveButton = document.createElement('button');
-  saveButton.textContent = 'Save';
-  saveButton.addEventListener('click', () => saveChanges(id));
-  cells[5].appendChild(saveButton);
+  document.getElementById('editForm').style.display = 'block';
+}
 
-  const cancelButton = document.createElement('button');
-  cancelButton.textContent = 'Cancel';
-  cancelButton.addEventListener('click', () => cancelEdit(id));
-  cells[5].appendChild(cancelButton);
-};
+document.getElementById('cancelEditButton').addEventListener('click', function() {
+  document.getElementById('editForm').style.display = 'none';
+});
 
-const saveChanges = (id) => {
-  const row = document.querySelector(`#jsonItemsTable tbody tr[id="${id}"]`);
-  const cells = row.querySelectorAll('td');
+document.getElementById('saveEditButton').addEventListener('click', function() {
+  const id = document.getElementById('editItemId').value;
+  const name = document.getElementById('editItemName').value;
+  const category = document.getElementById('editItemCategory').value;
+  const details = document.getElementById('editItemDetails').value;
+  const quantity = document.getElementById('editItemQuantity').value;
 
-  const newName = cells[1].textContent;
-  const newCategory = cells[2].textContent;
-  const newDetails = cells[3].textContent;
-  const newQuantity = cells[4].textContent;
-
-  fetch(`update_item.php?id=${id}&name=${newName}&category=${newCategory}&details=${newDetails}&quantity=${newQuantity}`)
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('There was a problem saving the data.');
-          }
-          return response.text();
+  fetch('update_item.php', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          id: id,
+          name: name,
+          category: category,
+          details: details,
+          quantity: quantity
       })
-      .then(data => {
-          console.log('Changes saved successfully:', data);
-          loadTables();
-      })
-      .catch(error => {
-          console.error('There was a problem saving the data: ', error);
-      });
-};
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('There was a problem saving the data.');
+      }
+      return response.json();
+  })
+  .then(data => {
+      console.log('Data saved successfully: ', data);
+      document.getElementById('editForm').style.display = 'none';
+      loadTables();
+  })
+  .catch(error => console.error('There was a problem saving the data: ', error));
+});
 
-const cancelEdit = (id) => {
-  loadTables();
-};
-
-const displayItems = (items) => {
+function populateItemsTable(items) {
   const tableBody = document.getElementById('jsonItemsTable');
   tableBody.innerHTML = '';
 
   items.forEach(item => {
-      const row = tableBody.insertRow();
-      row.innerHTML = `<td>${item.id}</td><td>${item.name}</td><td>${item.category}</td><td>${item.details}</td><td>${item.quantity}</td><td><button onclick="editRow(${item.id})">Edit</button></td>`;
+    const row = tableBody.insertRow();
+    row.id = `item_${item.id}`;
+    row.innerHTML = `<td>${item.id}</td><td>${item.name}</td><td>${item.category}</td><td>${item.details}</td><td>${item.quantity}</td><td><button onclick="editRow(${item.id})">Edit</button></td>`;
   });
-};
+}
 
-const displayCategories = (categories) => {
+function populateCategoriesTable(categories) {
   const tableBody = document.getElementById('jsonCategoriesTable');
   tableBody.innerHTML = '';
 
   categories.forEach(category => {
-      const row = tableBody.insertRow();
-      row.innerHTML = `<td>${category.id}</td><td>${category.name}</td>`;
+    const row = tableBody.insertRow();
+    row.innerHTML = `<td>${category.id}</td><td>${category.name}</td>`;
   });
-};
+}
 
 const getCurrentDateTime = () => {
   const currentDate = new Date();

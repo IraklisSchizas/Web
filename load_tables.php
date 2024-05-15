@@ -16,11 +16,11 @@ if ($result_items->num_rows > 0) {
 
         $row['edit_button'] = '<button onclick="editRow('.$row['id'].')">Edit</button>';
 
-        $items[] = '<tr id="item_'.$row['id'].'"><td>'.$row['id'].'</td><td>'.$row['name'].'</td><td>'.$row['category'].'</td><td>'.$row['details'].'</td><td>'.$row['quantity'].'</td><td>'.$row['edit_button'].'</td></tr>';
+        $items[] = $row;
     }
 }
 
-echo implode('', $items);
+echo json_encode($items);
 
 $conn->close();
 ?>

@@ -25,11 +25,8 @@ if (!isset($_SESSION['user_name'])) {
       <button class="form-btn" onclick="showAddCategoryForm()">Προσθήκη Κατηγορίας</button>
       <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
       <br>
-      
       <h2>Items Table</h2>
-      <table id="jsonItemsTable"><tbody>
-      <?php include 'load_tables.php'; ?>
-      </tbody></table>
+      <table id="jsonItemsTable"><tbody></tbody></table>
       
       <h2>Categories Table</h2>
       <table id="jsonCategoriesTable"></table>
