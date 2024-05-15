@@ -92,6 +92,7 @@ function editRow(id) {
   console.log(id);
   const cell = document.querySelector(`#jsonItemsTable tbody tr td:first-child`).textContent;
   const row = cell.parentNode;
+  const cells = row.querySelectorAll('td');
 
   document.getElementById('editItemId').value = cells[0].textContent;
   document.getElementById('editItemName').value = cells[1].textContent;
