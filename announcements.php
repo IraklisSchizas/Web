@@ -40,7 +40,8 @@ if(!isset($_SESSION['user_name'])){
         <input type="text" name="title" required placeholder="Τίτλος Ανακοίνωσης">
         <input type="text" name="details" required placeholder="Γράψτε το κείμενό σας εδώ.">
         <input type="button" name="submit" onclick="getCurrentDateTime()" required value="Δημιουργία Ανακοίνωησς" class="form-btn">
-        <p>Έχετε ήδη λογαριασμό; <a href="login.php">Σύνδεση</a></p>
+        <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
+       
     </form>
 </div>
 
