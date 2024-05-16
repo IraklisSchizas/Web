@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 @include 'config.php';
 
@@ -35,7 +34,7 @@ if(!isset($_SESSION['user_name'])){
       <!-- Leaflet Map Container -->
       <div id="map" style="height: 400px;"></div>
 
-      <a href="named_admin_page.php" class="btn">Επιστροφή στην Αρχική Σελίδα Διαχειριστή</a>
+      <p><a href="admin_page.php" class="btn">Επιστροφή στην Αρχική Σελίδα Διαχειριστή</a></p>
    </div>
 
 </div>
@@ -52,7 +51,7 @@ if(!isset($_SESSION['user_name'])){
 
 </body>
 </html>
-=======
+
 <?php
 @include 'config.php';
 
@@ -123,4 +122,3 @@ if(!isset($_SESSION['user_name'])){
 
 </body>
 </html>
->>>>>>> a3bb596f71c2d8132654cfc1768e3859cd06ff7e

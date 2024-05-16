@@ -111,7 +111,7 @@ function populateCategoriesTable(categories) {
     const row = tableBody.insertRow();
     row.innerHTML = `<td>${category.id}</td><td>${category.name}</td>`;
   });
-}
+};
 
 const getCurrentDateTime = () => {
   const currentDate = new Date();
@@ -123,5 +123,3 @@ const getCurrentDateTime = () => {
   const seconds = ('0' + currentDate.getSeconds()).slice(-2);
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
-
-//window.onload = loadTables;

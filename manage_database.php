@@ -21,8 +21,8 @@ if (!isset($_SESSION['user_name'])) {
   <div class="form-container">
     <form action="" method="post">
       <input type="button" id="j_button" class="form-btn" onclick="initialize()" value="Αρχικοποίηση"><br>
-      <button class="form-btn" onclick="showAddItemForm()">Προσθήκη Αντικειμένου</button>
-      <button class="form-btn" onclick="showAddCategoryForm()">Προσθήκη Κατηγορίας</button>
+      <button class="form-btn" onclick="window.location.href = 'add_to_database.php'">Προσθήκη Αντικειμένου</button>
+      <button class="form-btn" onclick="window.location.href = 'add_to_database.php'">Προσθήκη Κατηγορίας</button>
       <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
       <br>
       <h2>Items Table</h2>
