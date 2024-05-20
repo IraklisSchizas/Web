@@ -27,14 +27,18 @@ if(isset($_POST['submit'])){
         mysqli_query($conn, $insertItem);
         mysqli_query($conn, $insertCategory);
         echo("Το αντικείμενο και η κατηγορία αποθηκεύτηκαν επιτυχώς!");
+        header('location: display.php');
     }else if($itemId != NULL) {
         mysqli_query($conn, $insertItem);
         echo("Το αντικείμενο αποθηκεύτηκε επιτυχώς!");
+        header('location: display.php');
     }else if($categoryId != NULL){
         mysqli_query($conn, $insertCategory);
         echo("Η κατηγορία αποθηκεύτηκε επιτυχώς!");
+        header('location: display.php');
     }else{
         die("Connection failed: " . $conn->connect_error);
+        $error[] = 'Σφάλμα!';
     };
 };
 

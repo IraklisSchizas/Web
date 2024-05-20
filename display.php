@@ -24,10 +24,9 @@ if (!isset($_SESSION['user_name'])) {
     <div class="form-container">
         <form action="" method="post">
             <input type="button" id="j_button" class="form-btn" onclick="initialize()" value="Αρχικοποίηση"><br>
-            <input type="button" id="j_button" class="form-btn" onclick="window.location.href = 'add_to_database.php'" value="Προσθήκη Αντικειμένου - Κατηγορίας"><br>
-            <br>            
+            <input type="button" id="j_button" class="form-btn" onclick="window.location.href = 'add_to_database.php'" value="Προσθήκη Αντικειμένου - Κατηγορίας"><br>   
             <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
-            <br>
+            <br><br>
             <h2>Items Table</h2>
             <table class="table" id="jsonItemsTable">
                 <thead>
@@ -57,7 +56,10 @@ if (!isset($_SESSION['user_name'])) {
                                         <td>'.$category.'</td>
                                         <td>'.$details.'</td>
                                         <td>'.$quantity.'</td>
-                                        <td>'.'</td>
+                                        <td>
+                                            <button><a href="">Update</a></button>
+                                            <button><a href="">Delete</a></button>
+                                        </td>
                                     </tr>
                                 ');
                             }

@@ -160,9 +160,10 @@ td table {
 }
 
 button {
+   width: fit-content;
    padding: 8px 12px;
    margin: 8px 0;
    background: #66BB6A; /* Dark green */
-   color: #FFF; /* White */   
+   color: #FFF; /* White */
    border-radius: 5px;
 }
