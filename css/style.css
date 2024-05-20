@@ -150,7 +150,7 @@ td table {
 }
 
 .form-container form button.form-btn {
-   width: 30%;
+   width: fit-content;
    padding: 10px 15px;
    font-size: 17px;
    margin: 8px 0;
