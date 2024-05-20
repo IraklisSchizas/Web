@@ -23,8 +23,10 @@ if (!isset($_SESSION['user_name'])) {
 <body>
     <div class="form-container">
         <form action="" method="post">
-            <button class="form-btn" onclick="window.location.href = 'add_to_database.php'">Προσθήκη Αντικειμένου</button>
-            <br><br>
+            <button class="form-btn" onclick="window.location.href = 'add_to_database.php'">Προσθήκη Αντικειμένου - Κατηγορίας</button>
+            <br>
+            
+            <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p><br>
             <h2>Items Table</h2>
             <table class="table" id="jsonItemsTable">
                 <thead>
@@ -42,8 +44,21 @@ if (!isset($_SESSION['user_name'])) {
                         $sql = "SELECT  * FROM items";
                         $result = mysqli_query($conn, $sql);
                         if($result){
-                            $row=mysqli_fetch_assoc($result);
-                            echo $row['name'];
+                            while($row=mysqli_fetch_assoc($result)){
+                                $id = $row['id'];
+                                $name = $row['name'];
+                                $category = $row['category'];
+                                $details = $row['details'];
+                                $quantity = $row['quantity'];
+                                echo('<tr>
+                                        <th scope="row">'.$id.'</th>
+                                        <td>'.$name.'</td>
+                                        <td>'.$category.'</td>
+                                        <td>'.$details.'</td>
+                                        <td>'.$quantity.'</td>
+                                    </tr>
+                                ');
+                            }
                         }
                     ?>
                 </tbody>
@@ -68,8 +83,7 @@ if (!isset($_SESSION['user_name'])) {
                         }
                     ?>
                 </tbody>
-                </table><br>
-            <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
+            </table>
         </form>
     </div>
 </body>
