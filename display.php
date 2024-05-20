@@ -1,4 +1,7 @@
 <?php
+
+@include 'config.php';
+
 session_start();
 
 // Ελέγχουμε αν ο χρήστης είναι συνδεδεμένος
@@ -26,30 +29,44 @@ if (!isset($_SESSION['user_name'])) {
             <table class="table" id="jsonItemsTable">
                 <thead>
                     <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Details</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <?php
+                        $sql = "SELECT  * FROM items";
+                        $result = mysqli_query($conn, $sql);
+                        if($result){
+                            $row=mysqli_fetch_assoc($result);
+                            echo $row['name'];
+                        }
+                    ?>
+                </tbody>
+                </table>
+                <br><br><br>
+            <h2>Categories Table</h2>
+            <table class="table" id="jsonCategoriessTable">
+                <thead>
                     <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Actions</th>
                     </tr>
-                    <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                    </tr>
-                    <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
-                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $sql = "SELECT  * FROM categories";
+                        $result = mysqli_query($conn, $sql);
+                        if($result){
+                            $row=mysqli_fetch_assoc($result);
+                            echo $row['name'];
+                        }
+                    ?>
                 </tbody>
                 </table><br>
             <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
