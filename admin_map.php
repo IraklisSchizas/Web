@@ -31,6 +31,7 @@ echo count($vehicles);
 foreach ($vehicles as $v) {
    // Εδώ μπαίνει ο κώδικας που προβάλει κάθε όχημα μέσα στο χάρτη.
    // Έχει να κάνει και με το cargo (offers, requests).
+   
 }
 ?>
 
@@ -51,13 +52,12 @@ foreach ($vehicles as $v) {
    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
 <div class="container">
    <div class="content">
       <h3>Χάρτης Διαχειριστή</h3>
-      
+      <br>
       <!-- Leaflet Map Container -->
-      <div id="map" style="height: 400px; width: 100%; max-width: 700px;"></div>
+      <div id="map" style="height: 600px; width: 1000px;"></div>
       <br>
       <a href="admin_page.php" class="btn">Πίσω στη σελίδα Διαχειριστή</a>
    </div>
