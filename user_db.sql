@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Εξυπηρετητής: 127.0.0.1
--- Χρόνος δημιουργίας: 14 Μάη 2024 στις 17:51:11
+-- Χρόνος δημιουργίας: 20 Μάη 2024 στις 18:21:03
 -- Έκδοση διακομιστή: 10.4.32-MariaDB
 -- Έκδοση PHP: 8.2.12
 
@@ -56,15 +56,11 @@ INSERT INTO `categories` (`id`, `name`) VALUES
 (8, 'Hacker of class'),
 (9, '2d hacker'),
 (10, ''),
-(11, 'Test'),
 (13, '-----'),
 (14, 'Flood'),
-(15, 'new cat'),
+(15, 'abc'),
 (16, 'Medical Supplies'),
-(19, 'Shoes'),
-(21, 'Personal Hygiene '),
 (22, 'Cleaning Supplies'),
-(23, 'Tools'),
 (24, 'Kitchen Supplies'),
 (25, 'Baby Essentials'),
 (26, 'Insect Repellents'),
@@ -75,23 +71,15 @@ INSERT INTO `categories` (`id`, `name`) VALUES
 (33, 'Cleaning Supplies.'),
 (34, 'Hot Weather'),
 (35, 'First Aid '),
-(39, 'Test_0'),
-(40, 'test1'),
-(41, 'pet supplies'),
-(42, 'Μedicines'),
 (43, 'Energy Drinks'),
 (44, 'Disability and Assistance Items'),
 (45, 'Communication items'),
 (46, 'communications'),
 (47, 'Humanitarian Shelters'),
-(48, 'Water Purification'),
 (49, 'Animal Care'),
 (50, 'Earthquake Safety'),
-(51, 'Sleep Essentilals'),
 (52, 'Navigation Tools'),
 (53, 'Clothing and cover'),
-(54, 'Tools and Equipment'),
-(56, 'Special items'),
 (57, 'Household Items');
 
 -- --------------------------------------------------------
@@ -104,7 +92,7 @@ CREATE TABLE `items` (
   `id` int(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `category` int(255) NOT NULL,
-  `details` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`details`)),
+  `details` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `quantity` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -372,14 +360,12 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 
 CREATE TABLE `offers` (
   `id` int(255) NOT NULL,
-  `civilian_name` varchar(255) NOT NULL,
-  `civilian_surname` varchar(255) NOT NULL,
-  `phone` bigint(255) NOT NULL,
+  `civilian_id` int(255) NOT NULL,
   `date` date NOT NULL,
-  `item` int(255) NOT NULL,
+  `item_id` int(255) NOT NULL,
   `quantity` int(255) NOT NULL,
   `load_date` date NOT NULL,
-  `picked_by` varchar(255) NOT NULL
+  `rescuer_id` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -390,14 +376,12 @@ CREATE TABLE `offers` (
 
 CREATE TABLE `requests` (
   `id` int(255) NOT NULL,
-  `civilian_name` varchar(255) NOT NULL,
-  `civilian_surname` varchar(255) NOT NULL,
-  `phone` bigint(255) NOT NULL,
+  `civilian_id` int(255) NOT NULL,
   `date` date NOT NULL,
-  `item` int(255) NOT NULL,
+  `item_id` int(255) NOT NULL,
   `quantity` int(255) NOT NULL,
   `load_date` date NOT NULL,
-  `picked_by` varchar(255) NOT NULL
+  `rescuer_id` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -425,7 +409,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `name`, `surname`, `phone`, `latitude`, `longitude`, `password`, `user_type`) VALUES
 (1, 'admin', 'Admin', 'Adminas', 6912345678, '123.1', '124.5', '21232f297a57a5a743894a0e4a801fc3', 'admin'),
 (2, 'r1', 'r1', 'r1', 1234567890, '38.2204974', '21.7310703', '202cb962ac59075b964b07152d234b70', 'rescuer'),
-(3, 'c1', 'Civi', 'Lian', 2610123456, '38.220588', '21.731126', '202cb962ac59075b964b07152d234b70', 'civilian');
+(3, 'c1', 'Civi', 'Lian', 2610123456, '38.220588', '21.731126', '202cb962ac59075b964b07152d234b70', 'civilian'),
+(4, 'r2', 'r2', 'r2', 6912324458, '38.2205443', '21.7312005', '202cb962ac59075b964b07152d234b70', 'rescuer'),
+(5, 'r3', 'r3', 'r3', 6912345678, '38.2205569', '21.7312067', '202cb962ac59075b964b07152d234b70', 'rescuer');
 
 --
 -- Ευρετήρια για άχρηστους πίνακες
@@ -487,7 +473,7 @@ ALTER TABLE `requests`
 -- AUTO_INCREMENT για πίνακα `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
