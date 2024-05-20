@@ -57,8 +57,8 @@ if (!isset($_SESSION['user_name'])) {
                                         <td>'.$details.'</td>
                                         <td>'.$quantity.'</td>
                                         <td>
-                                            <button><a href="">Update</a></button>
-                                            <button><a href="">Delete</a></button>
+                                            <button><a href="update.php">Update</a></button>
+                                            <button><a href="delete.php">Delete</a></button>
                                         </td>
                                     </tr>
                                 ');
