@@ -12,26 +12,30 @@ if (!isset($_SESSION['user_name'])) {
 
 if(isset($_POST['submit'])){
 
-    $itemId = $_POST['itemId'];
-    $itemName = $_POST['itemName'];
-    $itemCategory = $_POST['itemCategory'];
-    $itemDetails = $_POST['itemDetails'];
-    $itemQuantity = $_POST['itemQuantity'];
-    $categoryId = $_POST['categoryId'];
-    $categoryName = $_POST['categoryName'];
+    $itemId = mysqli_real_escape_string($conn, $_POST['itemId']);
+    $itemName = mysqli_real_escape_string($conn, $_POST['itemName']);
+    $itemCategory = mysqli_real_escape_string($conn, $_POST['itemCategory']);
+    $itemDetails = json_encode($_POST['itemDetails']);
+    $itemQuantity = mysqli_real_escape_string($conn, $_POST['itemQuantity']);
+    $categoryId = mysqli_real_escape_string($conn, $_POST['categoryId']);
+    $categoryName = mysqli_real_escape_string($conn, $_POST['categoryName']);
 
-    $insertItem = "INSERT INTO 'items'(id, name, category, details, quantity)
-            VALUES ('$itemId, $itemName, $itemCategory, $itemDetails, $itemQuantity')";
-    $insertCategory = "INSERT INTO 'categories'(id, name)
-            VALUES ('$categoryId, $categoryName')";
+    $insertItem = "INSERT INTO items(id, name, category, details, quantity) VALUES ('$itemId', '$itemName', '$itemCategory', '$itemDetails', '$itemQuantity')";
+    $insertCategory = "INSERT INTO categories(id, name) VALUES ('$categoryId', '$categoryName')";
     
-    $itemResult = mysqli_real_escape_string($conn, $insertItem);
-    $categoryResult = mysqli_real_escape_string($conn, $insertCategory);
-    if($itemResult || $categoryResult) {
-        echo("Τα δεδομένα αποθηκεύτηκαν επιτυχώς!");
+    if($itemId != NULL && $categoryId != NULL) {
+        mysqli_query($conn, $insertItem);
+        mysqli_query($conn, $insertCategory);
+        echo("Το αντικείμενο και η κατηγορία αποθηκεύτηκαν επιτυχώς!");
+    }else if($itemId != NULL) {
+        mysqli_query($conn, $insertItem);
+        echo("Το αντικείμενο αποθηκεύτηκε επιτυχώς!");
+    }else if($categoryId != NULL){
+        mysqli_query($conn, $insertCategory);
+        echo("Η κατηγορία αποθηκεύτηκε επιτυχώς!");
     }else{
         die("Connection failed: " . $conn->connect_error);
-    }
+    };
 };
 
 ?>
@@ -66,36 +70,36 @@ if(isset($_POST['submit'])){
     </style>
 </head>
 <body>
-<div class="form-container">
-    <form action="" method="post">
-        <?php
-        if(isset($error)){
-            foreach($error as $error){
-                echo '<span class="error-msg">'.$error.'</span>';
+    <div class="form-container">
+        <form action="" method="post">
+            <?php
+            if(isset($error)){
+                foreach($error as $error){
+                    echo '<span class="error-msg">'.$error.'</span>';
+                };
             };
-        };
-        ?>
-        <br>
-        <h3>Items</h3>
-        <div class="boxInput" id="items">
-            <input type="text" name="itemId" placeholder="ID">
-            <input type="text" name="itemName" placeholder="Όνομα αντικειμένου">
-            <input type="text" name="itemCategory" placeholder="Κατηγορία αντικειμένου">
-            <input type="text" name="itemDetails" placeholder="Λεπτομέρειες">
-            <input type="text" name="itemQuantity" placeholder="Ποσότητα">
-        </div>
-        <button type="submit" class="form-btn" name="submit">Προσθήκη Αντικειμένου</button>
-        <br><br><br>
-        <h3>Categories</h3>
-        <div class="boxInput categories" id="categories">
-            <input type="text" name="categoryId" placeholder="ID">
-            <input type="text" name="categoryName" placeholder="Όνομα κατηγορίας">
-        </div>
-        <button type="submit" class="form-btn" name="submitCategory">Προσθήκη Κατηγορίας</button>
-        <p><a href="display.php">Πίσω στην Διαχείρηση Βάσης</a></p>
-    </form>
+            ?>
+            <br>
+            <h3>Items</h3>
+            <div class="boxInput" id="items">
+                <input type="number" name="itemId" placeholder="ID">
+                <input type="text" name="itemName" placeholder="Όνομα αντικειμένου">
+                <input type="number" name="itemCategory" placeholder="Κατηγορία αντικειμένου">
+                <input type="text" name="itemDetails" placeholder="Λεπτομέρειες">
+                <input type="number" name="itemQuantity" placeholder="Ποσότητα">
+            </div>
+            <!--<button type="submit" class="form-btn" name="submit">Προσθήκη Αντικειμένου</button>-->
+            <br>
+            <h3>Categories</h3>
+            <div class="boxInput categories" id="categories">
+                <input type="number" name="categoryId" placeholder="ID">
+                <input type="text" name="categoryName" placeholder="Όνομα κατηγορίας">
+            </div><br>
+            <button type="submit" name="submit" class="form-btn">Προσθήκη</button><br><br>
+            <p><a href="display.php">Πίσω στην Διαχείρηση Βάσης</a></p>
+        </form>
 
-</div>
-<script src="main.js"></script>
-</body>
+    </div>
+    <script src="main.js"></script>
+    </body>
 </html>

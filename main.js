@@ -54,7 +54,7 @@ function editRow(id) {
   document.getElementById('editForm').style.display = 'block';
 }
 
-document.getElementById('cancelEditButton').addEventListener('click', function() {
+/*document.getElementById('cancelEditButton').addEventListener('click', function() {
   document.getElementById('editForm').style.display = 'none';
 });
 
@@ -90,7 +90,7 @@ document.getElementById('saveEditButton').addEventListener('click', function() {
       loadTables();
   })
   .catch(error => console.error('There was a problem saving the data: ', error));
-});
+});*/
 
 function populateItemsTable(items) {
   const tableBody = document.getElementById('jsonItemsTable');

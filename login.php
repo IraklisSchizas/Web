@@ -39,12 +39,10 @@ if(isset($_POST['submit'])){
          $_SESSION['user_name'] = $row['name'];
          header('location:civilian_page.php');
 
-      }
-     
+      }     
    }else{
       $error[] = 'Incorrect username or password!';
    }
-
 };
 ?>
 

@@ -32,7 +32,7 @@ if(!isset($_SESSION['user_name'])){
       <h1>Καλωσήρθες <span><?php echo $_SESSION['user_name'] ?></span>!</h1>
       <p>αυτή είναι η σελίδα του διαχειριστή</p>
       <a href="register_rescuer.php" class="btn">Εγγραφή Διασώστη</a>
-      <a href="manage_database.php" class="btn">Διαχείρηση Βάσης</a>
+      <a href="display.php" class="btn">Διαχείρηση Βάσης</a>
       <a href="admin_map.php" class="btn">Χάρτης</a>
       <a href="announcements.php" class="btn">Ανακοινώσεις</a>
       <a href="logout.php" class="btn">αποσύνδεση</a>

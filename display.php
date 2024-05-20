@@ -19,6 +19,8 @@ if (!isset($_SESSION['user_name'])) {
 </head>
 <body>
     <div class="form-container">
-        
+        <form action="" method="post">
+            <p><a href="add_to_database.php" class="btn">Προσθήκη νέου Αντικειμένου ή Κατηγορίας</a></p>
+        </form>
     </div>
 </body>
