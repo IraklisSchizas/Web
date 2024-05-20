@@ -1,4 +1,7 @@
 <?php
+
+@include 'config.php';
+
 session_start();
 
 // Ελέγχουμε αν ο χρήστης είναι συνδεδεμένος
@@ -6,7 +9,28 @@ if (!isset($_SESSION['user_name'])) {
     header('location:login.php');
     exit();
 }
+
+// SQL query to get vehicle data
+$sql = " SELECT id, username, latitude, longitude FROM users WHERE user_type='rescuer' ";
+$result = mysqli_query($conn, $sql);
+
+$vehicles = array();
+
+if ($result->num_rows > 0) {
+    // Fetch all vehicle data
+    while($row = $result->fetch_assoc()) {
+        $vehicles[] = $row;
+    }
+} else {
+    echo json_encode(["error" => "No vehicles found"]);
+    exit;
+}
+//$conn->close();
+
+// Return vehicle data as JSON
+echo json_encode($vehicles);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="el">
