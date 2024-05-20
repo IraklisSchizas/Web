@@ -25,7 +25,7 @@ const initialize = () => {
     });
 }
 
-async function loadTables() {
+/*async function loadTables() {
   try {
     const response = await fetch('load_tables.php');
     if (!response.ok) {
@@ -52,7 +52,7 @@ function editRow(id) {
   document.getElementById('editItemQuantity').value = cells[4].textContent;
 
   document.getElementById('editForm').style.display = 'block';
-}
+}*/
 
 /*document.getElementById('cancelEditButton').addEventListener('click', function() {
   document.getElementById('editForm').style.display = 'none';
@@ -92,7 +92,7 @@ document.getElementById('saveEditButton').addEventListener('click', function() {
   .catch(error => console.error('There was a problem saving the data: ', error));
 });*/
 
-function populateItemsTable(items) {
+/*function populateItemsTable(items) {
   const tableBody = document.getElementById('jsonItemsTable');
   tableBody.innerHTML = '';
 
@@ -111,7 +111,7 @@ function populateCategoriesTable(categories) {
     const row = tableBody.insertRow();
     row.innerHTML = `<td>${category.id}</td><td>${category.name}</td>`;
   });
-};
+};*/
 
 const getCurrentDateTime = () => {
   const currentDate = new Date();
