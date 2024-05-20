@@ -25,10 +25,13 @@ if ($result->num_rows > 0) {
     echo json_encode(["error" => "No vehicles found"]);
     exit;
 }
-//$conn->close();
 
-// Return vehicle data as JSON
 echo json_encode($vehicles);
+echo count($vehicles);
+foreach ($vehicles as $v) {
+   // Εδώ μπαίνει ο κώδικας που προβάλει κάθε όχημα μέσα στο χάρτη.
+
+}
 ?>
 
 
