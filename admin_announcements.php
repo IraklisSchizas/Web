@@ -10,6 +10,7 @@ if(!isset($_SESSION['user_name'])){
    header('location:login.php');
 }
 
+
 // Create AnnouncementManager object
 $announcementManager = new AnnouncementManager($conn);
 
@@ -33,6 +34,7 @@ if(isset($_POST['submit'])){
 
    <!-- custom css file link  -->
    <link rel="stylesheet" href="css/style.css">
+
 </head>
 <body>
 
@@ -53,5 +55,7 @@ if(isset($_POST['submit'])){
 
 </div>
 
+    <script src="main.js"></script> 
+
 </body>
-</html>
+
