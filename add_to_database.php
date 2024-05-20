@@ -27,7 +27,7 @@ if(isset($_POST['submit'])){
     
     $itemResult = mysqli_real_escape_string($conn, $insertItem);
     $categoryResult = mysqli_real_escape_string($conn, $insertCategory);
-    if($itemResult | $categoryResult) {
+    if($itemResult || $categoryResult) {
         echo("Τα δεδομένα αποθηκεύτηκαν επιτυχώς!");
     }else{
         die("Connection failed: " . $conn->connect_error);
@@ -92,6 +92,7 @@ if(isset($_POST['submit'])){
             <input type="text" name="categoryName" placeholder="Όνομα κατηγορίας">
         </div>
         <button type="submit" class="form-btn" name="submitCategory">Προσθήκη Κατηγορίας</button>
+        <p><a href="display.php">Πίσω στην Διαχείρηση Βάσης</a></p>
     </form>
 
 </div>
