@@ -41,56 +41,6 @@ const initialize = () => {
   }
 }
 
-function editRow(id) {
-  const row = document.getElementById(`item_${id}`);
-  const cells = row.querySelectorAll('td');
-
-  document.getElementById('editItemId').value = cells[0].textContent;
-  document.getElementById('editItemName').value = cells[1].textContent;
-  document.getElementById('editItemCategory').value = cells[2].textContent;
-  document.getElementById('editItemDetails').value = cells[3].textContent;
-  document.getElementById('editItemQuantity').value = cells[4].textContent;
-
-  document.getElementById('editForm').style.display = 'block';
-}*/
-
-/*document.getElementById('cancelEditButton').addEventListener('click', function() {
-  document.getElementById('editForm').style.display = 'none';
-});
-
-document.getElementById('saveEditButton').addEventListener('click', function() {
-  const id = document.getElementById('editItemId').value;
-  const name = document.getElementById('editItemName').value;
-  const category = document.getElementById('editItemCategory').value;
-  const details = document.getElementById('editItemDetails').value;
-  const quantity = document.getElementById('editItemQuantity').value;
-
-  fetch('update_item.php', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-          id: id,
-          name: name,
-          category: category,
-          details: details,
-          quantity: quantity
-      })
-  })
-  .then(response => {
-      if (!response.ok) {
-          throw new Error('There was a problem saving the data.');
-      }
-      return response.json();
-  })
-  .then(data => {
-      console.log('Data saved successfully: ', data);
-      document.getElementById('editForm').style.display = 'none';
-      loadTables();
-  })
-  .catch(error => console.error('There was a problem saving the data: ', error));
-});*/
 
 /*function populateItemsTable(items) {
   const tableBody = document.getElementById('jsonItemsTable');
