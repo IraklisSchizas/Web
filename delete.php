@@ -13,7 +13,6 @@ if (isset($_GET['deleteid'])){
     $sql = "DELETE FROM items WHERE id=$id";
     $result = mysqli_query($conn, $sql);
     if($result) {
-        echo("Deleted successfully!");
         header("Location: display.php");
     }else{
         die(mysqli_error($conn));
