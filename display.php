@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
             <input type="button" id="j_button" class="form-btn" onclick="window.location.href = 'add_to_database.php'" value="Προσθήκη Αντικειμένου - Κατηγορίας"><br>
             <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
             <br><br>
-            <h2>Items Table</h2>
+            <h2>Items Table</h2><br>
             <table class="table" id="jsonItemsTable">
                 <thead>
                     <tr>
@@ -81,11 +81,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
                     $result = mysqli_query($conn, "SELECT * FROM items");
                     if ($result) {
                         while ($row = mysqli_fetch_assoc($result)) {
+                            $details_array = json_decode($row['details'], true);
+                            $details_formatted = "";
+                            foreach ($details_array as $detail) {
+                                $details_formatted .= ucfirst($detail['detail_name']) . ': ' . $detail['detail_value'] . '<br>';
+                            }
                             echo '<tr>
                                 <th scope="row">'.$row['id'].'</th>
                                 <td>'.$row['name'].'</td>
                                 <td>'.$row['category'].'</td>
-                                <td>'.$row['details'].'</td>
+                                <td>'.$details_formatted.'</td>
                                 <td>'.$row['quantity'].'</td>
                                 <td>
                                     <button><a href="update.php">Update</a></button>
@@ -98,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
                 </tbody>
             </table>
             <br><br><br>
-            <h2>Categories Table</h2>
+            <h2>Categories Table</h2><br>
             <table class="table" id="jsonCategoriessTable">
                 <thead>
                     <tr>
