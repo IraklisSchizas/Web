@@ -15,42 +15,29 @@ if(isset($_POST['submit'])){
     $itemId = mysqli_real_escape_string($conn, $_POST['itemId']);
     $itemName = mysqli_real_escape_string($conn, $_POST['itemName']);
     $itemCategory = mysqli_real_escape_string($conn, $_POST['itemCategory']);
-    $itemDetails = json_encode($_POST['itemDetails']);
-
-        // Split the original string by comma
-        $parts = explode(",", $itemDetails);
-
-        // Initialize an array to store details
-        $details = [];
-
-        // Loop through each part
-        foreach ($parts as $part) {
-            // Split each part by space
-            $detail = explode(" ", trim($part));
-            
-            // Construct detail array
-            $detail_array = [
-                "detail_name" => $detail[0], // detail name
-                "detail_value" => $detail[1] // detail value
-            ];
-            
-            // Add detail array to details array
-            $details[] = $detail_array;
+    
+    // Αλλαγή των detail ώστε να έρθουν στην JSON μορφή που θέλουμε
+    $itemDetailsInput = array_map('trim', explode(',', $_POST['itemDetails']));
+    $itemDetails = [];
+    foreach ($itemDetailsInput as $detail) {
+        // Αφαίρεση περιττών χαρακτηρών
+        $detail = str_replace('"', '', $detail);
+        $detailParts = explode(':', $detail);
+        $detailArray = [
+            "detail_name" => trim($detailParts[0]),
+            "detail_value" => trim($detailParts[1])
+        ];
+        if (!empty($detailArray["detail_name"])) {
+            $itemDetails[] = $detailArray;
         }
-
-        // Convert details array to JSON
-        $json_output = json_encode($details);
-
-        // Output JSON
-        $itemDetails = $json_output;
-        $itemDetails = str_replace('""', '"', $itemDetails);
-        echo $itemDetails;
+    }
+    $itemDetailsJSON = json_encode($itemDetails);
 
     $itemQuantity = mysqli_real_escape_string($conn, $_POST['itemQuantity']);
     $categoryId = mysqli_real_escape_string($conn, $_POST['categoryId']);
     $categoryName = mysqli_real_escape_string($conn, $_POST['categoryName']);
 
-    $insertItem = "INSERT INTO items(id, name, category, details, quantity) VALUES ('$itemId', '$itemName', '$itemCategory', '$itemDetails', '$itemQuantity')";
+    $insertItem = "INSERT INTO items(id, name, category, details, quantity) VALUES ('$itemId', '$itemName', '$itemCategory', '$itemDetailsJSON', '$itemQuantity')";
     $insertCategory = "INSERT INTO categories(id, name) VALUES ('$categoryId', '$categoryName')";
     
     if($itemId != NULL && $categoryId != NULL) {
