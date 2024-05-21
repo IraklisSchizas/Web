@@ -17,7 +17,6 @@ if(isset($_POST['submit'])){
     $itemCategory = mysqli_real_escape_string($conn, $_POST['itemCategory']);
     $itemDetails = json_encode($_POST['itemDetails']);
 
-    
         // Split the original string by comma
         $parts = explode(",", $itemDetails);
 
