@@ -8,39 +8,6 @@ if (!isset($_SESSION['user_name'])) {
     header('location:login.php');
     exit();
 }
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
-    $json_data = file_get_contents('export.json');
-    $data = json_decode($json_data, true);
-    if ($data === null) {
-        echo json_encode(['success' => false, 'error' => 'Invalid JSON data']);
-        exit();
-    }
-
-    $stmt_items = $conn->prepare("INSERT INTO items (id, name, category, details) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name=VALUES(name), category=VALUES(category), details=VALUES(details)");
-    foreach ($data['items'] as $item) {
-        $details_json = json_encode($item['details']); // Αποθήκευση στη μεταβλητή
-        $stmt_items->bind_param("isss", $item['id'], $item['name'], $item['category'], $details_json);
-        if (!$stmt_items->execute()) {
-            echo json_encode(['success' => false, 'error' => $stmt_items->error]);
-            exit();
-        }
-    }
-    $stmt_items->close();
-
-    $stmt_categories = $conn->prepare("INSERT INTO categories (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name=VALUES(name)");
-    foreach ($data['categories'] as $category) {
-        $stmt_categories->bind_param("is", $category['id'], $category['category_name']);
-        if (!$stmt_categories->execute()) {
-            echo json_encode(['success' => false, 'error' => $stmt_categories->error]);
-            exit();
-        }
-    }
-    $stmt_categories->close();
-
-    header('Location: display.php?initialized=true');
-    exit();
-}
 ?>
 
 <!DOCTYPE html>
@@ -71,18 +38,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
                 </thead>
                 <tbody>
                     <?php
-                    $result = mysqli_query($conn, "SELECT * FROM announcments");
-                    if ($result) {
-                        while ($row = mysqli_fetch_assoc($result)) {
+                    $result = $conn->query("SELECT * FROM announcements");
+
+                    // Έλεγχος αν υπάρχουν αποτελέσματα και εμφάνιση τους
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
                             echo '<tr>
                                 <th scope="row">'.$row['id'].'</th>
                                 <td>'.$row['title'].'</td>
                                 <td>'.$row['details'].'</td>
                                 <td>'.$row['date'].'</td>
-                                <td></td>
                             </tr>';
                         }
+                    } else {
+                        echo "<tr><td colspan='4'>No announcements found</td></tr>";
                     }
+                    $conn->close();
                     ?>
                 </tbody>
             </table>
