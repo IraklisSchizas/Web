@@ -16,6 +16,40 @@ if(isset($_POST['submit'])){
     $itemName = mysqli_real_escape_string($conn, $_POST['itemName']);
     $itemCategory = mysqli_real_escape_string($conn, $_POST['itemCategory']);
     $itemDetails = json_encode($_POST['itemDetails']);
+
+    
+        // Original string
+        $original = "volume ,1.5l";
+
+        // Split the original string by comma
+        $parts = explode(",", $itemDetails);
+
+        // Initialize an array to store details
+        $details = [];
+
+        // Loop through each part
+        foreach ($parts as $part) {
+            // Split each part by space
+            $detail = explode(" ", trim($part));
+            
+            // Construct detail array
+            $detail_array = [
+                "detail_name" => $detail[0], // detail name
+                "detail_value" => $detail[1] // detail value
+            ];
+            
+            // Add detail array to details array
+            $details[] = $detail_array;
+        }
+
+        // Convert details array to JSON
+        $json_output = json_encode($details);
+
+        // Output JSON
+        $itemDetails = $json_output;
+        $itemDetails = str_replace('""', '"', $itemDetails);
+        echo $itemDetails;
+
     $itemQuantity = mysqli_real_escape_string($conn, $_POST['itemQuantity']);
     $categoryId = mysqli_real_escape_string($conn, $_POST['categoryId']);
     $categoryName = mysqli_real_escape_string($conn, $_POST['categoryName']);
