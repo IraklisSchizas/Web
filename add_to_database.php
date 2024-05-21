@@ -18,9 +18,6 @@ if(isset($_POST['submit'])){
     $itemDetails = json_encode($_POST['itemDetails']);
 
     
-        // Original string
-        $original = "volume ,1.5l";
-
         // Split the original string by comma
         $parts = explode(",", $itemDetails);
 
