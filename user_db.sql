@@ -45,6 +45,7 @@ CREATE TABLE `announcements` (
 CREATE TABLE `categories` (
   `id` int(255) NOT NULL,
   `name` varchar(255) NOT NULL
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -96,6 +97,7 @@ CREATE TABLE `items` (
   `category` int(255) NOT NULL,
   `details` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `quantity` int(255) NOT NULL
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -361,13 +363,14 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 --
 
 CREATE TABLE `offers` (
-  `id` int(255) NOT NULL,
+  `id` int(255) NOT NULL AUTO_INCREMENT;
   `civilian_id` int(255) NOT NULL,
   `date` date NOT NULL,
   `item_id` int(255) NOT NULL,
   `quantity` int(255) NOT NULL,
   `load_date` date NOT NULL,
   `rescuer_id` int(255) NOT NULL
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -377,13 +380,14 @@ CREATE TABLE `offers` (
 --
 
 CREATE TABLE `requests` (
-  `id` int(255) NOT NULL,
+  `id` int(255) NOT NULL AUTO_INCREMENT;
   `civilian_id` int(255) NOT NULL,
   `date` date NOT NULL,
   `item_id` int(255) NOT NULL,
   `quantity` int(255) NOT NULL,
   `load_date` date NOT NULL,
   `rescuer_id` int(255) NOT NULL
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -393,7 +397,7 @@ CREATE TABLE `requests` (
 --
 
 CREATE TABLE `users` (
-  `id` int(255) NOT NULL,
+  `id` int(255) NOT NULL AUTO_INCREMENT;
   `username` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
@@ -402,6 +406,7 @@ CREATE TABLE `users` (
   `longitude` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `user_type` varchar(255) NOT NULL DEFAULT 'civilian'
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -414,68 +419,3 @@ INSERT INTO `users` (`id`, `username`, `name`, `surname`, `phone`, `latitude`, `
 (3, 'c1', 'Civi', 'Lian', 2610123456, '38.220588', '21.731126', '202cb962ac59075b964b07152d234b70', 'civilian'),
 (4, 'r2', 'r2', 'r2', 6912324458, '38.2205443', '21.7312005', '202cb962ac59075b964b07152d234b70', 'rescuer'),
 (5, 'r3', 'r3', 'r3', 6912345678, '38.2205569', '21.7312067', '202cb962ac59075b964b07152d234b70', 'rescuer');
-
---
--- Ευρετήρια για άχρηστους πίνακες
---
-
---
--- Ευρετήρια για πίνακα `announcements`
---
-
---
--- Ευρετήρια για πίνακα `categories`
---
-ALTER TABLE `categories`
-  ADD PRIMARY KEY (`id`);
-
---
--- Ευρετήρια για πίνακα `items`
---
-ALTER TABLE `items`
-  ADD PRIMARY KEY (`id`);
-
---
--- Ευρετήρια για πίνακα `offers`
---
-ALTER TABLE `offers`
-  ADD PRIMARY KEY (`id`);
-
---
--- Ευρετήρια για πίνακα `requests`
---
-ALTER TABLE `requests`
-  ADD PRIMARY KEY (`id`);
-
---
--- Ευρετήρια για πίνακα `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT για άχρηστους πίνακες
---
-
---
--- AUTO_INCREMENT για πίνακα `offers`
---
-ALTER TABLE `offers`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT για πίνακα `requests`
---
-ALTER TABLE `requests`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT για πίνακα `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
