@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <?php if (isset($_GET['initialized']) && $_GET['initialized'] == 'true'): ?>
+    <?php if (isset($_GET['initialized']) && $_GET['initialized'] == 'true'): header('Location: display.php'); ?>
         <div class="alert alert-success">Η αρχικοποίηση έγινε με επιτυχία!</div>
     <?php endif; ?>
 
