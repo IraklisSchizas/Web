@@ -17,10 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
         exit();
     }
 
-    $stmt_items = $conn->prepare("INSERT INTO items (id, name, category, details) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name=VALUES(name), category=VALUES(category), details=VALUES(details)");
+    $stmt_items = $conn->prepare("INSERT INTO items (id, name, category, details, quantity) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name=VALUES(name), category=VALUES(category), details=VALUES(details), quantity=VALUES(quantity)");
     foreach ($data['items'] as $item) {
         $details_json = json_encode($item['details']); // Αποθήκευση στη μεταβλητή
-        $stmt_items->bind_param("isss", $item['id'], $item['name'], $item['category'], $details_json);
+        $stmt_items->bind_param("isisi", $item['id'], $item['name'], $item['category'], $details_json, $item['quantity']);
         if (!$stmt_items->execute()) {
             echo json_encode(['success' => false, 'error' => $stmt_items->error]);
             exit();
