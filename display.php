@@ -93,8 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
                                 <td>'.$details_formatted.'</td>
                                 <td>'.$row['quantity'].'</td>
                                 <td>
-                                    <button><a href="update.php">Update</a></button>
-                                    <button><a href="delete.php?deleteid='.$row['id'].'">Delete</a></button>
+                                    <button><a href="update.php">Ενημέρωση</a></button>
+                                    <button><a href="delete.php?deleteid='.$row['id'].'">Διαγραφή</a></button>
                                 </td>
                             </tr>';
                         }
