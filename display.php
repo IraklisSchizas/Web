@@ -10,6 +10,10 @@ if (!isset($_SESSION['user_name'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
+    // Διαγραφή όλων των εγγραφών από τους πίνακες items και categories πριν την αρχικοποίηση
+    $conn->query("DELETE FROM items");
+    $conn->query("DELETE FROM categories");
+
     $json_data = file_get_contents('export.json');
     $data = json_decode($json_data, true);
     if ($data === null) {
