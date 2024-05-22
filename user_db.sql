@@ -428,7 +428,6 @@ ALTER TABLE `announcements`
 -- Ευρετήρια για πίνακα `categories`
 --
 ALTER TABLE `categories`
-  ADD PRIMARY KEY (`id`);
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
