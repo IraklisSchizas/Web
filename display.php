@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
     }
     $stmt_categories->close();
 
-    header('Location: display.php?initialized=true');
+    header('Location: display.php'); //header('Location: display.php?initialized=true');
     exit();
 }
 ?>
@@ -57,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <?php if (isset($_GET['initialized']) && $_GET['initialized'] == 'true'): header('Location: display.php'); ?>
+    <!--<?php if (isset($_GET['initialized']) && $_GET['initialized'] == 'true'): ?>
         <div class="alert alert-success">Η αρχικοποίηση έγινε με επιτυχία!</div>
-    <?php endif; ?>
+    <?php endif; ?>-->
 
     <div class="form-container">
         <form id="initialize_form" action="" method="post">
