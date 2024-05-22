@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `announcements` (
-  `id` int(255) NOT NULL AUTO_INCREMENT,
+  `id` int(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `details` text NOT NULL,
   `date` datetime(6) NOT NULL
@@ -422,12 +422,14 @@ INSERT INTO `users` (`id`, `username`, `name`, `surname`, `phone`, `latitude`, `
 --
 ALTER TABLE `announcements`
   ADD PRIMARY KEY (`id`);
+  MODIFY 
 
 --
 -- Ευρετήρια για πίνακα `categories`
 --
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- Ευρετήρια για πίνακα `items`
