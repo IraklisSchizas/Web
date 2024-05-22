@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `announcements` (
-  `id` int(255) NOT NULL,
+  `id` int(255) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `details` text NOT NULL,
   `date` datetime(6) NOT NULL
