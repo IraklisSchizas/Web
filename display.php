@@ -70,7 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
             <input type="hidden" name="initialize" value="true">
             <input type="button" id="initialize_button" class="form-btn" value="Αρχικοποίηση" onclick="document.getElementById('initialize_form').submit();"><br>
             <input type="button" id="j_button" class="form-btn" onclick="window.location.href = 'add_to_database.php'" value="Προσθήκη Αντικειμένου - Κατηγορίας"><br>
-            <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
+            <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p><br>
+            <div id="items_target"></div>
+            <p><a id="link" href="#categories_target">Πήγαινε στις Κατηγορίες</a></p>
             <br><br>
             <h2>Items Table</h2><br>
             <table class="table" id="jsonItemsTable">
@@ -110,7 +112,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
                     ?>
                 </tbody>
             </table>
-            <br><br><br>
+            <br>
+            <div id="categories_target"></div><br>
+            <p><a id="link" href="#items_target">Πήγαινε στα Αντικείμενα</a></p>
+            <br>
             <h2>Categories Table</h2><br>
             <table class="table" id="jsonCategoriessTable">
                 <thead>
