@@ -422,8 +422,6 @@ INSERT INTO `users` (`id`, `username`, `name`, `surname`, `phone`, `latitude`, `
 --
 -- Ευρετήρια για πίνακα `announcements`
 --
-ALTER TABLE `announcements`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Ευρετήρια για πίνακα `categories`
