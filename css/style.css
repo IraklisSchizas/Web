@@ -176,3 +176,29 @@ button {
    color: #FFF; /* White */
    border-radius: 5px;
 }
+
+.update-btn, .delete-btn {
+   background: #66BB6A; /* Dark green */
+   color: #FFF; /* White text */
+   border: none;
+   padding: 8px 12px;
+   cursor: pointer;
+   border-radius: 5px;
+}
+
+.update-btn:hover {
+   background: #3b3bc3 !important; /* Red background on hover */
+}
+
+.delete-btn:hover {
+   background: #e5403d !important; /* Red background on hover */
+}
+
+.update-btn a, .delete-btn a {
+   color: #FFF; /* White text for links inside buttons */
+   text-decoration: none;
+}
+
+.update-btn:hover a, .delete-btn:hover a {
+   color: #FFF !important; /* Ensure link color remains white on hover */
+}
