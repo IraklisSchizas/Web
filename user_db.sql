@@ -419,29 +419,3 @@ INSERT INTO `users` (`id`, `username`, `name`, `surname`, `phone`, `latitude`, `
 (4, 'r2', 'r2', 'r2', 6912324458, '38.2205443', '21.7312005', '202cb962ac59075b964b07152d234b70', 'rescuer'),
 (5, 'r3', 'r3', 'r3', 6912345678, '38.2205569', '21.7312067', '202cb962ac59075b964b07152d234b70', 'rescuer');
 
-
-
-
-
---
--- AUTO_INCREMENT για πίνακα `offers`
---
-ALTER TABLE `offers`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT για πίνακα `requests`
---
-ALTER TABLE `requests`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT για πίνακα `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
