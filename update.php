@@ -17,7 +17,7 @@ if(isset($_POST['submit'])){
     }
     $itemName = mysqli_real_escape_string($conn, $_POST['itemName']);
     $itemCategory = mysqli_real_escape_string($conn, $_POST['itemCategory']);
-    
+    $itemQuantity = mysqli_real_escape_string($conn, $_POST['itemQuantity']);
     // Αλλαγή των detail ώστε να έρθουν στην JSON μορφή που θέλουμε
     $itemDetailsInput = array_map('trim', explode(',', $_POST['itemDetails']));
     $itemDetails = [];
@@ -34,7 +34,6 @@ if(isset($_POST['submit'])){
         }
     }
     $itemDetailsJSON = json_encode($itemDetails);
-    $itemQuantity = mysqli_real_escape_string($conn, $_POST['itemQuantity']);
     
     $categoryName = mysqli_real_escape_string($conn, $_POST['categoryName']);
 
