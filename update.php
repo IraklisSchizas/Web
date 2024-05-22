@@ -38,28 +38,21 @@ if(isset($_POST['submit'])){
     $categoryName = mysqli_real_escape_string($conn, $_POST['categoryName']);
 
     $updateItem = "UPDATE items SET name='$itemName', category='$itemCategory', details='$itemDetailsJSON', quantity='$itemQuantity' WHERE id=$id";
-    //$updateCategory = "UPDATE categories SET name=$categoryName WHERE id=$id";
+    $updateCategory = "UPDATE categories SET name='$categoryName' WHERE id=$id";
     
-    /*if($itemId != NULL && $categoryId != NULL) {
-        mysqli_query($conn, $updateItem);
-        mysqli_query($conn, $updateCategory);
-        echo("Το αντικείμενο και η κατηγορία αποθηκεύτηκαν επιτυχώς!");
-        header('location: display.php');
-    }else if($itemId != NULL) {
-        mysqli_query($conn, $updateItem);
-        echo("Το αντικείμενο αποθηκεύτηκε επιτυχώς!");
-        header('location: display.php');
-    }else if($categoryId != NULL){
-        mysqli_query($conn, $updateCategory);
-        echo("Η κατηγορία αποθηκεύτηκε επιτυχώς!");
-        header('location: display.php');
-    }else{
-        die("Connection failed: " . $conn->connect_error);
-        $error[] = 'Σφάλμα!';
-    };*/
-    $result = mysqli_query($conn, $updateItem);
+    if (isset($_GET['is_a']) && $_GET['is_a'] == 'item') {
+        // Εντολή ενημέρωσης για τα αντικείμενα
+        $updateItem = "UPDATE items SET name='$itemName', category='$itemCategory', details='$itemDetailsJSON', quantity='$itemQuantity' WHERE id=$id";
+        $result = mysqli_query($conn, $updateItem);
+    } elseif (isset($_GET['is_a']) && $_GET['is_a'] == 'category') {
+        // Εντολή ενημέρωσης για τις κατηγορίες
+        $categoryName = mysqli_real_escape_string($conn, $_POST['categoryName']);
+        $updateCategory = "UPDATE categories SET name='$categoryName' WHERE id=$id";
+        $result = mysqli_query($conn, $updateCategory);
+    }    
     if($result) {
         header("Location: display.php");
+        exit();
     }else{
         die(mysqli_error($conn));
     }
@@ -106,18 +99,22 @@ if(isset($_POST['submit'])){
             };
             ?>
             <br>
-            <h3>Items</h3>
+            <?php if (isset($_GET['is_a']) && $_GET['is_a'] == 'item'): ?>
+            <h3>Επεξεργασία Αντικειμένου</h3>
             <div class="boxInput" id="items">
                 <input type="text" name="itemName" placeholder="Όνομα αντικειμένου">
                 <input type="number" name="itemCategory" placeholder="Κατηγορία αντικειμένου">
                 <input type="text" name="itemDetails" placeholder="Λεπτομέρειες">
                 <input type="number" name="itemQuantity" placeholder="Ποσότητα">
             </div>
-            <br>
-            <h3>Categories</h3>
+            <?php endif; ?>
+            <?php if (isset($_GET['is_a']) && $_GET['is_a'] == 'category'): ?>
+            <h3>Επεξεργασία Κατηγορίας</h3>
             <div class="boxInput categories" id="categories">
                 <input type="text" name="categoryName" placeholder="Όνομα κατηγορίας">
-            </div><br>
+            </div>
+            <?php endif; ?>
+            <br>
             <button type="submit" name="submit" class="form-btn">Ενημέρωση</button><br><br>
             <p><a href="display.php">Πίσω στην Διαχείρηση Βάσης</a></p>
         </form>

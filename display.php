@@ -97,8 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
                                 <td>'.$details_formatted.'</td>
                                 <td>'.$row['quantity'].'</td>
                                 <td>
-                                <button class="update-btn form-btn"><a href="update.php?updateid='.$row['id'].'">Ενημέρωση</a></button>
-                                <button class="delete-btn form-btn"><a href="delete.php?deleteid='.$row['id'].'">Διαγραφή</a></button>
+                                <button class="update-btn form-btn"><a href="update.php?updateid='.$row['id'].'&is_a=item">Ενημέρωση</a></button>
+                                <button class="delete-btn form-btn"><a href="delete.php?deleteid='.$row['id'].'&is_a=item">Διαγραφή</a></button>
                                 </td>
                             </tr>';
                         }
@@ -124,7 +124,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
                             echo '<tr>
                                 <th scope="row">'.$row['id'].'</th>
                                 <td>'.$row['name'].'</td>
-                                <td></td>
+                                <td>
+                                <button class="update-btn form-btn"><a href="update.php?updateid='.$row['id'].'&is_a=category">Ενημέρωση</a></button>
+                                <button class="delete-btn form-btn"><a href="delete.php?deleteid='.$row['id'].'&is_a=category">Διαγραφή</a></button>
+                                </td>
                             </tr>';
                         }
                     }
