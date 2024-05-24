@@ -8,6 +8,15 @@ if (!isset($_SESSION['user_name'])) {
     header('location:login.php');
     exit();
 }
+
+$civilian_name = $_SESSION['user_name'];
+// Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
+$stmt = $conn->prepare("SELECT * FROM users WHERE name = ?");
+$stmt->bind_param("s", $civilian_name);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$civilian_id = $row['id'];
 ?>
 
 <!DOCTYPE html>
@@ -31,34 +40,29 @@ if (!isset($_SESSION['user_name'])) {
             <input type="button" id="j_button" class="form-btn" onclick="window.location.href = 'add_request.php'" value="Δημιουργία Αιτήματος"><br>
             <p><a href="civilian_page.php">Πίσω στη σελίδα Πολίτη</a></p><br>
             <br><br>
-            <h2>Items Table</h2><br>
-            <table class="table" id="jsonItemsTable">
+            <h2>Τα αιτήματά μου</h2><br>
+            <table class="table" id="requestsTable">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Category</th>
-                        <th scope="col">Details</th>
+                        <th scope="col">Item</th>
                         <th scope="col">Quantity</th>
+                        <th scope="col">Date</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    $result = mysqli_query($conn, "SELECT * FROM items");
+                    // Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
+                    $stmt = $conn->prepare("SELECT * FROM requests WHERE civilian_id = ?");
+                    $stmt->bind_param("i", $civilian_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
                     if ($result) {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            $details_array = json_decode($row['details'], true);
-                            $details_formatted = "";
-                            foreach ($details_array as $detail) {
-                                $details_formatted .= ucfirst($detail['detail_name']) . ': ' . $detail['detail_value'] . '<br>';
-                            }
+                        while ($row = $result->fetch_assoc()) {
                             echo '<tr>
-                                <th scope="row">'.$row['id'].'</th>
-                                <td>'.$row['name'].'</td>
-                                <td>'.$row['category'].'</td>
-                                <td>'.$details_formatted.'</td>
+                                <th scope="row">'.$row['item_id'].'</th>
                                 <td>'.$row['quantity'].'</td>
+                                <td>'.$row['date'].'</td>
                                 <td>
                                 <button class="update-btn form-btn"><a href="update.php?updateid='.$row['id'].'&is_a=item">Ενημέρωση</a></button>
                                 <button class="delete-btn form-btn"><a href="delete.php?deleteid='.$row['id'].'&is_a=item">Διαγραφή</a></button>
