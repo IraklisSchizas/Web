@@ -24,7 +24,8 @@ if(isset($_POST['submit'])){
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $civilian_id = $row['id'];
-    
+
+    //Πρέπει να πάρουμε το itemId βάση του ονόματος που έδωσε ο χρήστης (itemName), και την ημερομηνία.
     $date;
     $itemId;
 
