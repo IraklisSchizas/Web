@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 @include 'config.php';
 session_start();
 
@@ -6,8 +9,8 @@ if (!isset($_SESSION['user_name'])) {
     header('location:login.php');
     exit();
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="el">
 <head>
