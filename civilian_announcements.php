@@ -14,16 +14,16 @@ if (!isset($_SESSION['user_name'])) {
 <!DOCTYPE html>
 <html lang="el">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ανακοινώσεις</title>
     <link rel="stylesheet" href="css/style.css">
-</head>>
 </head>
 <body>
     <div class="form-container">
-        <h2>Ανακοινώσεις</h2>
+        <h2>Ανακοινώσεις</h2><br>
+        <input type="hidden" name="initialize" value="true">
         <table class="table" id="announcementsTable">
             <thead>
                 <tr>
