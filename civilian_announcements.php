@@ -23,7 +23,6 @@ if (!isset($_SESSION['user_name'])) {
 <body>
     <div class="form-container">
         <h2>Ανακοινώσεις</h2><br>
-        <input type="hidden" name="initialize" value="true">
         <table class="table" id="announcementsTable">
             <thead>
                 <tr>
