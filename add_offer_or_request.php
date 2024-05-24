@@ -38,25 +38,28 @@ if(isset($_POST['submit'])){
     $rescuer_id = 0;
     
     // Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
-    if (isset($_GET['is_a']) && $_GET['is_a'] == 'offer') {
-        $stmt = $conn->prepare("INSERT INTO offers (civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES (?, ?, ?, ?, ?, ?)");
-    }elseif(isset($_GET['is_a']) && $_GET['is_a'] == 'request'){
-        $stmt = $conn->prepare("INSERT INTO requests (civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES (?, ?, ?, ?, ?, ?)");
-    }
-
-    $stmt->bind_param("issiis", $civilian_id, $date, $itemId, $quantity, $load_date, $rescuer_id);
-
-    if ($stmt->execute()) {
-        if (isset($_GET['is_a']) && $_GET['is_a'] == 'offer'){
-            echo "Η προσφορά προστέθηκε με επιτυχία.";
-        }else{
-            echo "Το αίτημα προστέθηκε με επιτυχία.";
+    if (isset($_GET['is_a'])){
+        $is_a = $_GET['is_a'];
+        if($is_a == 'offer') {
+            $stmt = $conn->prepare("INSERT INTO offers (civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES (?, ?, ?, ?, ?, ?)");
+        }elseif($is_a == 'request'){
+            $stmt = $conn->prepare("INSERT INTO requests (civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES (?, ?, ?, ?, ?, ?)");
         }
-    } else {
-        echo "Σφάλμα: " . $stmt->error;
-    }
+
+        $stmt->bind_param("issiis", $civilian_id, $date, $itemId, $quantity, $load_date, $rescuer_id);
+
+        if ($stmt->execute()) {
+            if ($is_a == 'offer'){
+                echo "Η προσφορά προστέθηκε με επιτυχία.";
+            }else{
+                echo "Το αίτημα προστέθηκε με επιτυχία.";
+            }
+        } else {
+            echo "Σφάλμα: " . $stmt->error;
+        }
     $stmt->close();
     $conn->close();
+    }
 }
 ?>
 
@@ -96,7 +99,11 @@ if(isset($_POST['submit'])){
             };
             ?>
             <br>
-            <h3>Δημιουργία Προσφοράς</h3>
+            <?php if(isset($_GET['is_a']) && $_GET['is_a'] == 'offer'): ?>
+                <h3>Δημιουργία Προσφοράς</h3>
+            <?php else: ?>
+                <h3>Δημιουργία Αιτήματος</h3>
+            <?php endif; ?>
             <div class="boxInput" id="items">
                 <input type="text" name="itemName" placeholder="Όνομα αντικειμένου">
                 <input type="text" name="itemCategory" placeholder="Κατηγορία αντικειμένου">
