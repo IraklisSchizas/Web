@@ -36,8 +36,8 @@ $civilian_id = $row['id'];
     <div class="form-container">
         <form id="initialize_form" action="" method="post">
             <input type="hidden" name="initialize" value="true">
-            <input type="button" id="j_button" class="form-btn" onclick="window.location.href = 'add_offer.php'" value="Δημιουργία Προσφοράς"><br>
-            <input type="button" id="j_button" class="form-btn" onclick="window.location.href = 'add_request.php'" value="Δημιουργία Αιτήματος"><br>
+            <input type="button" id="j_button" class="form-btn" onclick="window.location.href = 'add_offer_or_request.php?is_a=offer'" value="Δημιουργία Προσφοράς"><br>
+            <input type="button" id="j_button" class="form-btn" onclick="window.location.href = 'add_offer_or_request.php?is_a=request'" value="Δημιουργία Αιτήματος"><br>
             <p><a href="civilian_page.php">Πίσω στη σελίδα Πολίτη</a></p><br>
             <br><br>
             <h2>Τα αιτήματά μου</h2><br>

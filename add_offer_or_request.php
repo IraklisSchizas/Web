@@ -34,20 +34,30 @@ if(isset($_POST['submit'])){
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $itemId = $row['id'];
+    $load_date = 0;
+    $rescuer_id = 0;
+    
+    // Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
+    if (isset($_GET['is_a']) && $_GET['is_a'] == 'offer') {
+        $stmt = $conn->prepare("INSERT INTO offers (civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES (?, ?, ?, ?, ?, ?)");
+    }elseif(isset($_GET['is_a']) && $_GET['is_a'] == 'request'){
+        $stmt = $conn->prepare("INSERT INTO requests (civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES (?, ?, ?, ?, ?, ?)");
+    }
 
-    
-    $insertOffer = "INSERT INTO offers(civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES ('$civilian_id', '$date', '$itemId, '$quantity', 0, 0)";
-    
-    if($itemId != NULL) {
-        mysqli_query($conn, $insertOffer);
-        echo("Η προσφορά προστέθηκε επιτυχώς!");
-        header('location: civilian_requests.php');
-        exit();
-    }else{
-        die("Connection failed: " . $conn->connect_error);
-        $error[] = 'Σφάλμα!';
-    };
-};
+    $stmt->bind_param("issiis", $civilian_id, $date, $itemId, $quantity, $load_date, $rescuer_id);
+
+    if ($stmt->execute()) {
+        if (isset($_GET['is_a']) && $_GET['is_a'] == 'offer'){
+            echo "Η προσφορά προστέθηκε με επιτυχία.";
+        }else{
+            echo "Το αίτημα προστέθηκε με επιτυχία.";
+        }
+    } else {
+        echo "Σφάλμα: " . $stmt->error;
+    }
+    $stmt->close();
+    $conn->close();
+}
 ?>
 
 <!DOCTYPE html>

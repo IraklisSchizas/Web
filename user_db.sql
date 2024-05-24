@@ -364,10 +364,10 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 CREATE TABLE `offers` (
   `id` int(255) NOT NULL  AUTO_INCREMENT,
   `civilian_id` int(255) NOT NULL,
-  `date` date NOT NULL,
+  `date` datetime(6) NOT NULL,
   `item_id` int(255) NOT NULL,
   `quantity` int(255) NOT NULL,
-  `load_date` date NOT NULL,
+  `load_date` datetime(6) NOT NULL,
   `rescuer_id` int(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -381,10 +381,10 @@ CREATE TABLE `offers` (
 CREATE TABLE `requests` (
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `civilian_id` int(255) NOT NULL,
-  `date` date NOT NULL,
+  `date` datetime(6) NOT NULL,
   `item_id` int(255) NOT NULL,
   `quantity` int(255) NOT NULL,
-  `load_date` date NOT NULL,
+  `load_date` datetime(6) NOT NULL,
   `rescuer_id` int(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
