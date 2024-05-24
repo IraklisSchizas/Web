@@ -25,9 +25,15 @@ if(isset($_POST['submit'])){
     $row = $result->fetch_assoc();
     $civilian_id = $row['id'];
 
+    $date = date("Y-m-d H:i:s");
     //Πρέπει να πάρουμε το itemId βάση του ονόματος που έδωσε ο χρήστης (itemName), και την ημερομηνία.
-    $date;
-    $itemId;
+    // Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
+    $stmt = $conn->prepare("SELECT * FROM items WHERE name = ?");
+    $stmt->bind_param("s", $itemName);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $itemId = $row['id'];
 
     
     $insertOffer = "INSERT INTO offers(civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES ('$civilian_id', '$date', '$itemId, '$quantity', 0, 0)";
@@ -56,7 +62,7 @@ if(isset($_POST['submit'])){
         /* Κώδικας CSS για το boxInput tag */
         .boxInput {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 5 στήλες για τα Items */
+            grid-template-columns: repeat(3, 1fr); /* 5 στήλες */
             gap: 10px; /* Κενό μεταξύ των στοιχείων */
         }
 
