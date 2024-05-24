@@ -100,7 +100,7 @@ html {
    border-radius: 5px;
 }
 
-.form-container form textarea {
+.form-container form h2 {
    width: 100%;
    padding: 10px 15px;
    font-size: 17px;
