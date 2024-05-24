@@ -4,7 +4,6 @@ ini_set('display_errors', 1);
 
 @include 'config.php';
 session_start();
-
 if (!isset($_SESSION['user_name'])) {
     header('location:login.php');
     exit();
@@ -22,6 +21,8 @@ if (!isset($_SESSION['user_name'])) {
 </head>
 <body>
     <div class="form-container">
+    <form id="initialize_form" action="" method="post">
+    <p><a href="civilian_page.php">Πίσω στην αρχική σελίδα</a></p>
         <h2>Ανακοινώσεις</h2><br>
         <table class="table" id="announcementsTable">
             <thead>
@@ -56,7 +57,6 @@ if (!isset($_SESSION['user_name'])) {
                 ?>
             </tbody>
         </table>
-        <p><a href="civilian_page.php">Πίσω στην αρχική σελίδα</a></p>
     </div>
 </body>
 </html>
