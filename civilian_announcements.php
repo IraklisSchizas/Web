@@ -22,7 +22,7 @@ if (!isset($_SESSION['user_name'])) {
 </head>
 <body>
     <div class="form-container">
-        <h3>Ανακοινώσεις</h3>
+        <h2>Ανακοινώσεις</h2>
         <table class="table" id="announcementsTable">
             <thead>
                 <tr>
