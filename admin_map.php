@@ -26,8 +26,8 @@ if ($result->num_rows > 0) {
     exit;
 }
 
-echo json_encode($vehicles);
-echo count($vehicles);
+//echo json_encode($vehicles);
+//echo count($vehicles);
 foreach ($vehicles as $v) {
    // Εδώ μπαίνει ο κώδικας που προβάλει κάθε όχημα μέσα στο χάρτη.
    // Έχει να κάνει και με το cargo (offers, requests).
