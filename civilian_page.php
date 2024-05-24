@@ -32,7 +32,7 @@ if(!isset($_SESSION['user_name'])){
       <h1>Καλωσήρθες <span><?php echo $_SESSION['user_name'] ?></span>!</h1>
       <p>αυτή είναι η σελίδα των πολιτών</p>
       <a href="" class="btn">διαχείριση αιτημάτων</a>
-      <a href="announcements.php" class="btn">Ανακοινώσεις</a>
+      <a href="civilian_announcements.php" class="btn">Ανακοινώσεις</a>
       <a href="logout.php" class="btn">αποσύνδεση</a>
    </div>
 
