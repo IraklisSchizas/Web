@@ -56,7 +56,7 @@ if (!isset($_SESSION['user_name'])) {
                 ?>
             </tbody>
         </table>
-        <p><a href="civilian_home.php">Πίσω στην αρχική σελίδα</a></p>
+        <p><a href="civilian_page.php">Πίσω στην αρχική σελίδα</a></p>
     </div>
 </body>
 </html>
