@@ -12,8 +12,10 @@ if (!isset($_SESSION['user_name'])) {
 
 if(isset($_POST['submit'])){
 
-    $itemNames = $_POST['itemName'];
-    $itemName = implode(',', array_map([$conn, 'real_escape_string'], $itemNames));
+    // Λαμβάνουμε τα αντικείμενα από τη φόρμα
+    $itemNamesString = $_POST['itemName'];
+    $itemNames = explode(',', $itemNamesString); // Μετατρέπουμε το string σε πίνακα
+    
     $quantity = mysqli_real_escape_string($conn, $_POST['itemQuantity']);
 
     $civilian_name = $_SESSION['user_name'];
@@ -25,41 +27,43 @@ if(isset($_POST['submit'])){
     $row = $result->fetch_assoc();
     $civilian_id = $row['id'];
     $date = date("Y-m-d H:i:s");
-    //Πρέπει να πάρουμε το itemId βάση του ονόματος που έδωσε ο χρήστης (itemName), και την ημερομηνία.
-    // Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
-    $stmt2 = $conn->prepare("SELECT * FROM items WHERE name = ?");
-    $stmt2->bind_param("s", $name);
-    $stmt2->execute();
-    $result = $stmt2->get_result();
-    $row = $result->fetch_assoc();
-    $itemId = $row['id'];
-    $load_date = 0;
-    $rescuer_id = 0;
     
-    // Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
-    if (isset($_GET['is_a'])){
-        $is_a = $_GET['is_a'];
-        if($is_a == 'offer') {
-            $stmt = $conn->prepare("INSERT INTO offers (civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES (?, ?, ?, ?, ?, ?)");
-        }elseif($is_a == 'request'){
-            $stmt = $conn->prepare("INSERT INTO requests (civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES (?, ?, ?, ?, ?, ?)");
-        }
-
-        $stmt->bind_param("issiis", $civilian_id, $date, $itemId, $quantity, $load_date, $rescuer_id);
-
-        if ($stmt->execute()) {
-            if ($is_a == 'offer'){
-                header("Location: civilian_announcements.php");
-            }else{
-                header("Location: civilian_requests.php");
+    // Προσθέτουμε κώδικα για την επεξεργασία κάθε αντικειμένου ξεχωριστά
+    foreach ($itemNames as $itemName) {
+        // Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
+        $stmt= $conn->prepare("SELECT * FROM items WHERE name = ?");
+        $stmt->bind_param("s", $itemName);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $itemId = $row['id'];
+        $load_date = 0;
+        $rescuer_id = 0;
+        
+        // Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
+        if (isset($_GET['is_a'])){
+            $is_a = $_GET['is_a'];
+            if($is_a == 'offer') {
+                $stmt = $conn->prepare("INSERT INTO offers (civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES (?, ?, ?, ?, ?, ?)");
+            }elseif($is_a == 'request'){
+                $stmt = $conn->prepare("INSERT INTO requests (civilian_id, date, item_id, quantity, load_date, rescuer_id) VALUES (?, ?, ?, ?, ?, ?)");
             }
-        } else {
-            echo "Σφάλμα: " . $stmt->error;
+
+            $stmt->bind_param("issiis", $civilian_id, $date, $itemId, $quantity, $load_date, $rescuer_id);
+
+            if ($stmt->execute()) {
+                if ($is_a == 'offer'){
+                    header("Location: civilian_announcements.php");
+                }else{
+                    header("Location: civilian_requests.php");
+                }
+            } else {
+                echo "Σφάλμα: " . $stmt->error;
+            }
+            $stmt->close();
         }
-    $stmt->close();
-    $stmt2->close();
-    $conn->close();
     }
+    $conn->close();
 }
 ?>
 
@@ -107,7 +111,7 @@ if(isset($_POST['submit'])){
             <?php endif; ?>
             <div class="boxInput" id="items">
                 <!-- Dropdown για επιλογή αντικειμένων -->
-                <select name="itemName[]" id="itemName" class="item-select" multiple="multiple" required style="width: auto;">
+                <select name="itemName" id="itemName" class="item-select" multiple="multiple" required style="width: auto;">
                     <?php
                     if (isset($_GET['announcement_id'])) {
                         // Για την προσφορά
