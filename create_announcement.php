@@ -17,15 +17,16 @@ class AnnouncementManager {
     }
 
     // Create announcement
-    public function createAnnouncement($title, $details) {
+    public function createAnnouncement($title, $details, $item_ids) {
         $title = mysqli_real_escape_string($this->conn, $title);
         $details = mysqli_real_escape_string($this->conn, $details);
         $date = date("Y-m-d H:i:s");
+        $item_ids = mysqli_real_escape_string($this->conn, $item_ids);
 
         if(empty($title) || empty($details)) {
             return 'Όλα τα πεδία είναι υποχρεωτικά.';
         } else {
-            $insert = "INSERT INTO announcements (title, details, date) VALUES ('$title', '$details', '$date')";
+            $insert = "INSERT INTO announcements (title, details, date, item_ids) VALUES ('$title', '$details', '$date', '$item_ids')";
             if(mysqli_query($this->conn, $insert)) {
                 return 'Η ανακοίνωση δημιουργήθηκε με επιτυχία!';
             } else {
@@ -43,7 +44,8 @@ $message = '';
 if(isset($_POST['submit'])){
     $title = $_POST['title'];
     $details = $_POST['details'];
-    $message = $announcementManager->createAnnouncement($title, $details);
+    $items = $_POST['items'];
+    $message = $announcementManager->createAnnouncement($title, $details, $items);
 }
 ?>
 
@@ -71,6 +73,7 @@ if(isset($_POST['submit'])){
         ?>
         <input type="text" name="title" required placeholder="Τίτλος Ανακοίνωσης">
         <textarea name="details" required placeholder="Γράψτε το κείμενό σας εδώ."></textarea>
+        <input type="text" name="items" required placeholder="Αφορά τα αντικείμενα">
         <input type="submit" name="submit" value="Δημιουργία Ανακοίνωσης" class="form-btn">
         <p><a href="announcements.php">Πίσω στις Ανακοινώσεις</a></p>
     </form>
