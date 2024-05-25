@@ -25,7 +25,13 @@ if ($is_a == 'item') {
     $row = mysqli_fetch_assoc($result2);
     $old_name = $row['name'];
     $old_categorty = $row['category'];
-    $old_details = $row['details'];
+    //$old_details = ($row['details']);
+    $old_details = "";
+    $details_array = json_decode($row['details'], true);
+    $details_formatted = "";
+    foreach ($details_array as $detail) {
+        $old_details .= ucfirst($detail['detail_name']) . ': ' . $detail['detail_value'] . '<br>';
+    }
     $old_quantity = $row['quantity'];
 } elseif ($is_a == 'category') {
     // Προφόρτωση δεδομένων για την κατηγορία
