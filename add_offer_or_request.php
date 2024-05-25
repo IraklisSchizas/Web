@@ -13,7 +13,6 @@ if (!isset($_SESSION['user_name'])) {
 if(isset($_POST['submit'])){
 
     $itemName = mysqli_real_escape_string($conn, $_POST['itemName']);
-    $itemCategory = mysqli_real_escape_string($conn, $_POST['itemCategory']);
     $quantity = mysqli_real_escape_string($conn, $_POST['itemQuantity']);
 
     $civilian_name = $_SESSION['user_name'];
@@ -75,7 +74,7 @@ if(isset($_POST['submit'])){
         /* Κώδικας CSS για το boxInput tag */
         .boxInput {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 5 στήλες */
+            grid-template-columns: repeat(2, 1fr); /* 2 στήλες */
             gap: 10px; /* Κενό μεταξύ των στοιχείων */
         }
 
@@ -105,8 +104,7 @@ if(isset($_POST['submit'])){
                 <h3>Δημιουργία Αιτήματος</h3>
             <?php endif; ?>
             <div class="boxInput" id="items">
-                <input type="text" name="itemName" placeholder="Όνομα αντικειμένου">
-                <input type="text" name="itemCategory" placeholder="Κατηγορία αντικειμένου">
+                <input type="text" name="itemName" placeholder="Αντικείμενα:">
                 <input type="number" name="itemQuantity" placeholder="Πόσα άτομα αφορά;">
             </div><br>
             <button type="submit" name="submit" class="form-btn">Προσθήκη</button><br><br>
