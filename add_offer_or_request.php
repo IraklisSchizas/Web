@@ -12,7 +12,8 @@ if (!isset($_SESSION['user_name'])) {
 
 if(isset($_POST['submit'])){
 
-    $itemName = mysqli_real_escape_string($conn, $_POST['itemName']);
+    $itemNames = $_POST['itemName'];
+    $itemName = implode(',', array_map([$conn, 'real_escape_string'], $itemNames));
     $quantity = mysqli_real_escape_string($conn, $_POST['itemQuantity']);
 
     $civilian_name = $_SESSION['user_name'];
@@ -70,6 +71,7 @@ if(isset($_POST['submit'])){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Σελίδα Διαχειριστή</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         /* Κώδικας CSS για το boxInput tag */
         .boxInput {
@@ -78,7 +80,7 @@ if(isset($_POST['submit'])){
             gap: 10px; /* Κενό μεταξύ των στοιχείων */
         }
 
-        .boxInput input {
+        .boxInput input, .boxInput select {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -104,8 +106,21 @@ if(isset($_POST['submit'])){
                 <h3>Δημιουργία Αιτήματος</h3>
             <?php endif; ?>
             <div class="boxInput" id="items">
-                <input type="text" name="itemName" placeholder="Αντικείμενα:">
-                <input type="number" name="itemQuantity" placeholder="Πόσα άτομα αφορά;">
+                <!-- Dropdown για επιλογή αντικειμένων -->
+                <select name="itemName[]" id="itemName" class="item-select" multiple="multiple" required style="width: auto;">
+                    <?php
+                    if (isset($_GET['announcement_id'])) {
+                        $announcement_id = intval($_GET['announcement_id']);
+                        $items_result = $conn->query("SELECT items.id, items.name FROM items
+                                                      JOIN announcements ON FIND_IN_SET(items.id, announcements.item_ids)
+                                                      WHERE announcements.id = $announcement_id");
+                        while ($item_row = $items_result->fetch_assoc()) {
+                            echo '<option value="'.$item_row['name'].'">'.$item_row['name'].'</option>';
+                        }
+                    }
+                    ?>
+                </select>
+                <input type="number" name="itemQuantity" placeholder="Πόσα άτομα αφορά">
             </div><br>
             <button type="submit" name="submit" class="form-btn">Προσθήκη</button><br><br>
             <?php if(isset($_GET['is_a']) && $_GET['is_a'] == 'offer'): ?>
@@ -114,7 +129,17 @@ if(isset($_POST['submit'])){
                 <p><a href="civilian_requests.php">Πίσω στα Αιτήματα</a></p>
             <?php endif; ?>
         </form>
-
     </div>
-    </body>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.item-select').select2({
+                placeholder: "Επιλέξτε αντικείμενο",
+                allowClear: true
+            });
+        });
+    </script>
+</body>
 </html>
