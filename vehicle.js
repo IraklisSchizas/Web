@@ -6,20 +6,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Load vehicle data from the server
-fetch('get_vehicles.php')
-    .then(response => response.json())
-    .then(data => {
-        data.forEach(function(vehicle) {
-            var marker = L.marker([vehicle.latitude, vehicle.longitude]).addTo(map);
-            marker.bindPopup(
-                "<b>Όχημα:</b> " + vehicle.username +
-                "<br><b>Φορτίο:</b> " + vehicle.cargo +
-                "<br><b>Κατάσταση:</b> " + vehicle.status
-            );
-        });
-    })
-    .catch(error => console.error('Error fetching vehicle data:', error));
+
 
 // Create a custom icon for the base marker
 var baseIcon = L.icon({
