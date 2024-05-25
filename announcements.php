@@ -30,10 +30,10 @@ if (!isset($_SESSION['user_name'])) {
             <table class="table" id="announcementsTable">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Details</th>
-                        <th scope="col">Date</th>
+                        <th scope="col">Τίτλος</th>
+                        <th scope="col">Λεπτομέρειες</th>
+                        <th scope="col">Ημερομηνία</th>
+                        <th scope="col">Αντικείμενα</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,10 +44,10 @@ if (!isset($_SESSION['user_name'])) {
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             echo '<tr>
-                                <th scope="row">'.$row['id'].'</th>
-                                <td>'.$row['title'].'</td>
+                                <th scope="row">'.$row['title'].'</th>
                                 <td>'.$row['details'].'</td>
                                 <td>'.$row['date'].'</td>
+                                <td>'.$row['item_ids'].'</td>
                             </tr>';
                         }
                     } else {
