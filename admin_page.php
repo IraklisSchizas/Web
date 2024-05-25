@@ -33,6 +33,7 @@ if(!isset($_SESSION['user_name'])){
       <a href="register_rescuer.php" class="btn">Εγγραφή Διασώστη</a>
       <a href="display.php" class="btn">Διαχείρηση Βάσης</a>
       <a href="admin_map.php" class="btn">Χάρτης</a>
+      <a href="display_warehouse.php" class="btn">Προβολή Κατάστασης Αποθήκης</a>
       <a href="announcements.php" class="btn">Ανακοινώσεις</a>
       <a href="logout.php" class="btn">αποσύνδεση</a>
    </div>
