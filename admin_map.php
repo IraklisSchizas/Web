@@ -3,7 +3,6 @@
 @include 'config.php';
 
 session_start();
-
 // Ελέγχουμε αν ο χρήστης είναι συνδεδεμένος
 if (!isset($_SESSION['user_name'])) {
     header('location:login.php');
