@@ -24,10 +24,8 @@ if (!isset($_SESSION['user_name'])) {
         <form id="initialize_form" action="" method="post">
             <br>
             <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p><br><br>
-            <h2>Αντικείμενα</h2><br>
-
             <!-- Dropdown για επιλογή κατηγορίας -->
-            <label for="category">Κατηγορία:</label>
+            <label for="category"><h2>Κατηγορία:</h2></label>
             <select name="category" id="category">
                 <option value="">Όλες</option>
                 <?php
@@ -39,8 +37,9 @@ if (!isset($_SESSION['user_name'])) {
                 ?>
             </select>
             <button type="submit">Αναζήτηση</button>
-            
             <br><br>
+            <h2>Αντικείμενα</h2><br>
+            <br>
             <table class="table" id="jsonItemsTable">
                 <thead>
                     <tr>
