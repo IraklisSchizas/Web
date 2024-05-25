@@ -107,7 +107,7 @@ if(isset($_POST['submit'])){
             <div class="boxInput" id="items">
                 <input type="text" name="itemName" placeholder="Όνομα αντικειμένου">
                 <input type="text" name="itemCategory" placeholder="Κατηγορία αντικειμένου">
-                <input type="number" name="itemQuantity" placeholder="Ποσότητα">
+                <input type="number" name="itemQuantity" placeholder="Πόσα άτομα αφορά;">
             </div><br>
             <button type="submit" name="submit" class="form-btn">Προσθήκη</button><br><br>
             <?php if(isset($_GET['is_a']) && $_GET['is_a'] == 'offer'): ?>
