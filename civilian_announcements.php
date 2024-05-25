@@ -8,13 +8,6 @@ if (!isset($_SESSION['user_name'])) {
     header('location:login.php');
     exit();
 }
-
-// Λήψη των αντικειμένων και των ονομάτων τους σε έναν πίνακα
-$items = [];
-$item_result = $conn->query("SELECT id, name FROM items");
-while ($item_row = $item_result->fetch_assoc()) {
-    $items[$item_row['id']] = $item_row['name'];
-}
 ?>
 
 <!DOCTYPE html>
@@ -44,26 +37,34 @@ while ($item_row = $item_result->fetch_assoc()) {
             </thead>
             <tbody>
                 <?php
-                $stmt = $conn->prepare("SELECT title, details, date, item_ids FROM announcements");
+                $stmt = $conn->prepare("SELECT id, title, details, date, item_ids FROM announcements");
                 $stmt->execute();
                 $result = $stmt->get_result();
 
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        // Αντικατάσταση των item_ids με τα item_names
+                        $announcement_id = $row['id'];
+                        // Μετατροπή των item_ids σε item_names
                         $item_ids = explode(',', $row['item_ids']);
-                        $item_names = array_map(function($id) use ($items) {
-                            return $items[$id];
-                        }, $item_ids);
+                        $item_names = [];
+                        foreach ($item_ids as $item_id) {
+                            $item_stmt = $conn->prepare("SELECT name FROM items WHERE id = ?");
+                            $item_stmt->bind_param("i", $item_id);
+                            $item_stmt->execute();
+                            $item_result = $item_stmt->get_result();
+                            if ($item_row = $item_result->fetch_assoc()) {
+                                $item_names[] = $item_row['name'];
+                            }
+                        }
                         $item_names_str = implode(', ', $item_names);
-
+                        
                         echo '<tr>
                             <th scope="row">' . htmlspecialchars($row['title']) . '</th>
                             <td>' . htmlspecialchars($row['details']) . '</td>
                             <td>' . htmlspecialchars($row['date']) . '</td>
                             <td>' . htmlspecialchars($item_names_str) . '</td>
                             <td>
-                                <button class="update-btn form-btn"><a href="add_offer_or_request.php?is_a=offer">Προσφορά</a></button>
+                                <button class="update-btn form-btn"><a href="add_offer_or_request.php?is_a=offer&announcement_id=' . $announcement_id . '">Προσφορά</a></button>
                             </td>
                         </tr>';
                     }
