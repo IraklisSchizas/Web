@@ -28,31 +28,30 @@ if (!isset($_SESSION['user_name'])) {
         <table class="table" id="announcementsTable">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
                     <th scope="col">Τίτλος</th>
                     <th scope="col">Λεπτομέρειες</th>
                     <th scope="col">Ημερομηνία</th>
+                    <th scope="col">Αντικείμενα</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                $stmt = $conn->prepare("SELECT id, title, details, date FROM announcements");
+                $stmt = $conn->prepare("SELECT title, details, date, item_ids FROM announcements");
                 $stmt->execute();
                 $result = $stmt->get_result();
 
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         echo '<tr>
-                            <th scope="row">' . htmlspecialchars($row['id']) . '</th>
-                            <td>' . htmlspecialchars($row['title']) . '</td>
+                            <th scope="row">' . htmlspecialchars($row['title']) . '</th>
                             <td>' . htmlspecialchars($row['details']) . '</td>
                             <td>' . htmlspecialchars($row['date']) . '</td>
+                            <td>' . htmlspecialchars($row['item_ids']) . '</td>
                         </tr>';
                     }
                 } else {
                     echo "<tr><td colspan='4'>Δεν βρέθηκαν ανακοινώσεις</td></tr>";
                 }
-
                 $stmt->close();
                 $conn->close();
                 ?>
