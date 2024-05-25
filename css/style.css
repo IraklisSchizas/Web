@@ -118,6 +118,11 @@ html {
    border-radius: 5px;
 }
 
+.form-container form select {
+   height: auto;
+   width: min-content;
+}
+
 .form-container form select option {
    background: #fff;
 }
