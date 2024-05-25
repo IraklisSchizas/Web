@@ -3,7 +3,6 @@
 @include 'config.php';
 
 session_start();
-
 //Redirect to loggin page if not logged in
 if(!isset($_SESSION['user_name'])){
    header('location:login.php');

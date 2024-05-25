@@ -2,6 +2,12 @@
 
 @include 'config.php';
 
+session_start();
+//Redirect to loggin page if not logged in
+if(!isset($_SESSION['user_name'])){
+   header('location:login.php');
+}
+
 if(isset($_POST['submit'])){
 
    $username = mysqli_real_escape_string($conn, $_POST['username']);
