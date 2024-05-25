@@ -26,7 +26,7 @@ if (!isset($_SESSION['user_name'])) {
             <input type="button" id="j_button" class="form-btn" onclick="window.location.href = 'create_announcement.php'" value="Δημιουργία Ανακοίνωσης"><br>
             <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
             <br><br>            
-            <h2>Announcements</h2><br>
+            <h2>Ανακοινώσεις</h2><br>
             <table class="table" id="announcementsTable">
                 <thead>
                     <tr>

@@ -47,7 +47,6 @@ $civilian_id = $row['id'];
                         <th scope="col">Item</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Date</th>
-                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,10 +62,6 @@ $civilian_id = $row['id'];
                                 <th scope="row">'.$row['item_id'].'</th>
                                 <td>'.$row['quantity'].'</td>
                                 <td>'.$row['date'].'</td>
-                                <td>
-                                <button class="update-btn form-btn"><a href="update.php?updateid='.$row['id'].'&is_a=item">Ενημέρωση</a></button>
-                                <button class="delete-btn form-btn"><a href="delete.php?deleteid='.$row['id'].'&is_a=item">Διαγραφή</a></button>
-                                </td>
                             </tr>';
                         }
                     }

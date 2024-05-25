@@ -24,7 +24,7 @@ if (!isset($_SESSION['user_name'])) {
     <form id="initialize_form" action="" method="post">
     <p><a href="civilian_page.php">Πίσω στην αρχική σελίδα</a></p>
     <br><br>
-        <h2>Announcements</h2><br>
+        <h2>Ανακοινώσεις</h2><br>
         <table class="table" id="announcementsTable">
             <thead>
                 <tr>
