@@ -125,19 +125,18 @@ if(isset($_POST['submit'])){
             };
             ?>
             <br>
-            <?php echo $old_details;
-            if (isset($_GET['is_a']) && $_GET['is_a'] == 'item'): ?>
+            <?php if (isset($_GET['is_a']) && $_GET['is_a'] == 'item'): ?>
             <h3>Επεξεργασία Αντικειμένου</h3>
             <div class="boxInput" id="items">
                 <input type="text" name="itemName" placeholder="Όνομα αντικειμένου" value=<?php echo $old_name; ?>>
                 <input type="number" name="itemCategory" placeholder="Κατηγορία αντικειμένου" value=<?php echo $old_categorty; ?>>
-                <input type="text" name="itemDetails" placeholder="Λεπτομέρειες" value=<?php
+                <input type="text" name="itemDetails" placeholder="Λεπτομέρειες" value="<?php
                     $details_formatted = "";
-                    foreach ($old_details as $detail) {
-                        $details_formatted .= ucfirst($detail['detail_name']) . ': ' . $detail['detail_value'] . '<br>';
+                    foreach ($details_array as $detail) {
+                        $details_formatted .= ucfirst($detail['detail_name']) . ': ' . $detail['detail_value'] . ', ';
                     }
-                    echo $details_formatted;
-                ?>>
+                    echo htmlspecialchars(rtrim($details_formatted, ', ')); // Αφαίρεση του τελευταίου κόμματος και κενού
+                ?>">
                 <input type="number" name="itemQuantity" placeholder="Ποσότητα" value=<?php echo $old_quantity; ?>>
             </div>
             <?php endif; ?>
