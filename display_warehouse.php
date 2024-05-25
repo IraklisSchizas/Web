@@ -25,6 +25,22 @@ if (!isset($_SESSION['user_name'])) {
             <br>
             <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p><br><br>
             <h2>Αντικείμενα</h2><br>
+
+            <!-- Dropdown για επιλογή κατηγορίας -->
+            <label for="category">Κατηγορία:</label>
+            <select name="category" id="category">
+                <option value="">Όλες</option>
+                <?php
+                // Ανάκτηση μοναδικών κατηγοριών από τη βάση δεδομένων
+                $categories_result = mysqli_query($conn, "SELECT DISTINCT category FROM items");
+                while ($category_row = mysqli_fetch_assoc($categories_result)) {
+                    echo '<option value="'.$category_row['category'].'">'.$category_row['category'].'</option>';
+                }
+                ?>
+            </select>
+            <button type="submit">Αναζήτηση</button>
+            
+            <br><br>
             <table class="table" id="jsonItemsTable">
                 <thead>
                     <tr>
@@ -37,7 +53,17 @@ if (!isset($_SESSION['user_name'])) {
                 </thead>
                 <tbody>
                     <?php
-                    $result = mysqli_query($conn, "SELECT * FROM items");
+                    // Ανάκτηση της επιλεγμένης κατηγορίας από τη φόρμα
+                    $selected_category = isset($_POST['category']) ? $_POST['category'] : '';
+
+                    // Δημιουργία του SQL query με βάση την επιλεγμένη κατηγορία
+                    if ($selected_category) {
+                        $query = "SELECT * FROM items WHERE category = '".mysqli_real_escape_string($conn, $selected_category)."'";
+                    } else {
+                        $query = "SELECT * FROM items";
+                    }
+
+                    $result = mysqli_query($conn, $query);
                     if ($result) {
                         while ($row = mysqli_fetch_assoc($result)) {
                             $details_array = json_decode($row['details'], true);
