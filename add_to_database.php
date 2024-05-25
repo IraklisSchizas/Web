@@ -103,7 +103,7 @@ if(isset($_POST['submit'])){
             };
             ?>
             <br>
-            <h3>Items</h3>
+            <h3>Αντικείμενο</h3>
             <div class="boxInput" id="items">
                 <input type="number" name="itemId" placeholder="ID">
                 <input type="text" name="itemName" placeholder="Όνομα αντικειμένου">
@@ -112,7 +112,7 @@ if(isset($_POST['submit'])){
                 <input type="number" name="itemQuantity" placeholder="Ποσότητα">
             </div>
             <br>
-            <h3>Categories</h3>
+            <h3>Κατηγορία</h3>
             <div class="boxInput categories" id="categories">
                 <input type="number" name="categoryId" placeholder="ID">
                 <input type="text" name="categoryName" placeholder="Όνομα κατηγορίας">

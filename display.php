@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
             <div id="items_target"></div>
             <p><a id="link" href="#categories_target">Πήγαινε στις Κατηγορίες</a></p>
             <br><br>
-            <h2>Items Table</h2><br>
+            <h2>Αντικείμενα</h2><br>
             <table class="table" id="jsonItemsTable">
                 <thead>
                     <tr>
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
             <div id="categories_target"></div><br>
             <p><a id="link" href="#items_target">Πήγαινε στα Αντικείμενα</a></p>
             <br>
-            <h2>Categories Table</h2><br>
+            <h2>Κατηγορίες</h2><br>
             <table class="table" id="jsonCategoriessTable">
                 <thead>
                     <tr>
