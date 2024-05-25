@@ -32,6 +32,7 @@ if (!isset($_SESSION['user_name'])) {
                     <th scope="col">Λεπτομέρειες</th>
                     <th scope="col">Ημερομηνία</th>
                     <th scope="col">Αντικείμενα</th>
+                    <th scope="col">Ενέργειες</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,10 +48,13 @@ if (!isset($_SESSION['user_name'])) {
                             <td>' . htmlspecialchars($row['details']) . '</td>
                             <td>' . htmlspecialchars($row['date']) . '</td>
                             <td>' . htmlspecialchars($row['item_ids']) . '</td>
+                            <td>
+                            <button class="update-btn form-btn"><a href="add_offer_or_request.php?is_a=offer">Προσφορά</a></button>
+                            </td>
                         </tr>';
                     }
                 } else {
-                    echo "<tr><td colspan='4'>Δεν βρέθηκαν ανακοινώσεις</td></tr>";
+                    echo "<tr><td colspan='5'>Δεν βρέθηκαν ανακοινώσεις</td></tr>";
                 }
                 $stmt->close();
                 $conn->close();

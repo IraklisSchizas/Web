@@ -110,7 +110,11 @@ if(isset($_POST['submit'])){
                 <input type="number" name="itemQuantity" placeholder="Ποσότητα">
             </div><br>
             <button type="submit" name="submit" class="form-btn">Προσθήκη</button><br><br>
-            <p><a href="civilian_requests.php">Πίσω στα Αιτήματα</a></p>
+            <?php if(isset($_GET['is_a']) && $_GET['is_a'] == 'offer'): ?>
+                <p><a href="civilian_announcements.php">Πίσω στις Ανακοινώσεις</a></p>
+            <?php else: ?>
+                <p><a href="civilian_requests.php">Πίσω στα Αιτήματα</a></p>
+            <?php endif; ?>
         </form>
 
     </div>

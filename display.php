@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
     }
     $stmt_categories->close();
 
-    header('Location: display.php'); //header('Location: display.php?initialized=true');
+    header('Location: display.php');
     exit();
 }
 ?>
