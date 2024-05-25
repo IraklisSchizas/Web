@@ -50,9 +50,9 @@ if(isset($_POST['submit'])){
 
         if ($stmt->execute()) {
             if ($is_a == 'offer'){
-                echo "Η προσφορά προστέθηκε με επιτυχία.";
+                header("Location: civilian_announcements.php");
             }else{
-                echo "Το αίτημα προστέθηκε με επιτυχία.";
+                header("Location: civilian_requests.php");
             }
         } else {
             echo "Σφάλμα: " . $stmt->error;
