@@ -32,9 +32,9 @@ if (!isset($_SESSION['user_name'])) {
                 <option value="">Όλες</option>
                 <?php
                 // Ανάκτηση μοναδικών κατηγοριών από τη βάση δεδομένων
-                $categories_result = mysqli_query($conn, "SELECT DISTINCT category FROM items");
+                $categories_result = mysqli_query($conn, "SELECT * FROM categories");
                 while ($category_row = mysqli_fetch_assoc($categories_result)) {
-                    echo '<option value="'.$category_row['category'].'">'.$category_row['category'].'</option>';
+                    echo '<option value="'.$category_row['id'].'">'.$category_row['name'].'</option>';
                 }
                 ?>
             </select>
@@ -56,11 +56,16 @@ if (!isset($_SESSION['user_name'])) {
                     // Ανάκτηση της επιλεγμένης κατηγορίας από τη φόρμα
                     $selected_category = isset($_POST['category']) ? $_POST['category'] : '';
 
-                    // Δημιουργία του SQL query με βάση την επιλεγμένη κατηγορία
+                    // Δημιουργία του SQL query με join για να πάρουμε το όνομα της κατηγορίας
                     if ($selected_category) {
-                        $query = "SELECT * FROM items WHERE category = '".mysqli_real_escape_string($conn, $selected_category)."'";
+                        $query = "SELECT items.*, categories.name as category_name 
+                                  FROM items 
+                                  JOIN categories ON items.category = categories.id 
+                                  WHERE items.category = '".mysqli_real_escape_string($conn, $selected_category)."'";
                     } else {
-                        $query = "SELECT * FROM items";
+                        $query = "SELECT items.*, categories.name as category_name 
+                                  FROM items 
+                                  JOIN categories ON items.category = categories.id";
                     }
 
                     $result = mysqli_query($conn, $query);
@@ -74,7 +79,7 @@ if (!isset($_SESSION['user_name'])) {
                             echo '<tr>
                                 <th scope="row">'.$row['id'].'</th>
                                 <td>'.$row['name'].'</td>
-                                <td>'.$row['category'].'</td>
+                                <td>'.$row['category_name'].'</td>
                                 <td>'.$details_formatted.'</td>
                                 <td>'.$row['quantity'].'</td>
                             </tr>';
