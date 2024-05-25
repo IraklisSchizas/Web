@@ -125,12 +125,19 @@ if(isset($_POST['submit'])){
             };
             ?>
             <br>
-            <?php if (isset($_GET['is_a']) && $_GET['is_a'] == 'item'): ?>
+            <?php echo $old_details;
+            if (isset($_GET['is_a']) && $_GET['is_a'] == 'item'): ?>
             <h3>Επεξεργασία Αντικειμένου</h3>
             <div class="boxInput" id="items">
                 <input type="text" name="itemName" placeholder="Όνομα αντικειμένου" value=<?php echo $old_name; ?>>
                 <input type="number" name="itemCategory" placeholder="Κατηγορία αντικειμένου" value=<?php echo $old_categorty; ?>>
-                <input type="text" name="itemDetails" placeholder="Λεπτομέρειες" value=<?php echo $old_details; ?>>
+                <input type="text" name="itemDetails" placeholder="Λεπτομέρειες" value=<?php
+                    $details_formatted = "";
+                    foreach ($old_details as $detail) {
+                        $details_formatted .= ucfirst($detail['detail_name']) . ': ' . $detail['detail_value'] . '<br>';
+                    }
+                    echo $details_formatted;
+                ?>>
                 <input type="number" name="itemQuantity" placeholder="Ποσότητα" value=<?php echo $old_quantity; ?>>
             </div>
             <?php endif; ?>
