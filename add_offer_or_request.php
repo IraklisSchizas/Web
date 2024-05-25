@@ -110,6 +110,7 @@ if(isset($_POST['submit'])){
                 <select name="itemName[]" id="itemName" class="item-select" multiple="multiple" required style="width: auto;">
                     <?php
                     if (isset($_GET['announcement_id'])) {
+                        // Για την προσφορά
                         $announcement_id = intval($_GET['announcement_id']);
                         $items_result = $conn->query("SELECT items.id, items.name FROM items
                                                       JOIN announcements ON FIND_IN_SET(items.id, announcements.item_ids)
@@ -117,6 +118,12 @@ if(isset($_POST['submit'])){
                         while ($item_row = $items_result->fetch_assoc()) {
                             echo '<option value="'.$item_row['name'].'">'.$item_row['name'].'</option>';
                         }
+                    } else {
+                        // Για το αίτημα
+                        $items_result = $conn->query("SELECT items.id, items.name FROM items");
+                        while ($item_row = $items_result->fetch_assoc()) {
+                            echo '<option value="'.$item_row['name'].'">'.$item_row['name'].'</option>';
+                        } 
                     }
                     ?>
                 </select>
