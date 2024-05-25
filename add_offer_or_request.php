@@ -24,14 +24,13 @@ if(isset($_POST['submit'])){
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $civilian_id = $row['id'];
-
     $date = date("Y-m-d H:i:s");
     //Πρέπει να πάρουμε το itemId βάση του ονόματος που έδωσε ο χρήστης (itemName), και την ημερομηνία.
     // Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
-    $stmt = $conn->prepare("SELECT * FROM items WHERE name = ?");
-    $stmt->bind_param("s", $itemName);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt2 = $conn->prepare("SELECT * FROM items WHERE name = ?");
+    $stmt2->bind_param("s", $name);
+    $stmt2->execute();
+    $result = $stmt2->get_result();
     $row = $result->fetch_assoc();
     $itemId = $row['id'];
     $load_date = 0;
@@ -58,6 +57,7 @@ if(isset($_POST['submit'])){
             echo "Σφάλμα: " . $stmt->error;
         }
     $stmt->close();
+    $stmt2->close();
     $conn->close();
     }
 }
