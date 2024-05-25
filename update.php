@@ -10,11 +10,33 @@ if (!isset($_SESSION['user_name'])) {
     exit();
 }
 
+if (isset($_GET['updateid'])){
+    $id = $_GET['updateid'];
+}
+if (isset($_GET['is_a'])){
+    $is_a = $_GET['is_a'];
+}else{
+    die(mysqli_error($conn));
+}
+if ($is_a == 'item') {
+    // Προφόρτωση δεδομένων για το αντικείμενο
+    $sql = "SELECT * FROM items WHERE id=$id ";
+    $result2 = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result2);
+    $old_name = $row['name'];
+    $old_categorty = $row['category'];
+    $old_details = $row['details'];
+    $old_quantity = $row['quantity'];
+} elseif ($is_a == 'category') {
+    // Προφόρτωση δεδομένων για την κατηγορία
+    $sql = "SELECT * FROM categories WHERE id=$id ";
+    $result2 = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result2);
+    $old_name = $row['name'];
+}
+
 if(isset($_POST['submit'])){
 
-    if (isset($_GET['updateid'])){
-        $id = $_GET['updateid'];
-    }
     $itemName = mysqli_real_escape_string($conn, $_POST['itemName']);
     $itemCategory = mysqli_real_escape_string($conn, $_POST['itemCategory']);
     $itemQuantity = mysqli_real_escape_string($conn, $_POST['itemQuantity']);
@@ -40,34 +62,19 @@ if(isset($_POST['submit'])){
     $updateItem = "UPDATE items SET name='$itemName', category='$itemCategory', details='$itemDetailsJSON', quantity='$itemQuantity' WHERE id=$id";
     $updateCategory = "UPDATE categories SET name='$categoryName' WHERE id=$id";
     
-    if (isset($_GET['is_a']) && $_GET['is_a'] == 'item') {
-        // Προφόρτωση δεδομένων για το αντικείμενο
-        $sql = "SELECT * FROM items WHERE id='$id' ";
-        $result2 = mysqli_query($conn, $result2);
-        $row = mysqli_fetch_assoc($result2);
-        $old_name = $row['name'];
-        $old_categorty = $row['category'];
-        $old_details = $row['details'];
-        $old_quantity = $row['quantity'];
+    if ($is_a == 'item') {
         // Εντολή ενημέρωσης για τα αντικείμενα
         $updateItem = "UPDATE items SET name='$itemName', category='$itemCategory', details='$itemDetailsJSON', quantity='$itemQuantity' WHERE id=$id";
         $result = mysqli_query($conn, $updateItem);
-    } elseif (isset($_GET['is_a']) && $_GET['is_a'] == 'category') {
-        // Προφόρτωση δεδομένων για την κατηγορία
-        $sql = "SELECT * FROM items WHERE id=$id ";
-        $result2 = mysqli_query($conn, $result2);
-        $row = mysqli_fetch_assoc($result2);
-        $old_name = $row['name'];
+    } elseif ($is_a == 'category') {
         // Εντολή ενημέρωσης για τις κατηγορίες
         $categoryName = mysqli_real_escape_string($conn, $_POST['categoryName']);
         $updateCategory = "UPDATE categories SET name='$categoryName' WHERE id=$id";
         $result = mysqli_query($conn, $updateCategory);
-    }    
+    }   
     if($result) {
         header("Location: display.php");
         exit();
-    }else{
-        die(mysqli_error($conn));
     }
 };
 ?>
@@ -115,16 +122,16 @@ if(isset($_POST['submit'])){
             <?php if (isset($_GET['is_a']) && $_GET['is_a'] == 'item'): ?>
             <h3>Επεξεργασία Αντικειμένου</h3>
             <div class="boxInput" id="items">
-                <input type="text" name="itemName" placeholder="Όνομα αντικειμένου" value=$old_name>
-                <input type="number" name="itemCategory" placeholder="Κατηγορία αντικειμένου" value=$old_categorty>
-                <input type="text" name="itemDetails" placeholder="Λεπτομέρειες" value=$old_details>
-                <input type="number" name="itemQuantity" placeholder="Ποσότητα" value=$old_quantity>
+                <input type="text" name="itemName" placeholder="Όνομα αντικειμένου" value=<?php echo $old_name; ?>>
+                <input type="number" name="itemCategory" placeholder="Κατηγορία αντικειμένου" value=<?php echo $old_categorty; ?>>
+                <input type="text" name="itemDetails" placeholder="Λεπτομέρειες" value=<?php echo $old_details; ?>>
+                <input type="number" name="itemQuantity" placeholder="Ποσότητα" value=<?php echo $old_quantity; ?>>
             </div>
             <?php endif; ?>
             <?php if (isset($_GET['is_a']) && $_GET['is_a'] == 'category'): ?>
             <h3>Επεξεργασία Κατηγορίας</h3>
             <div class="boxInput categories" id="categories">
-                <input type="text" name="categoryName" placeholder="Όνομα κατηγορίας" value=$old_name>
+                <input type="text" name="categoryName" placeholder="Όνομα κατηγορίας" value=<?php echo $old_name; ?>>
             </div>
             <?php endif; ?>
             <br>
