@@ -24,15 +24,12 @@ if ($result->num_rows > 0) {
     echo json_encode(["error" => "No vehicles found"]);
     exit;
 }
+//Απεικόνιση σε μορφή JSON για να μπορεί να τα απεικονίσει η JavaScript
+header('Content-Type: application/json');
+    echo json_encode($vehicles);
+    exit();
 
-//echo json_encode($vehicles);
-//echo count($vehicles);
-foreach ($vehicles as $v) {
-   // Εδώ μπαίνει ο κώδικας που προβάλει κάθε όχημα μέσα στο χάρτη.
-   // Έχει να κάνει και με το cargo (offers, requests).
-   
-}
-?>
+
 
 
 <!DOCTYPE html>
@@ -61,6 +58,7 @@ foreach ($vehicles as $v) {
       <a href="admin_page.php" class="btn">Πίσω στη σελίδα Διαχειριστή</a>
    </div>
 </div>
+
 
 <script src="vehicle.js"></script>
 </body>

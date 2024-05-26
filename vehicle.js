@@ -20,8 +20,32 @@ var baseIcon = L.icon({
 var baseMarker = L.marker([38.291047, 21.793039], {icon: baseIcon}).addTo(map);
 baseMarker.bindPopup("<b>Βάση</b>").openPopup();
 
-// Προσθήκη σημείων για κάθε όχημα
-vehicles.forEach(function(vehicle) {
-    var marker = L.marker([vehicle.latitude, vehicle.longitude]).addTo(map);
-    marker.bindPopup('<b>' + vehicle.username + '</b><br>Γεωγραφικό Πλάτος: ' + vehicle.latitude + '<br>Γεωγραφικό Μήκος: ' + vehicle.longitude);
-});
+// Προσθήκη markers για κάθε όχημα
+function addMarkers(vehicles) {
+    vehicles.forEach(function(vehicle) {
+        var marker = L.marker([vehicle.latitude, vehicle.longitude]).addTo(map);
+        marker.bindPopup("<b>" + vehicle.username + "</b><br>Latitude: " + vehicle.latitude + "<br>Longitude: " + vehicle.longitude);
+    });
+}
+
+// Λειτουργία για την ανάκτηση και ανανέωση των δεδομένων
+function fetchVehicles() {
+    fetch('admin_map.php?fetch_vehicles=1')
+        .then(response => response.json())
+        .then(data => {
+            // Καθαρισμός των υπαρχόντων markers
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+            // Προσθήκη των νέων markers
+            addMarkers(data);
+        });
+}
+
+// Ανάκτηση και απεικόνιση των δεδομένων κατά την φόρτωση της σελίδας
+fetchVehicles();
+
+// Ανανέωση των δεδομένων κάθε 30 δευτερόλεπτα
+setInterval(fetchVehicles, 30000);
