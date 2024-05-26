@@ -51,6 +51,7 @@ if ($result->num_rows > 0) {
         </div>
     </div>
 
+    <script src="vehicle.js"></script>
     <script>
         // Δημιουργία του χάρτη
         var map = L.map('map').setView([37.9838, 23.7275], 13);
