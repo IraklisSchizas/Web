@@ -26,7 +26,7 @@ if (!isset($_SESSION['user_name'])) {
             <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p><br><br>
             <!-- Dropdown για επιλογή κατηγορίας -->
             <label for="category"><h2>Κατηγορία:</h2></label>
-            <select name="category" id="category">
+            <select name="category[]" id="category" multiple>
                 <option value="">Όλες</option>
                 <?php
                 // Ανάκτηση μοναδικών κατηγοριών από τη βάση δεδομένων
@@ -35,7 +35,7 @@ if (!isset($_SESSION['user_name'])) {
                     echo '<option value="'.$category_row['id'].'">'.$category_row['name'].'</option>';
                 }
                 ?>
-            </select>
+            </select><br>
             <button type="submit">Αναζήτηση</button>
             <br><br>
             <h2>Αντικείμενα</h2><br>
@@ -53,20 +53,26 @@ if (!isset($_SESSION['user_name'])) {
                 <tbody>
                     <?php
                     // Ανάκτηση της επιλεγμένης κατηγορίας από τη φόρμα
-                    $selected_category = isset($_POST['category']) ? $_POST['category'] : '';
+                    $selected_categories_str = isset($_POST['category']) ? $_POST['category'] : array();
+                    if (!empty($selected_categories_str)) {
+                        if (!is_array($selected_categories_str)) {
+                            $selected_categories_str = array($selected_categories_str);
+                        }
+                        $selected_categories = array_map('intval', $selected_categories_str);
+                        $selected_categories_str = implode(",", $selected_categories);
+                    }
 
                     // Δημιουργία του SQL query με join για να πάρουμε το όνομα της κατηγορίας
-                    if ($selected_category) {
+                    if (!empty($selected_categories_str)) {
                         $query = "SELECT items.*, categories.name as category_name 
                                   FROM items 
                                   JOIN categories ON items.category = categories.id 
-                                  WHERE items.category = '".mysqli_real_escape_string($conn, $selected_category)."'";
+                                  WHERE items.category IN ($selected_categories_str)";
                     } else {
                         $query = "SELECT items.*, categories.name as category_name 
                                   FROM items 
                                   JOIN categories ON items.category = categories.id";
                     }
-
                     $result = mysqli_query($conn, $query);
                     if ($result) {
                         while ($row = mysqli_fetch_assoc($result)) {
