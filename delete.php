@@ -22,7 +22,7 @@ if (isset($_GET['deleteid'])){
         }
         $result = mysqli_query($conn, $sql);
         if($result) {
-            header("Location: display.php");
+            header("Location: manage_database.php");
         }else{
             die(mysqli_error($conn));
         }

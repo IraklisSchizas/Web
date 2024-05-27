@@ -44,17 +44,17 @@ if(isset($_POST['submit'])){
         mysqli_query($conn, $insertItem);
         mysqli_query($conn, $insertCategory);
         echo("Το αντικείμενο και η κατηγορία αποθηκεύτηκαν επιτυχώς!");
-        header('location: display.php');
+        header('location: manage_database.php');
         exit();
     }else if($itemId != NULL) {
         mysqli_query($conn, $insertItem);
         echo("Το αντικείμενο αποθηκεύτηκε επιτυχώς!");
-        header('location: display.php');
+        header('location: manage_database.php');
         exit();
     }else if($categoryId != NULL){
         mysqli_query($conn, $insertCategory);
         echo("Η κατηγορία αποθηκεύτηκε επιτυχώς!");
-        header('location: display.php');
+        header('location: manage_database.php');
         exit();
     }else{
         die("Connection failed: " . $conn->connect_error);
@@ -118,7 +118,7 @@ if(isset($_POST['submit'])){
                 <input type="text" name="categoryName" placeholder="Όνομα κατηγορίας">
             </div><br>
             <button type="submit" name="submit" class="form-btn">Προσθήκη</button><br><br>
-            <p><a href="display.php">Πίσω στην Διαχείρηση Βάσης</a></p>
+            <p><a href="manage_database.php">Πίσω στην Διαχείρηση Βάσης</a></p>
         </form>
 
     </div>

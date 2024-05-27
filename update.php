@@ -79,7 +79,7 @@ if(isset($_POST['submit'])){
         $result = mysqli_query($conn, $updateCategory);
     }   
     if($result) {
-        header("Location: display.php");
+        header("Location: manage_database.php");
         exit();
     }
 };
@@ -148,7 +148,7 @@ if(isset($_POST['submit'])){
             <?php endif; ?>
             <br>
             <button type="submit" name="submit" class="form-btn">Ενημέρωση</button><br><br>
-            <p><a href="display.php">Πίσω στην Διαχείρηση Βάσης</a></p>
+            <p><a href="manage_database.php">Πίσω στην Διαχείρηση Βάσης</a></p>
         </form>
 
     </div>

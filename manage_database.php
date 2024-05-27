@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
     }
     $stmt_categories->close();
 
-    header('Location: display.php');
+    header('Location: manage_database.php');
     exit();
 }
 ?>
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
     <div class="form-container">
         <form id="initialize_form" action="" method="post">
             <input type="hidden" name="initialize" value="true">
-            <input type="button" id="initialize_button" class="form-btn" value="Αρχικοποίηση" onclick="document.getElementById('initialize_form').submit();"><br>
+            <input type="button" id="initialize_button" class="form-btn" value="Αρχικοποίηση" onclick="confirmInitialization();"><br>
             <input type="button" id="j_button" class="form-btn" onclick="window.location.href = 'add_to_database.php'" value="Προσθήκη Αντικειμένου - Κατηγορίας"><br>
             <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p><br>
             <div id="items_target"></div>
@@ -145,5 +145,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
             </table>
         </form>
     </div>
+    <script>
+        function confirmInitialization() {
+            if (confirm("Είστε σίγουροι πως θέλετε να πραγματοποιήσετε Αρχικοποίηση;")) {
+                document.getElementById('initialize_form').submit();
+            }
+        }
+    </script>
 </body>
 </html>
