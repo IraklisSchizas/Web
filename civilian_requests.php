@@ -29,10 +29,6 @@ $civilian_id = $row['id'];
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!--<?php if (isset($_GET['initialized']) && $_GET['initialized'] == 'true'): ?>
-        <div class="alert alert-success">Η αρχικοποίηση έγινε με επιτυχία!</div>
-    <?php endif; ?>-->
-
     <div class="form-container">
         <form id="initialize_form" action="" method="post">
             <input type="hidden" name="initialize" value="true">
@@ -57,8 +53,20 @@ $civilian_id = $row['id'];
                     $result = $stmt->get_result();
                     if ($result) {
                         while ($row = $result->fetch_assoc()) {
+                            // Διαχωρίζουμε τα ids των αντικειμένων και φτιάχνουμε μια λίστα με τα ονόματα
+                            $itemIds = explode(',', $row['item_id']);
+                            $itemNames = [];
+                            foreach ($itemIds as $itemId) {
+                                $itemStmt = $conn->prepare("SELECT name FROM items WHERE id = ?");
+                                $itemStmt->bind_param("i", $itemId);
+                                $itemStmt->execute();
+                                $itemResult = $itemStmt->get_result();
+                                $itemRow = $itemResult->fetch_assoc();
+                                $itemNames[] = $itemRow['name'];
+                            }
+                            $itemNamesString = implode(', ', $itemNames);
                             echo '<tr>
-                                <th scope="row">'.$row['item_id'].'</th>
+                                <th scope="row">'.$itemNamesString.'</th>
                                 <td>'.$row['quantity'].'</td>
                                 <td>'.$row['date'].'</td>
                             </tr>';
