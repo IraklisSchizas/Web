@@ -31,7 +31,7 @@ CREATE TABLE `announcements` (
   `id` int(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `details` text NOT NULL,
-  `date` datetime(6) NOT NULL,
+  `date` datetime NOT NULL,
   `item_ids` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -397,10 +397,10 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 CREATE TABLE `offers` (
   `id` int(255) NOT NULL,
   `civilian_id` int(255) NOT NULL,
-  `date` datetime(6) NOT NULL,
+  `date` datetime NOT NULL,
   `item_id` varchar(255) NOT NULL,
   `quantity` int(255) NOT NULL,
-  `load_date` datetime(6) NOT NULL,
+  `load_date` datetime NOT NULL,
   `rescuer_id` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -431,7 +431,7 @@ CREATE TABLE `requests` (
   `date` datetime NOT NULL,
   `item_id` varchar(255) NOT NULL,
   `quantity` int(255) NOT NULL,
-  `load_date` datetime(6) NOT NULL,
+  `load_date` datetime NOT NULL,
   `rescuer_id` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
