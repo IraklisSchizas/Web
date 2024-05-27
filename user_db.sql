@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Εξυπηρετητής: 127.0.0.1
--- Χρόνος δημιουργίας: 20 Μάη 2024 στις 18:21:03
+-- Χρόνος δημιουργίας: 27 Μάη 2024 στις 18:38:42
 -- Έκδοση διακομιστή: 10.4.32-MariaDB
 -- Έκδοση PHP: 8.2.12
 
@@ -28,12 +28,34 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `announcements` (
-  `id` int(255) NOT NULL AUTO_INCREMENT,
+  `id` int(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `details` text NOT NULL,
-  `date` datetime NOT NULL,
+  `date` datetime(6) NOT NULL,
+  `item_ids` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Άδειασμα δεδομένων του πίνακα `announcements`
+--
+
+INSERT INTO `announcements` (`id`, `title`, `details`, `date`, `item_ids`) VALUES
+(4, 'pros oloys', 'Plolu shmantiko mhnyma paidia oti kalytero', '2024-05-21 16:22:54.000000', '16,17'),
+(6, 'abc', 'defg', '2024-05-25 17:46:04.000000', '17'),
+(10, 'dd', 'ddsds', '2024-05-25 18:01:56.000000', '16,17,18,19,20,24,56,71,84,85,91,101,108,116'),
+(11, 'vdffd', 'dfdfdf', '2024-05-25 18:06:07.000000', '18');
+
+-- --------------------------------------------------------
+
+--
+-- Δομή πίνακα για τον πίνακα `cargo`
+--
+
+CREATE TABLE `cargo` (
+  `id` int(255) NOT NULL,
+  `rescuer_id` int(255) NOT NULL,
   `item_ids` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  `quantity` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -44,8 +66,7 @@ CREATE TABLE `announcements` (
 
 CREATE TABLE `categories` (
   `id` int(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  `name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -59,11 +80,15 @@ INSERT INTO `categories` (`id`, `name`) VALUES
 (8, 'Hacker of class'),
 (9, '2d hacker'),
 (10, ''),
+(11, 'Test'),
 (13, '-----'),
 (14, 'Flood'),
-(15, 'abc'),
+(15, 'new cat'),
 (16, 'Medical Supplies'),
+(19, 'Shoes'),
+(21, 'Personal Hygiene '),
 (22, 'Cleaning Supplies'),
+(23, 'Tools'),
 (24, 'Kitchen Supplies'),
 (25, 'Baby Essentials'),
 (26, 'Insect Repellents'),
@@ -74,15 +99,23 @@ INSERT INTO `categories` (`id`, `name`) VALUES
 (33, 'Cleaning Supplies.'),
 (34, 'Hot Weather'),
 (35, 'First Aid '),
+(39, 'Test_0'),
+(40, 'test1'),
+(41, 'pet supplies'),
+(42, 'Μedicines'),
 (43, 'Energy Drinks'),
 (44, 'Disability and Assistance Items'),
 (45, 'Communication items'),
 (46, 'communications'),
 (47, 'Humanitarian Shelters'),
+(48, 'Water Purification'),
 (49, 'Animal Care'),
 (50, 'Earthquake Safety'),
+(51, 'Sleep Essentilals'),
 (52, 'Navigation Tools'),
 (53, 'Clothing and cover'),
+(54, 'Tools and Equipment'),
+(56, 'Special items'),
 (57, 'Household Items');
 
 -- --------------------------------------------------------
@@ -96,8 +129,7 @@ CREATE TABLE `items` (
   `name` varchar(255) NOT NULL,
   `category` int(255) NOT NULL,
   `details` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `quantity` int(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  `quantity` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -112,7 +144,7 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 (20, 'Bread', 5, '[{\"detail_name\":\"weight\",\"detail_value\":\"1kg\"},{\"detail_name\":\"type\",\"detail_value\":\"white\"}]', 0),
 (21, 'Chocolate', 5, '[{\"detail_name\":\"weight\",\"detail_value\":\"100g\"},{\"detail_name\":\"type\",\"detail_value\":\"milk chocolate\"},{\"detail_name\":\"brand\",\"detail_value\":\"ION\"}]', 0),
 (22, 'Men Sneakers', 7, '[{\"detail_name\":\"size\",\"detail_value\":\"44\"}]', 0),
-(23, 'Test Product', 9, '[{\"detail_name\":\"weight\",\"detail_value\":\"500g\"},{\"detail_name\":\"pack size\",\"detail_value\":\"12\"},{\"detail_name\":\"expiry date\",\"detail_value\":\"13/12/1978\"}]', 0),
+(23, 'Test Product', 9, '[{\"detail_name\":\"weight\",\"detail_value\":\"500g\"},{\"detail_name\":\"pack size\",\"detail_value\":\"12\"},{\"detail_name\":\"expiry date\",\"detail_value\":\"13\\/12\\/1978\"}]', 0),
 (24, 'Test Val', 14, '[{\"detail_name\":\"Details\",\"detail_value\":\"600ml\"}]', 0),
 (25, 'Spaghetti', 5, '[{\"detail_name\":\"grams\",\"detail_value\":\"500\"}]', 0),
 (26, 'Croissant', 5, '[{\"detail_name\":\"calories\",\"detail_value\":\"200\"}]', 0),
@@ -211,7 +243,7 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 (120, 'Fruits', 5, '[{\"detail_name\":\"\",\"detail_value\":\"\"},{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (121, 'Duct Tape', 23, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (122, '', 10, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
-(123, 'Αθλητικά', 19, '[{\"detail_name\":\"u039du03bf 46\",\"detail_value\":\"\"}]', 0),
+(123, 'Αθλητικά', 19, '[{\"detail_name\":\"\\u039d\\u03bf 46\",\"detail_value\":\"\"}]', 0),
 (124, 'Πασατέμπος', 5, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (125, 'Bandages', 35, '[{\"detail_name\":\"Adhesive\",\"detail_value\":\"2 meters\"}]', 0),
 (126, 'Betadine', 35, '[{\"detail_name\":\"Povidone iodine 10%\",\"detail_value\":\"240 ml\"}]', 0),
@@ -297,11 +329,11 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 (206, 'mobile phones', 45, '[{\"detail_name\":\"iphone\",\"detail_value\":\"200\"}]', 0),
 (207, 'spoon', 24, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (208, 'fork', 24, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
-(209, 'MOTOTRBO R7', 45, '[{\"detail_name\":\"band\",\"detail_value\":\"UHF/VHF\"},{\"detail_name\":\"Wi-Fi\",\"detail_value\":\"2,4/5,0 GHz\"},{\"detail_name\":\"Bluetooth\",\"detail_value\":\"5.2\"},{\"detail_name\":\"u039fu03b8u03ccu03bdu03b7\",\"detail_value\":\"2,4u201d 320 x 240 px. QVGA\"},{\"detail_name\":\"u03b4u03b9u03acu03c1u03bau03b5u03b9u03b1 u03b6u03c9u03aeu03c2 u03c4u03b7u03c2 u03bcu03c0u03b1u03c4u03b1u03c1u03afu03b1u03c2\",\"detail_value\":\"28 u03ceu03c1u03b5u03c2\"}]', 0),
-(210, 'RM LA 250 (VHF Linear Ενισχυτής 140-150MHz)', 45, '[{\"detail_name\":\"Frequency\",\"detail_value\":\"140-150Mhz\"},{\"detail_name\":\"Power Supply\",\"detail_value\":\"13VDC /- 1V 40A\"},{\"detail_name\":\"Output RF Power (Nominal)\",\"detail_value\":\"30 u2013 210W ; 230W max AM/FM/CW\"},{\"detail_name\":\"Modulation Types\",\"detail_value\":\"SSB,CW,AM, FM, data etc (All narrowband modes)\"}]', 0),
-(211, 'Humanitarian General Purpose Tent System (HGPTS)', 47, '[{\"detail_name\":\"PART NUMBER\",\"detail_value\":\"C14Y016X016-T\"},{\"detail_name\":\"CONTRACTOR NAME:\",\"detail_value\":\"CELINA Tent, Inc\"},{\"detail_name\":\"COLOR\",\"detail_value\":\"Tan\"},{\"detail_name\":\"SET-UP TIME/NUMBER OF PERSONS\",\"detail_value\":\"4 People/30 Minutes\"}]', 0),
-(212, 'CELINA Dynamic Small Shelter ', 47, '[{\"detail_name\":\"dimensions\",\"detail_value\":\" 20u2019x32.5u2019\"},{\"detail_name\":\"TYPE\",\"detail_value\":\"Frame Structure, Expandable, Air-Transportable\"},{\"detail_name\":\"WEIGHT\",\"detail_value\":\"1,200 lbs\"}]', 0),
-(213, 'Multi-purpose Area Shelter System, Type-I', 47, '[{\"detail_name\":\"TYPE\",\"detail_value\":\"Frame Structure, Expandable, Air- Transportable\"},{\"detail_name\":\"DIMENSIONS\",\"detail_value\":\"E I-40u2019x80u2019\"},{\"detail_name\":\"WEIGHT\",\"detail_value\":\"24,000 lbs\"}]', 0),
+(209, 'MOTOTRBO R7', 45, '[{\"detail_name\":\"band\",\"detail_value\":\"UHF\\/VHF\"},{\"detail_name\":\"Wi-Fi\",\"detail_value\":\"2,4\\/5,0 GHz\"},{\"detail_name\":\"Bluetooth\",\"detail_value\":\"5.2\"},{\"detail_name\":\"\\u039f\\u03b8\\u03cc\\u03bd\\u03b7\",\"detail_value\":\"2,4\\u201d 320 x 240 px. QVGA\"},{\"detail_name\":\"\\u03b4\\u03b9\\u03ac\\u03c1\\u03ba\\u03b5\\u03b9\\u03b1 \\u03b6\\u03c9\\u03ae\\u03c2 \\u03c4\\u03b7\\u03c2 \\u03bc\\u03c0\\u03b1\\u03c4\\u03b1\\u03c1\\u03af\\u03b1\\u03c2\",\"detail_value\":\"28 \\u03ce\\u03c1\\u03b5\\u03c2\"}]', 0),
+(210, 'RM LA 250 (VHF Linear Ενισχυτής 140-150MHz)', 45, '[{\"detail_name\":\"Frequency\",\"detail_value\":\"140-150Mhz\"},{\"detail_name\":\"Power Supply\",\"detail_value\":\"13VDC \\/- 1V 40A\"},{\"detail_name\":\"Output RF Power (Nominal)\",\"detail_value\":\"30 \\u2013 210W ; 230W max AM\\/FM\\/CW\"},{\"detail_name\":\"Modulation Types\",\"detail_value\":\"SSB,CW,AM, FM, data etc (All narrowband modes)\"}]', 0),
+(211, 'Humanitarian General Purpose Tent System (HGPTS)', 47, '[{\"detail_name\":\"PART NUMBER\",\"detail_value\":\"C14Y016X016-T\"},{\"detail_name\":\"CONTRACTOR NAME:\",\"detail_value\":\"CELINA Tent, Inc\"},{\"detail_name\":\"COLOR\",\"detail_value\":\"Tan\"},{\"detail_name\":\"SET-UP TIME\\/NUMBER OF PERSONS\",\"detail_value\":\"4 People\\/30 Minutes\"}]', 0),
+(212, 'CELINA Dynamic Small Shelter ', 47, '[{\"detail_name\":\"dimensions\",\"detail_value\":\" 20\\u2019x32.5\\u2019\"},{\"detail_name\":\"TYPE\",\"detail_value\":\"Frame Structure, Expandable, Air-Transportable\"},{\"detail_name\":\"WEIGHT\",\"detail_value\":\"1,200 lbs\"}]', 0),
+(213, 'Multi-purpose Area Shelter System, Type-I', 47, '[{\"detail_name\":\"TYPE\",\"detail_value\":\"Frame Structure, Expandable, Air- Transportable\"},{\"detail_name\":\"DIMENSIONS\",\"detail_value\":\"E I-40\\u2019x80\\u2019\"},{\"detail_name\":\"WEIGHT\",\"detail_value\":\"24,000 lbs\"}]', 0),
 (214, 'Trousers', 7, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (215, 'Shoes', 7, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (216, 'Hoodie', 7, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
@@ -363,15 +395,29 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 --
 
 CREATE TABLE `offers` (
-  `id` int(255) NOT NULL  AUTO_INCREMENT,
+  `id` int(255) NOT NULL,
   `civilian_id` int(255) NOT NULL,
-  `date` datetime NOT NULL,
-  `item_id` int(255) NOT NULL,
+  `date` datetime(6) NOT NULL,
+  `item_id` varchar(255) NOT NULL,
   `quantity` int(255) NOT NULL,
-  `load_date` datetime NOT NULL,
-  `rescuer_id` int(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  `load_date` datetime(6) NOT NULL,
+  `rescuer_id` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Άδειασμα δεδομένων του πίνακα `offers`
+--
+
+INSERT INTO `offers` (`id`, `civilian_id`, `date`, `item_id`, `quantity`, `load_date`, `rescuer_id`) VALUES
+(1, 3, '2024-05-25 19:29:19.000000', '17', 2, '0000-00-00 00:00:00.000000', 0),
+(2, 3, '2024-05-27 12:23:11.000000', '17', 12, '0000-00-00 00:00:00.000000', 0),
+(3, 3, '2024-05-27 12:23:25.000000', '17', 4, '0000-00-00 00:00:00.000000', 0),
+(4, 3, '2024-05-27 16:26:12.000000', '20', 1, '0000-00-00 00:00:00.000000', 0),
+(5, 3, '2024-05-27 16:30:21.000000', '16,17', 2, '0000-00-00 00:00:00.000000', 0),
+(6, 3, '2024-05-27 16:35:38.000000', '18', 1, '0000-00-00 00:00:00.000000', 0),
+(7, 3, '2024-05-27 16:37:27.000000', '16,17,18,19,20', 2, '0000-00-00 00:00:00.000000', 0),
+(8, 3, '2024-05-27 16:45:48.000000', '85,91,108', 6, '0000-00-00 00:00:00.000000', 0),
+(9, 3, '2024-05-27 18:21:01.000000', '18,19,108', 11, '0000-00-00 00:00:00.000000', 0);
 
 -- --------------------------------------------------------
 
@@ -380,29 +426,24 @@ CREATE TABLE `offers` (
 --
 
 CREATE TABLE `requests` (
-  `id` int(255) NOT NULL AUTO_INCREMENT,
+  `id` int(255) NOT NULL,
   `civilian_id` int(255) NOT NULL,
   `date` datetime NOT NULL,
-  `item_id` int(255) NOT NULL,
+  `item_id` varchar(255) NOT NULL,
   `quantity` int(255) NOT NULL,
-  `load_date` datetime NOT NULL,
-  `rescuer_id` int(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  `load_date` datetime(6) NOT NULL,
+  `rescuer_id` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Δομή πίνακα για τον πίνακα `cargo`
+-- Άδειασμα δεδομένων του πίνακα `requests`
 --
 
-CREATE TABLE `cargo` (
-  `id` int(255) NOT NULL AUTO_INCREMENT,
-  `rescuer_id` int(255) NOT NULL,
-  `item_ids` varchar(255) NOT NULL,
-  `quantity` int(255) NOT NULL
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `requests` (`id`, `civilian_id`, `date`, `item_id`, `quantity`, `load_date`, `rescuer_id`) VALUES
+(1, 3, '2024-05-25 19:28:01', '17', 12, '0000-00-00 00:00:00.000000', 0),
+(5, 3, '2024-05-27 16:42:46', '29', 4, '0000-00-00 00:00:00.000000', 0),
+(6, 3, '2024-05-27 16:51:38', '17', 1, '0000-00-00 00:00:00.000000', 0),
+(7, 3, '2024-05-27 18:33:45', '17,19', 12, '0000-00-00 00:00:00.000000', 0);
 
 -- --------------------------------------------------------
 
@@ -411,7 +452,7 @@ CREATE TABLE `cargo` (
 --
 
 CREATE TABLE `users` (
-  `id` int(255) NOT NULL AUTO_INCREMENT,
+  `id` int(255) NOT NULL,
   `username` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
@@ -419,8 +460,7 @@ CREATE TABLE `users` (
   `latitude` varchar(255) NOT NULL,
   `longitude` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `user_type` varchar(255) NOT NULL DEFAULT 'civilian',
-  PRIMARY KEY (`id`)
+  `user_type` varchar(255) NOT NULL DEFAULT 'civilian'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -429,8 +469,92 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `name`, `surname`, `phone`, `latitude`, `longitude`, `password`, `user_type`) VALUES
 (1, 'admin', 'Admin', 'Adminas', 6912345678, '38.246279', '21.735030', '21232f297a57a5a743894a0e4a801fc3', 'admin'),
-(2, 'r1', 'r1', 'r1', 1234567890, '38.243924' , '21.729517', '202cb962ac59075b964b07152d234b70', 'rescuer'),
+(2, 'r1', 'r1', 'r1', 1234567890, '38.243924', '21.729517', '202cb962ac59075b964b07152d234b70', 'rescuer'),
 (3, 'c1', 'Civi', 'Lian', 2610123456, '38.220588', '21.731126', '202cb962ac59075b964b07152d234b70', 'civilian'),
-(4, 'r2', 'r2', 'r2', 6912324458, '38.241835' , '21.744357', '202cb962ac59075b964b07152d234b70', 'rescuer'),
-(5, 'r3', 'r3', 'r3', 6912345678, '38.255442' , '21.741126', '202cb962ac59075b964b07152d234b70', 'rescuer');
+(4, 'r2', 'r2', 'r2', 6912324458, '38.241835', '21.744357', '202cb962ac59075b964b07152d234b70', 'rescuer'),
+(5, 'r3', 'r3', 'r3', 6912345678, '38.255442', '21.741126', '202cb962ac59075b964b07152d234b70', 'rescuer');
 
+--
+-- Ευρετήρια για άχρηστους πίνακες
+--
+
+--
+-- Ευρετήρια για πίνακα `announcements`
+--
+ALTER TABLE `announcements`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Ευρετήρια για πίνακα `cargo`
+--
+ALTER TABLE `cargo`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Ευρετήρια για πίνακα `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Ευρετήρια για πίνακα `items`
+--
+ALTER TABLE `items`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Ευρετήρια για πίνακα `offers`
+--
+ALTER TABLE `offers`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Ευρετήρια για πίνακα `requests`
+--
+ALTER TABLE `requests`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Ευρετήρια για πίνακα `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT για άχρηστους πίνακες
+--
+
+--
+-- AUTO_INCREMENT για πίνακα `announcements`
+--
+ALTER TABLE `announcements`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT για πίνακα `cargo`
+--
+ALTER TABLE `cargo`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT για πίνακα `offers`
+--
+ALTER TABLE `offers`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT για πίνακα `requests`
+--
+ALTER TABLE `requests`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT για πίνακα `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
