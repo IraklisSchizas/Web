@@ -37,7 +37,7 @@ if (!isset($_SESSION['user_name'])) {
                 }
                 ?>
             </select>
-            <button type="submit">Αναζήτηση</button>
+            <button class="form-btn" type="submit">Αναζήτηση</button>
             <br><br>
             <h2>Αντικείμενα</h2><br>
             <br>
