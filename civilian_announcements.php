@@ -8,6 +8,15 @@ if (!isset($_SESSION['user_name'])) {
     header('location:login.php');
     exit();
 }
+
+$civilian_name = $_SESSION['user_name'];
+// Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
+$stmt = $conn->prepare("SELECT * FROM users WHERE name = ?");
+$stmt->bind_param("s", $civilian_name);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$civilian_id = $row['id'];
 ?>
 
 <!DOCTYPE html>
@@ -71,11 +80,44 @@ if (!isset($_SESSION['user_name'])) {
                 } else {
                     echo "<tr><td colspan='5'>Δεν βρέθηκαν ανακοινώσεις</td></tr>";
                 }
-                $stmt->close();
-                $conn->close();
                 ?>
             </tbody>
         </table>
+        <br><br>
+        <form id="initialize_form" action="" method="post">
+            <input type="hidden" name="initialize" value="true">
+            <br><br>
+            <h2>Οι προσφορές μου</h2><br>
+            <table class="table" id="offersTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Item</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
+                    $stmt = $conn->prepare("SELECT * FROM offers WHERE civilian_id = ?");
+                    $stmt->bind_param("i", $civilian_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    if ($result) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo '<tr>
+                                <th scope="row">'.$row['item_id'].'</th>
+                                <td>'.$row['quantity'].'</td>
+                                <td>'.$row['date'].'</td>
+                            </tr>';
+                        }
+                    }
+                    $stmt->close();
+                    $conn->close();
+                    ?>
+                </tbody>
+            </table>
+        </form>
     </div>
 </body>
 </html>
