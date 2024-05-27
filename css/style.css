@@ -2,22 +2,26 @@
 
 html {  
    scroll-behavior: smooth;  
+   font-size: 16px; /* Base font size for responsive scaling */
 }
 
-*{
+* {
    font-family: 'Poppins', sans-serif;
-   margin:0; padding:0;
+   margin: 0; 
+   padding: 0;
    box-sizing: border-box;
-   outline: none; border:none;
+   outline: none; 
+   border: none;
    text-decoration: none;
 }
+
 .container {
    min-height: 100vh;
    display: flex;
    align-items: center;
    justify-content: center;
-   padding: 20px;
-   padding-bottom: 60px;
+   padding: 1.25rem;
+   padding-bottom: 3.75rem;
 }
 
 .container .content {
@@ -25,19 +29,19 @@ html {
 }
 
 .container .content h3 {
-   font-size: 30px;
+   font-size: 1.875rem;
    color: #333;
 }
 
 .container .content h3 span {
    background: #4CAF50; /* Dark green */
    color: #fff;
-   border-radius: 5px;
-   padding: 0 15px;
+   border-radius: 0.3125rem;
+   padding: 0 0.9375rem;
 }
 
 .container .content h1 {
-   font-size: 50px;
+   font-size: 3.125rem;
    color: #333;
 }
 
@@ -46,17 +50,17 @@ html {
 }
 
 .container .content p {
-   font-size: 25px;
-   margin-bottom: 20px;
+   font-size: 1.5625rem;
+   margin-bottom: 1.25rem;
 }
 
 .container .content .btn {
    display: inline-block;
-   padding: 10px 30px;
-   font-size: 20px;
+   padding: 0.625rem 1.875rem;
+   font-size: 1.25rem;
    background: #333;
    color: #fff;
-   margin: 0 5px;
+   margin: 0 0.3125rem;
    text-transform: capitalize;
 }
 
@@ -69,58 +73,42 @@ html {
    display: flex;
    align-items: center;
    justify-content: center;
-   padding: 20px;
-   padding-bottom: 60px;
+   padding: 1.25rem;
+   padding-bottom: 3.75rem;
    background: #efefef; /* Light grey */
 }
 
 .form-container form {
-   padding: 20px;
-   border-radius: 5px;
-   box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+   padding: 1.25rem;
+   border-radius: 0.3125rem;
+   box-shadow: 0 0.3125rem 0.625rem rgba(0, 0, 0, .1);
    background: #FFF; /* White */
    text-align: center;
    max-width: 80%;
+   width: 100%;
 }
 
 .form-container form h3 {
-   font-size: 30px;
+   font-size: 1.875rem;
    text-transform: uppercase;
-   margin-bottom: 10px;
+   margin-bottom: 0.625rem;
    color: #333;
 }
 
 .form-container form input,
-.form-container form select {
-   width: 100%;
-   padding: 10px 15px;
-   font-size: 17px;
-   margin: 8px 0;
-   background: #E0F7FA; /* Light green */
-   border-radius: 5px;
-}
-
-.form-container form {
-   width: 100%;
-   padding: 10px 15px;
-   font-size: 17px;
-   margin: 8px 0;
-   background: #E0F7FA; /* Light green */
-   border-radius: 5px;
-}
-
+.form-container form select,
 .form-container form textarea {
    width: 100%;
-   padding: 10px 15px;
-   font-size: 17px;
-   margin: 8px 0;
+   padding: 0.625rem 0.9375rem;
+   font-size: 1.0625rem;
+   margin: 0.5rem 0;
    background: #E0F7FA; /* Light green */
-   border-radius: 5px;
+   border-radius: 0.3125rem;
 }
 
 .form-container form select {
    height: auto;
-   width: min-content;
+   width: auto;
 }
 
 .form-container form select option {
@@ -131,7 +119,7 @@ html {
    background: #66BB6A; /* Dark green */
    color: #FFF; /* White */
    text-transform: capitalize;
-   font-size: 20px;
+   font-size: 1.25rem;
    cursor: pointer;
 }
 
@@ -141,8 +129,8 @@ html {
 }
 
 .form-container form p {
-   margin-top: 10px;
-   font-size: 20px;
+   margin-top: 0.625rem;
+   font-size: 1.25rem;
    color: #333;
 }
 
@@ -151,13 +139,13 @@ html {
 }
 
 .form-container form .error-msg {
-   margin: 10px 0;
+   margin: 0.625rem 0;
    display: block;
    background: #EF5350; /* Darker shade of red */
    color: #fff;
-   border-radius: 5px;
-   font-size: 20px;
-   padding: 10px;
+   border-radius: 0.3125rem;
+   font-size: 1.25rem;
+   padding: 0.625rem;
 }
 
 table {
@@ -166,46 +154,45 @@ table {
 }
 
 th, td {
-   padding: 10px;
-   border: 1px solid #ddd;
+   padding: 0.625rem;
+   border: 0.0625rem solid #ddd;
    text-align: left;
 }
 
-/* Center details subtable */
 td table {
    margin: 0 auto;
 }
 
 .form-container form button.form-btn {
    width: fit-content;
-   padding: 10px 15px;
-   font-size: 17px;
-   margin: 8px 0;
+   padding: 0.625rem 0.9375rem;
+   font-size: 1.0625rem;
+   margin: 0.5rem 0;
    background: #66BB6A; /* Dark green */
    color: #FFF; /* White */   
-   border-radius: 5px;
+   border-radius: 0.3125rem;
 }
 
 button {
    width: fit-content;
-   padding: 8px 12px;
-   margin: 8px 0;
+   padding: 0.5rem 0.75rem;
+   margin: 0.5rem 0;
    background: #66BB6A; /* Dark green */
    color: #FFF; /* White */
-   border-radius: 5px;
+   border-radius: 0.3125rem;
 }
 
 .update-btn, .delete-btn {
    background: #66BB6A; /* Dark green */
    color: #FFF; /* White text */
    border: none;
-   padding: 8px 12px;
+   padding: 0.5rem 0.75rem;
    cursor: pointer;
-   border-radius: 5px;
+   border-radius: 0.3125rem;
 }
 
 .update-btn:hover {
-   background: #3b3bc3 !important; /* Red background on hover */
+   background: #3b3bc3 !important; /* Blue background on hover */
 }
 
 .delete-btn:hover {
@@ -219,4 +206,75 @@ button {
 
 .update-btn:hover a, .delete-btn:hover a {
    color: #FFF !important; /* Ensure link color remains white on hover */
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+   .container .content h3 {
+      font-size: 1.5rem;
+   }
+
+   .container .content h1 {
+      font-size: 2.5rem;
+   }
+
+   .container .content p {
+      font-size: 1.25rem;
+   }
+
+   .container .content .btn {
+      padding: 0.5rem 1.25rem;
+      font-size: 1rem;
+   }
+
+   .form-container form h3 {
+      font-size: 1.5rem;
+   }
+
+   .form-container form .form-btn {
+      font-size: 1rem;
+   }
+
+   .form-container form p {
+      font-size: 1rem;
+   }
+
+   .form-container form .error-msg {
+      font-size: 1rem;
+   }
+}
+
+@media (max-width: 480px) {
+   .container .content h3 {
+      font-size: 1.25rem;
+   }
+
+   .container .content h1 {
+      font-size: 2rem;
+   }
+
+   .container .content p {
+      font-size: 1rem;
+   }
+
+   .container .content .btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+   }
+
+   .form-container form h3 {
+      font-size: 1.25rem;
+   }
+
+   .form-container form .form-btn {
+      font-size: 0.875rem;
+   }
+
+   .form-container form p {
+      font-size: 0.875rem;
+   }
+
+   .form-container form .error-msg {
+      font-size: 0.875rem;
+   }
 }
