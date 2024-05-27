@@ -8,6 +8,17 @@ if (!isset($_SESSION['user_name'])) {
     exit();
 }
 
+$user_name = $_SESSION['user_name'];
+
+// SQL ερώτημα για να ανοίγει ο χάρτης με κέντρο την τοποθεσία της βάσης
+$user_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = ?");
+$user_query->bind_param("s", $user_name);
+$user_query->execute();
+$user_result = $user_query->get_result();
+$user_row = $user_result->fetch_assoc();
+$user_latitude = $user_row['latitude'];
+$user_longitude = $user_row['longitude'];
+
 // SQL query to get vehicle data
 $sql = "SELECT id, username, latitude, longitude FROM users WHERE user_type='rescuer'";
 $result = mysqli_query($conn, $sql);
@@ -52,8 +63,8 @@ if ($result->num_rows > 0) {
     </div>
 
     <script>
-        // Δημιουργία του χάρτη
-        var map = L.map('map').setView([37.9838, 23.7275], 13);
+        // Δημιουργία του χάρτη χρησιμοποιώντας τις συντεταγμένες του ενεργού χρήστη
+        var map = L.map('map').setView([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], 14);
 
         // Προσθήκη του βασικού layer από το OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -68,4 +79,3 @@ if ($result->num_rows > 0) {
     </script>
 </body>
 </html>
-
