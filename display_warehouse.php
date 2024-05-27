@@ -17,6 +17,7 @@ if (!isset($_SESSION['user_name'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Σελίδα Διαχειριστή</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -24,9 +25,9 @@ if (!isset($_SESSION['user_name'])) {
         <form id="initialize_form" action="" method="post">
             <br>
             <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p><br><br>
-            <!-- Dropdown για επιλογή κατηγορίας -->
-            <label for="category"><h2>Κατηγορία:</h2></label>
-            <select name="category[]" id="category" multiple>
+            <!-- Dropdown για επιλογή κατηγορίας με το Select2 -->
+            <label for="category"><h2>Κατηγορίες:</h2></label>
+            <select name="category[]" id="category" multiple style="width: 100%;">
                 <option value="">Όλες</option>
                 <?php
                 // Ανάκτηση μοναδικών κατηγοριών από τη βάση δεδομένων
@@ -35,7 +36,7 @@ if (!isset($_SESSION['user_name'])) {
                     echo '<option value="'.$category_row['id'].'">'.$category_row['name'].'</option>';
                 }
                 ?>
-            </select><br>
+            </select>
             <button type="submit">Αναζήτηση</button>
             <br><br>
             <h2>Αντικείμενα</h2><br>
@@ -73,6 +74,7 @@ if (!isset($_SESSION['user_name'])) {
                                   FROM items 
                                   JOIN categories ON items.category = categories.id";
                     }
+
                     $result = mysqli_query($conn, $query);
                     if ($result) {
                         while ($row = mysqli_fetch_assoc($result)) {
@@ -95,5 +97,15 @@ if (!isset($_SESSION['user_name'])) {
             </table>
         </form>
     </div>
+    <!-- Συμπερίληψη του jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Συμπερίληψη του Select2 JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <!-- Ενεργοποίηση του Select2 -->
+    <script>
+    $(document).ready(function() {
+        $('#category').select2();
+    });
+    </script>
 </body>
 </html>
