@@ -79,8 +79,7 @@ if ($result->num_rows > 0) {
             $status = ($vehicle['quantity'] > 0) ? "φορτωμένο" : "άδειο";
         ?>
             var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>]).addTo(map);
-            marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: <?php echo $status; ?>
-                <br>Latitude: <?php echo $vehicle['latitude']; ?><br>Longitude: <?php echo $vehicle['longitude']; ?>");
+            marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: <?php echo $status; ?><br>Latitude: <?php echo $vehicle['latitude']; ?><br>Longitude: <?php echo $vehicle['longitude']; ?>");
         <?php endforeach; ?>
     </script>
 </body>
