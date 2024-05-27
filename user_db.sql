@@ -393,6 +393,20 @@ CREATE TABLE `requests` (
 -- --------------------------------------------------------
 
 --
+-- Δομή πίνακα για τον πίνακα `cargo`
+--
+
+CREATE TABLE `cargo` (
+  `id` int(255) NOT NULL AUTO_INCREMENT,
+  `rescuer_id` int(255) NOT NULL,
+  `item_ids` varchar(255) NOT NULL,
+  `quantity` int(255) NOT NULL
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Δομή πίνακα για τον πίνακα `users`
 --
 
