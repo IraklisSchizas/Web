@@ -33,7 +33,6 @@ if(!isset($_SESSION['user_name'])){
       <p>αυτή είναι η σελίδα των διασωστών</p>
       <a href="" class="btn">διαχείριση φορτίου</a>
       <a href="" class="btn">προβολή χάρτη</a>
-      <a href="" class="btn">εφαρμογή φίλτρων στο χάρτη</a>
       <a href="" class="btn">διαχείριση τρέχοντων tasks</a>
       <a href="logout.php" class="btn">αποσύνδεση</a>
    </div>
