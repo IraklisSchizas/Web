@@ -414,7 +414,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `name`, `surname`, `phone`, `latitude`, `longitude`, `password`, `user_type`) VALUES
-(1, 'admin', 'Admin', 'Adminas', 6912345678, '123.1', '124.5', '21232f297a57a5a743894a0e4a801fc3', 'admin'),
+(1, 'admin', 'Admin', 'Adminas', 6912345678, '38.246279', '21.735030', '21232f297a57a5a743894a0e4a801fc3', 'admin'),
 (2, 'r1', 'r1', 'r1', 1234567890, '38.2204974', '21.7310703', '202cb962ac59075b964b07152d234b70', 'rescuer'),
 (3, 'c1', 'Civi', 'Lian', 2610123456, '38.220588', '21.731126', '202cb962ac59075b964b07152d234b70', 'civilian'),
 (4, 'r2', 'r2', 'r2', 6912324458, '38.2205443', '21.7312005', '202cb962ac59075b964b07152d234b70', 'rescuer'),
