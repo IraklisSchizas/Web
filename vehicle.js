@@ -8,7 +8,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Create a custom icon for the base marker
 var baseIcon = L.icon({
-    iconUrl: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@2.0.0/src/img/marker-icon-2x-orange.png',
+    iconUrl: 'https://www.google.com/search?sca_esv=3eef141e9e980f13&sca_upv=1&sxsrf=ADLYWIJBIr3Y3ELjAMtCJ_QSB5487n-zQw:1716740525036&q=red+pin&uds=ADvngMim3Uae8ftS3CxLvAfbGACXqgYwq15IWjU1RTHp39HHA0HZw2RAlcqFT1kq3ECl2JRr9sZ56aJ6QutsgwZ9nxspAyLP1-pgTWMHVjJiec8rF76JnFS7VF8SjEj77YmANMuZxvHClGw8gFcORKNwVP4xFqI-TV-G24w-sJsYq-rO19jr6dWKccbLueF-R7YrDZxEBUe9NiKdbOu11PZhhaqph5m-weMzinglQHiOYAJOZA5mdslmkpFQfZkedETS2pmSG1ZA5bJXEp3OZeP2CS6WeXcg-ii8-ovCi4HVWgb2ysigvuYpLmc2PmK_h2fozLL2WTNDDGMcMiMZx6lk7oQ8RLVY4DNpYhVEjZHCwJBVhwJtx3E&udm=2&prmd=ivnmbz&sa=X&ved=2ahUKEwjd-anp3KuGAxV8zAIHHYJ1D8MQtKgLegQIEhAB&biw=1536&bih=695&dpr=1.25#vhid=Rrx4uYnYX0_pkM&vssid=mosaic',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],

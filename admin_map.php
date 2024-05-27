@@ -19,8 +19,11 @@ $user_row = $user_result->fetch_assoc();
 $user_latitude = $user_row['latitude'];
 $user_longitude = $user_row['longitude'];
 
-// SQL query to get vehicle data
-$sql = "SELECT id, username, latitude, longitude FROM users WHERE user_type='rescuer'";
+// SQL query to get vehicle data and related cargo information
+$sql = "SELECT u.id, u.username, u.latitude, u.longitude, c.item_ids, c.quantity
+        FROM users u
+        LEFT JOIN cargo c ON u.id = c.rescuer_id
+        WHERE u.user_type='rescuer'";
 $result = mysqli_query($conn, $sql);
 
 $vehicles = array();
@@ -72,9 +75,11 @@ if ($result->num_rows > 0) {
         }).addTo(map);
 
         // Προσθήκη markers για κάθε όχημα
-        <?php foreach ($vehicles as $vehicle): ?>
+        <?php foreach ($vehicles as $vehicle): 
+            $status = ($vehicle['quantity'] > 0) ? "φορτωμένο" : "άδειο";
+        ?>
             var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>]).addTo(map);
-            marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Latitude: <?php echo $vehicle['latitude']; ?><br>Longitude: <?php echo $vehicle['longitude']; ?>");
+            marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: <?php echo $status; ?>");
         <?php endforeach; ?>
     </script>
 </body>
