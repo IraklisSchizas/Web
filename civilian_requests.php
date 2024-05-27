@@ -43,9 +43,9 @@ $civilian_id = $row['id'];
             <table class="table" id="requestsTable">
                 <thead>
                     <tr>
-                        <th scope="col">Item</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Date</th>
+                        <th scope="col">Αντικείμενα</th>
+                        <th scope="col">Ποσότητα</th>
+                        <th scope="col">Ημερομηνία</th>
                     </tr>
                 </thead>
                 <tbody>
