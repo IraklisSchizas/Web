@@ -36,6 +36,32 @@ if ($result->num_rows > 0) {
     echo "No vehicles found";
     exit();
 }
+
+// SQL queries to get offers and requests
+$offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, o.load_date, o.rescuer_id, u.latitude, u.longitude 
+                 FROM offers o 
+                 JOIN users u ON o.civilian_id = u.id";
+$requests_query = "SELECT r.id, r.civilian_id, r.date, r.item_id, r.quantity, r.load_date, r.rescuer_id, u.latitude, u.longitude 
+                   FROM requests r 
+                   JOIN users u ON r.civilian_id = u.id";
+
+$offers_result = mysqli_query($conn, $offers_query);
+$requests_result = mysqli_query($conn, $requests_query);
+
+$offers = array();
+$requests = array();
+
+if ($offers_result->num_rows > 0) {
+    while ($row = $offers_result->fetch_assoc()) {
+        $offers[] = $row;
+    }
+}
+
+if ($requests_result->num_rows > 0) {
+    while ($row = $requests_result->fetch_assoc()) {
+        $requests[] = $row;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -80,6 +106,24 @@ if ($result->num_rows > 0) {
         ?>
             var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>]).addTo(map);
             marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: <?php echo $status; ?><br>Latitude: <?php echo $vehicle['latitude']; ?><br>Longitude: <?php echo $vehicle['longitude']; ?>");
+        <?php endforeach; ?>
+
+        // Προσθήκη markers για offers με πράσινο χρώμα
+        <?php foreach ($offers as $offer): ?>
+            var offerMarker = L.circleMarker([<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>], {
+                color: 'green',
+                radius: 8
+            }).addTo(map);
+            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Item: <?php echo $offer['item_id']; ?><br>Quantity: <?php echo $offer['quantity']; ?><br>Latitude: <?php echo $offer['latitude']; ?><br>Longitude: <?php echo $offer['longitude']; ?>");
+        <?php endforeach; ?>
+
+        // Προσθήκη markers για requests με κόκκινο χρώμα
+        <?php foreach ($requests as $request): ?>
+            var requestMarker = L.circleMarker([<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>], {
+                color: 'red',
+                radius: 8
+            }).addTo(map);
+            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Item: <?php echo $request['item_id']; ?><br>Quantity: <?php echo $request['quantity']; ?><br>Latitude: <?php echo $request['latitude']; ?><br>Longitude: <?php echo $request['longitude']; ?>");
         <?php endforeach; ?>
     </script>
 </body>
