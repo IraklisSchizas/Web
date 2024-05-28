@@ -100,6 +100,13 @@ if ($requests_result->num_rows > 0) {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+        // Προσθήκη του marker για τη Βάση
+        var baseMarker = L.circleMarker([38.249165, 21.737503], {
+            color: 'orange',
+            radius: 10
+        }).addTo(map);
+        baseMarker.bindPopup("<b>Βάση</b>");
+
         // Προσθήκη markers για κάθε όχημα
         <?php foreach ($vehicles as $vehicle): 
             $status = ($vehicle['quantity'] > 0) ? "φορτωμένο" : "άδειο";
@@ -115,7 +122,7 @@ if ($requests_result->num_rows > 0) {
                 color: 'green',
                 radius: 8
             }).addTo(map);
-            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Name: <?php echo $offer['name']; ?><br>Surname: <?php echo $offer['surname']; ?><br>Phone: <?php echo $offer['phone']; ?><br>Date: <?php echo $offer['date']; ?><br>Item: <?php echo $offer['item_id']; ?><br>Quantity: <?php echo $offer['quantity']; ?>");
+            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Item: <?php echo $offer['item_id']; ?><br>Quantity: <?php echo $offer['quantity']; ?><br>Latitude: <?php echo $offer['latitude']; ?><br>Longitude: <?php echo $offer['longitude']; ?>");
         <?php endforeach; ?>
 
         // Προσθήκη markers για requests με κόκκινο χρώμα
@@ -124,7 +131,7 @@ if ($requests_result->num_rows > 0) {
                 color: 'red',
                 radius: 8
             }).addTo(map);
-            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Name: <?php echo $request['name']; ?><br>Surname: <?php echo $request['surname']; ?><br>Phone: <?php echo $request['phone']; ?><br>Date: <?php echo $request['date']; ?><br>Item: <?php echo $request['item_id']; ?><br>Quantity: <?php echo $request['quantity']; ?>");
+            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Item: <?php echo $request['item_id']; ?><br>Quantity: <?php echo $request['quantity']; ?><br>Latitude: <?php echo $request['latitude']; ?><br>Longitude: <?php echo $request['longitude']; ?>");
         <?php endforeach; ?>
     </script>
 </body>
