@@ -38,10 +38,10 @@ if ($result->num_rows > 0) {
 }
 
 // SQL queries to get offers and requests
-$offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, o.load_date, o.rescuer_id, u.latitude, u.longitude 
+$offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, o.load_date, o.rescuer_id, u.latitude, u.longitude, u.name, u.surname, u.phone
                  FROM offers o 
                  JOIN users u ON o.civilian_id = u.id";
-$requests_query = "SELECT r.id, r.civilian_id, r.date, r.item_id, r.quantity, r.load_date, r.rescuer_id, u.latitude, u.longitude 
+$requests_query = "SELECT r.id, r.civilian_id, r.date, r.item_id, r.quantity, r.load_date, r.rescuer_id, u.latitude, u.longitude, u.name, u.surname, u.phone
                    FROM requests r 
                    JOIN users u ON r.civilian_id = u.id";
 
@@ -115,7 +115,7 @@ if ($requests_result->num_rows > 0) {
                 color: 'green',
                 radius: 8
             }).addTo(map);
-            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Item: <?php echo $offer['item_id']; ?><br>Quantity: <?php echo $offer['quantity']; ?><br>Latitude: <?php echo $offer['latitude']; ?><br>Longitude: <?php echo $offer['longitude']; ?>");
+            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Item: <?php echo $offer['item_id']; ?><br>Quantity: <?php echo $offer['quantity']; ?><br>Name: <?php echo $offer['name']; ?><br>Surname: <?php echo $offer['surname']; ?><br>Phone: <?php echo $offer['phone']; ?>");
         <?php endforeach; ?>
 
         // Προσθήκη markers για requests με κόκκινο χρώμα
@@ -124,7 +124,7 @@ if ($requests_result->num_rows > 0) {
                 color: 'red',
                 radius: 8
             }).addTo(map);
-            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Item: <?php echo $request['item_id']; ?><br>Quantity: <?php echo $request['quantity']; ?><br>Latitude: <?php echo $request['latitude']; ?><br>Longitude: <?php echo $request['longitude']; ?>");
+            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Item: <?php echo $request['item_id']; ?><br>Quantity: <?php echo $request['quantity']; ?><br>Name: <?php echo $offer['name']; ?><br>Surname: <?php echo $offer['surname']; ?><br>Phone: <?php echo $offer['phone']; ?>");
         <?php endforeach; ?>
     </script>
 </body>
