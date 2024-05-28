@@ -37,15 +37,15 @@ if ($result->num_rows > 0) {
     exit();
 }
 
-// SQL queries to get offers and requests
-$offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, o.load_date, o.rescuer_id, u.latitude, u.longitude, u.name, u.surname, u.phone, re.username as rescuer_username
+// SQL queries to get offers and requests, including those with rescuer_id = 0
+$offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, o.load_date, o.rescuer_id, u.latitude, u.longitude, u.name, u.surname, u.phone, IFNULL(re.username, 'None') as rescuer_username
                  FROM offers o 
                  JOIN users u ON o.civilian_id = u.id
-                 JOIN users re ON o.rescuer_id = re.id";
-$requests_query = "SELECT r.id, r.civilian_id, r.date, r.item_id, r.quantity, r.load_date, r.rescuer_id, u.latitude, u.longitude, u.name, u.surname, u.phone, re.username as rescuer_username
+                 LEFT JOIN users re ON o.rescuer_id = re.id";
+$requests_query = "SELECT r.id, r.civilian_id, r.date, r.item_id, r.quantity, r.load_date, r.rescuer_id, u.latitude, u.longitude, u.name, u.surname, u.phone, IFNULL(re.username, 'None') as rescuer_username
                    FROM requests r 
                    JOIN users u ON r.civilian_id = u.id
-                   JOIN users re ON r.rescuer_id = re.id";
+                   LEFT JOIN users re ON r.rescuer_id = re.id";
 
 $offers_result = mysqli_query($conn, $offers_query);
 $requests_result = mysqli_query($conn, $requests_query);
@@ -118,22 +118,26 @@ if ($requests_result->num_rows > 0) {
         
         <?php endforeach; ?>
 
-        // Προσθήκη markers για offers με πράσινο χρώμα
-        <?php foreach ($offers as $offer): ?>
+        // Προσθήκη markers για offers
+        <?php foreach ($offers as $offer): 
+            $color = ($offer['rescuer_id'] == 0) ? 'green' : 'yellow';
+        ?>
             var offerMarker = L.circleMarker([<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>], {
-                color: 'green',
+                color: '<?php echo $color; ?>',
                 radius: 8
             }).addTo(map);
-            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Όνομα: <?php echo $offer['name']; ?><br>Επώνυμο: <?php echo $offer['surname']; ?><br>Τηλέφωνο: <?php echo $offer['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?><br>Αντικείμενο: <?php echo $offer['item_id']; ?><br>Ποσότητα: <?php echo $offer['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $offer['load_date'] != '0000-00-00 00:00:00'? $offer['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $offer['rescuer_username'] != NULL? $offer['rescuer_username'] : '-' ; ?>");
+            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Όνομα: <?php echo $offer['name']; ?><br>Επώνυμο: <?php echo $offer['surname']; ?><br>Τηλέφωνο: <?php echo $offer['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?><br>Αντικείμενο: <?php echo $offer['item_id']; ?><br>Ποσότητα: <?php echo $offer['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $offer['load_date'] != '0000-00-00 00:00:00'? $offer['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $offer['rescuer_username'] != 'None'? $offer['rescuer_username'] : '-' ; ?>");
         <?php endforeach; ?>
 
-        // Προσθήκη markers για requests με κόκκινο χρώμα
-        <?php foreach ($requests as $request): ?>
+        // Προσθήκη markers για requests
+        <?php foreach ($requests as $request): 
+            $color = ($request['rescuer_id'] == 0) ? 'red' : 'purple';
+        ?>
             var requestMarker = L.circleMarker([<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>], {
-                color: 'red',
+                color: '<?php echo $color; ?>',
                 radius: 8
             }).addTo(map);
-            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Όνομα: <?php echo $request['name']; ?><br>Επώνυμο: <?php echo $request['surname']; ?><br>Τηλέφωνο: <?php echo $request['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?><br>Αντικείμενο: <?php echo $request['item_id']; ?><br>Ποσότητα: <?php echo $request['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $request['load_date'] != '0000-00-00 00:00:00'? $request['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $request['rescuer_username'] != NULL? $request['rescuer_username'] : '-' ; ?>");
+            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Όνομα: <?php echo $request['name']; ?><br>Επώνυμο: <?php echo $request['surname']; ?><br>Τηλέφωνο: <?php echo $request['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?><br>Αντικείμενο: <?php echo $request['item_id']; ?><br>Ποσότητα: <?php echo $request['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $request['load_date'] != '0000-00-00 00:00:00'? $request['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $request['rescuer_username'] != 'None'? $request['rescuer_username'] : '-' ; ?>");
         <?php endforeach; ?>
     </script>
 </body>
