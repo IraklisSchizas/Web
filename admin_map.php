@@ -115,7 +115,7 @@ if ($requests_result->num_rows > 0) {
                 color: 'green',
                 radius: 8
             }).addTo(map);
-            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Item: <?php echo $offer['item_id']; ?><br>Quantity: <?php echo $offer['quantity']; ?><br>Name: <?php echo $offer['name']; ?><br>Surname: <?php echo $offer['surname']; ?><br>Phone: <?php echo $offer['phone']; ?>");
+            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Name: <?php echo $offer['name']; ?><br>Surname: <?php echo $offer['surname']; ?><br>Phone: <?php echo $offer['phone']; ?><br>Date: <?php echo $offer['date']; ?><br>Item: <?php echo $offer['item_id']; ?><br>Quantity: <?php echo $offer['quantity']; ?>");
         <?php endforeach; ?>
 
         // Προσθήκη markers για requests με κόκκινο χρώμα
@@ -124,7 +124,7 @@ if ($requests_result->num_rows > 0) {
                 color: 'red',
                 radius: 8
             }).addTo(map);
-            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Item: <?php echo $request['item_id']; ?><br>Quantity: <?php echo $request['quantity']; ?><br>Name: <?php echo $offer['name']; ?><br>Surname: <?php echo $offer['surname']; ?><br>Phone: <?php echo $offer['phone']; ?>");
+            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Name: <?php echo $request['name']; ?><br>Surname: <?php echo $request['surname']; ?><br>Phone: <?php echo $request['phone']; ?><br>Date: <?php echo $request['date']; ?><br>Item: <?php echo $request['item_id']; ?><br>Quantity: <?php echo $request['quantity']; ?>");
         <?php endforeach; ?>
     </script>
 </body>
