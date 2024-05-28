@@ -103,7 +103,7 @@ if ($requests_result->num_rows > 0) {
         // Προσθήκη του marker για τη Βάση
         var baseMarker = L.circleMarker([38.249165, 21.737503], {
             color: 'orange',
-            radius: 9
+            radius: 10
         }).addTo(map);
         baseMarker.bindPopup("<b>Βάση</b>");
 
@@ -122,7 +122,7 @@ if ($requests_result->num_rows > 0) {
                 color: 'green',
                 radius: 8
             }).addTo(map);
-            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Item: <?php echo $offer['item_id']; ?><br>Quantity: <?php echo $offer['quantity']; ?><br>Latitude: <?php echo $offer['latitude']; ?><br>Longitude: <?php echo $offer['longitude']; ?>");
+            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Item: <?php echo $offer['item_id']; ?><br>Quantity: <?php echo $offer['quantity']; ?>");
         <?php endforeach; ?>
 
         // Προσθήκη markers για requests με κόκκινο χρώμα
@@ -131,8 +131,9 @@ if ($requests_result->num_rows > 0) {
                 color: 'red',
                 radius: 8
             }).addTo(map);
-            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Item: <?php echo $request['item_id']; ?><br>Quantity: <?php echo $request['quantity']; ?><br>Latitude: <?php echo $request['latitude']; ?><br>Longitude: <?php echo $request['longitude']; ?>");
-        <?php endforeach; ?>
+            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Item: <?php echo $request['item_id']; ?><br>Quantity: <?php echo $request['quantity']; ?>");
+            <?php endforeach; ?>
+
     </script>
 </body>
 </html>
