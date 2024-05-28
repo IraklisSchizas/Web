@@ -94,6 +94,8 @@ $civilian_id = $row['id'];
                         <th scope="col">Αντικείμενα</th>
                         <th scope="col">Ποσότητα</th>
                         <th scope="col">Ημερομηνία</th>
+                        <th scope="col">Έγινε Δεκτό</th>
+                        <th scope="col">Ημερομηνία αποδοχής</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -117,10 +119,14 @@ $civilian_id = $row['id'];
                                 $itemNames[] = $itemRow['name'];
                             }
                             $itemNamesString = implode(', ', $itemNames);
+                            $accepted = $row['rescuer_id'] != 0 ? 'Ναι' : 'Όχι';
+                            $load_date = $row['load_date'] !='0000-00-00 00:00:00'? $row['load_date'] : '-';
                             echo '<tr>
-                                <th scope="row">'.$itemNamesString.'</th>
-                                <td>'.$row['quantity'].'</td>
-                                <td>'.$row['date'].'</td>
+                                <th scope="row">' . htmlspecialchars($itemNamesString) . '</th>
+                                <td>' . htmlspecialchars($row['quantity']) . '</td>
+                                <td>' . htmlspecialchars($row['date']) . '</td>
+                                <td>' . htmlspecialchars($accepted) . '</td>
+                                <td>' . htmlspecialchars($load_date) . '</td>
                             </tr>';
                         }
                     }
