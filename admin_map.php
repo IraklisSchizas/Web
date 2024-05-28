@@ -100,6 +100,13 @@ if ($requests_result->num_rows > 0) {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+        // Προσθήκη του marker για τη Βάση
+        var baseMarker = L.circleMarker([38.249165, 21.737503], {
+            color: 'orange',
+            radius: 9
+        }).addTo(map);
+        baseMarker.bindPopup("<b>Βάση</b>");
+
         // Προσθήκη markers για κάθε όχημα
         <?php foreach ($vehicles as $vehicle): 
             $status = ($vehicle['quantity'] > 0) ? "φορτωμένο" : "άδειο";
