@@ -77,6 +77,7 @@ if ($requests_result->num_rows > 0) {
     <!-- Leaflet CSS and JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Προσθήκη jQuery για το Ajax -->
 
     <!-- Custom CSS file link -->
     <link rel="stylesheet" href="css/style.css">
@@ -113,8 +114,28 @@ if ($requests_result->num_rows > 0) {
         <?php foreach ($vehicles as $vehicle): 
             $status = ($vehicle['quantity'] > 0) ? "φορτωμένο" : "άδειο";
         ?>
-            var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>]).addTo(map);
+            var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>], {draggable: true}).addTo(map);
             marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: <?php echo $status; ?>");
+
+            // Event listener για την αποθήκευση της νέας τοποθεσίας
+            marker.on('dragend', function(e) {
+                var newLatLng = e.target.getLatLng();
+                $.ajax({
+                    url: 'update_location.php',
+                    type: 'POST',
+                    data: {
+                        latitude: newLatLng.lat,
+                        longitude: newLatLng.lng,
+                        username: '<?php echo $vehicle['username']; ?>'
+                    },
+                    success: function(response) {
+                        alert('Η τοποθεσία ενημερώθηκε επιτυχώς.');
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Σφάλμα κατά την ενημέρωση της τοποθεσίας.');
+                    }
+                });
+            });
         
         <?php endforeach; ?>
 
