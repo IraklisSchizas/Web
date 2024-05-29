@@ -103,11 +103,13 @@ if ($requests_result->num_rows > 0) {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Προσθήκη του marker για τη Βάση και καθορισμός του ως draggable
+        // Προσθήκη του marker για τη Βάση και καθορισμός του ως draggable και με πορτοκαλί χρώμα
         var baseMarker = L.marker([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], {
-            color: 'orange',
-            radius: 10,
-            draggable: true
+            draggable: true,
+            icon: L.divIcon({
+                className: 'base-marker-icon',
+                html: '<div style="background-color: orange; width: 25px; height: 25px; border-radius: 50%;"></div>'
+            })
         }).addTo(map);
         baseMarker.bindPopup("<b>Βάση</b>");
 
