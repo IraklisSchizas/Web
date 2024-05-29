@@ -77,6 +77,7 @@ if ($requests_result->num_rows > 0) {
     <!-- Leaflet CSS and JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Προσθήκη jQuery για το Ajax -->
 
     <!-- Custom CSS file link -->
     <link rel="stylesheet" href="css/style.css">
@@ -102,12 +103,38 @@ if ($requests_result->num_rows > 0) {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Προσθήκη του marker για τη Βάση
-        var baseMarker = L.circleMarker([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], {
+        // Προσθήκη του marker για τη Βάση και καθορισμός του ως draggable
+        var baseMarker = L.marker([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], {
             color: 'orange',
-            radius: 10
+            radius: 10,
+            draggable: true
         }).addTo(map);
         baseMarker.bindPopup("<b>Βάση</b>");
+
+        // Event listener για την αποθήκευση της νέας τοποθεσίας της βάσης με επιβεβαίωση
+        baseMarker.on('dragend', function(e) {
+            var newLatLng = e.target.getLatLng();
+            if (confirm('Είστε σίγουροι πως θέλετε να αλλάξετε την τοποθεσία σας;')) {
+                $.ajax({
+                    url: 'update_location.php',
+                    type: 'POST',
+                    data: {
+                        latitude: newLatLng.lat,
+                        longitude: newLatLng.lng,
+                        username: '<?php echo $user_name; ?>'
+                    },
+                    success: function(response) {
+                        alert('Η τοποθεσία ενημερώθηκε επιτυχώς.');
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Σφάλμα κατά την ενημέρωση της τοποθεσίας.');
+                    }
+                });
+            } else {
+                // Αν ο χρήστης ακυρώσει, επαναφέρει τον marker στην αρχική θέση
+                baseMarker.setLatLng([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>]);
+            }
+        });
 
         // Προσθήκη markers για κάθε όχημα
         <?php foreach ($vehicles as $vehicle): 
