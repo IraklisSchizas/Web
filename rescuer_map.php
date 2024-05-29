@@ -117,24 +117,29 @@ if ($requests_result->num_rows > 0) {
             var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>], {draggable: true}).addTo(map);
             marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: <?php echo $status; ?>");
 
-            // Event listener για την αποθήκευση της νέας τοποθεσίας
+            // Event listener για την αποθήκευση της νέας τοποθεσίας με επιβεβαίωση
             marker.on('dragend', function(e) {
                 var newLatLng = e.target.getLatLng();
-                $.ajax({
-                    url: 'update_location.php',
-                    type: 'POST',
-                    data: {
-                        latitude: newLatLng.lat,
-                        longitude: newLatLng.lng,
-                        username: '<?php echo $vehicle['username']; ?>'
-                    },
-                    success: function(response) {
-                        alert('Η τοποθεσία ενημερώθηκε επιτυχώς.');
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Σφάλμα κατά την ενημέρωση της τοποθεσίας.');
-                    }
-                });
+                if (confirm('Είστε σίγουροι πως θέλετε να αλλάξετε την τοποθεσία σας;')) {
+                    $.ajax({
+                        url: 'update_location.php',
+                        type: 'POST',
+                        data: {
+                            latitude: newLatLng.lat,
+                            longitude: newLatLng.lng,
+                            username: '<?php echo $vehicle['username']; ?>'
+                        },
+                        success: function(response) {
+                            alert('Η τοποθεσία ενημερώθηκε επιτυχώς.');
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Σφάλμα κατά την ενημέρωση της τοποθεσίας.');
+                        }
+                    });
+                } else {
+                    // Αν ο χρήστης ακυρώσει, επαναφέρει τον marker στην αρχική θέση
+                    marker.setLatLng([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>]);
+                }
             });
         
         <?php endforeach; ?>
