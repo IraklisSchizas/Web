@@ -103,7 +103,7 @@ if ($requests_result->num_rows > 0) {
         }).addTo(map);
 
         // Προσθήκη του marker για τη Βάση
-        var baseMarker = L.circleMarker([38.249165, 21.737503], {
+        var baseMarker = L.circleMarker([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], {
             color: 'orange',
             radius: 10
         }).addTo(map);
