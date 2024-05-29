@@ -84,7 +84,7 @@ if ($requests_result->num_rows > 0) {
 <body>
     <div class="container">
         <div class="content">
-            <h3>Χάρτης Διαχειριστή</h3>
+            <h3>Χάρτης Διασώστη</h3>
             <br>
             <!-- Leaflet Map Container -->
             <div id="map" style="height: 600px; width: 1000px;"></div>
