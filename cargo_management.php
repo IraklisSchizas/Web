@@ -38,7 +38,7 @@ if (isset($_POST['unload_items'])) {
 
 </head>
 <body>
-    <h2>Cargo Management</h2>
+    <h1>Cargo Management</h1>
 
     <?php
     // Έλεγχος αν πατήθηκε το κουμπί φόρτωσης ή εκφόρτωσης
