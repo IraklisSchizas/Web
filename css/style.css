@@ -208,6 +208,27 @@ button {
    color: #FFF !important; /* Ensure link color remains white on hover */
 }
 
+.form-container form label {
+   display: block;
+   margin-bottom: 0.625rem;
+}
+
+.form-container form input[type="submit"] {
+   display: block;
+   padding: 0.625rem 1.875rem;
+   font-size: 1.25rem;
+   background: #4CAF50; /* Dark green */
+   color: #fff;
+   margin: 0 auto;
+   border-radius: 0.3125rem;
+   cursor: pointer;
+   transition: background 0.3s ease-in-out;
+}
+
+.form-container form input[type="submit"]:hover {
+   background: #388e3c; /* Dark green on hover */
+}
+
 /* Media Queries */
 @media (max-width: 768px) {
    .container .content h3 {
