@@ -151,9 +151,11 @@ if ($requests_result->num_rows > 0) {
                 color: '<?php echo $color; ?>',
                 radius: 8
             }).addTo(map);
-            offerMarker.bindPopup(
-                "<b>Offer ID: <?php echo $offer['id']; ?></b><br>Όνομα: <?php echo $offer['name']; ?><br>Επώνυμο: <?php echo $offer['surname']; ?><br>Τηλέφωνο: <?php echo $offer['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?><br>Αντικείμενο: <?php echo $offer['item_id']; ?><br>Ποσότητα: <?php echo $offer['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $offer['load_date'] != '0000-00-00 00:00:00'? $offer['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $offer['rescuer_username'] != 'None'? $offer['rescuer_username'] : '-' ; ?><br><button onclick='takeOffer(<?php echo $offer['id']; ?>)'>Ανάληψη Προσφοράς</button>"
-            );
+            var offerPopupContent = "<b>Offer ID: <?php echo $offer['id']; ?></b><br>Όνομα: <?php echo $offer['name']; ?><br>Επώνυμο: <?php echo $offer['surname']; ?><br>Τηλέφωνο: <?php echo $offer['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?><br>Αντικείμενο: <?php echo $offer['item_id']; ?><br>Ποσότητα: <?php echo $offer['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $offer['load_date'] != '0000-00-00 00:00:00'? $offer['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $offer['rescuer_username'] != 'None'? $offer['rescuer_username'] : '-' ; ?>";
+            if (<?php echo $offer['rescuer_id']; ?> == 0) {
+                offerPopupContent += "<br><button onclick='takeOffer(<?php echo $offer['id']; ?>)'>Ανάληψη Προσφοράς</button>";
+            }
+            offerMarker.bindPopup(offerPopupContent);
         <?php endforeach; ?>
 
         // Προσθήκη markers για requests
@@ -164,9 +166,11 @@ if ($requests_result->num_rows > 0) {
                 color: '<?php echo $color; ?>',
                 radius: 8
             }).addTo(map);
-            requestMarker.bindPopup(
-                "<b>Request ID: <?php echo $request['id']; ?></b><br>Όνομα: <?php echo $request['name']; ?><br>Επώνυμο: <?php echo $request['surname']; ?><br>Τηλέφωνο: <?php echo $request['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?><br>Αντικείμενο: <?php echo $request['item_id']; ?><br>Ποσότητα: <?php echo $request['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $request['load_date'] != '0000-00-00 00:00:00'? $request['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $request['rescuer_username'] != 'None'? $request['rescuer_username'] : '-' ; ?><br><button onclick='takeRequest(<?php echo $request['id']; ?>)'>Ανάληψη Αιτήματος</button>"
-            );
+            var requestPopupContent = "<b>Request ID: <?php echo $request['id']; ?></b><br>Όνομα: <?php echo $request['name']; ?><br>Επώνυμο: <?php echo $request['surname']; ?><br>Τηλέφωνο: <?php echo $request['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?><br>Αντικείμενο: <?php echo $request['item_id']; ?><br>Ποσότητα: <?php echo $request['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $request['load_date'] != '0000-00-00 00:00:00'? $request['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $request['rescuer_username'] != 'None'? $request['rescuer_username'] : '-' ; ?>";
+            if (<?php echo $request['rescuer_id']; ?> == 0) {
+                requestPopupContent += "<br><button onclick='takeRequest(<?php echo $request['id']; ?>)'>Ανάληψη Αιτήματος</button>";
+            }
+            requestMarker.bindPopup(requestPopupContent);
         <?php endforeach; ?>
 
         function takeOffer(offerId) {
