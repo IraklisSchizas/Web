@@ -12,7 +12,6 @@ $user_name = $_SESSION['user_name'];
 
 // SQL ερώτημα για να ανοίγει ο χάρτης με κέντρο την τοποθεσία της βάσης
 $user_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = 'admin'");
-//$user_query->bind_param("s", "admin");
 $user_query->execute();
 $user_result = $user_query->get_result();
 $user_row = $user_result->fetch_assoc();
@@ -152,7 +151,9 @@ if ($requests_result->num_rows > 0) {
                 color: '<?php echo $color; ?>',
                 radius: 8
             }).addTo(map);
-            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Όνομα: <?php echo $offer['name']; ?><br>Επώνυμο: <?php echo $offer['surname']; ?><br>Τηλέφωνο: <?php echo $offer['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?><br>Αντικείμενο: <?php echo $offer['item_id']; ?><br>Ποσότητα: <?php echo $offer['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $offer['load_date'] != '0000-00-00 00:00:00'? $offer['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $offer['rescuer_username'] != 'None'? $offer['rescuer_username'] : '-' ; ?>");
+            offerMarker.bindPopup(
+                "<b>Offer ID: <?php echo $offer['id']; ?></b><br>Όνομα: <?php echo $offer['name']; ?><br>Επώνυμο: <?php echo $offer['surname']; ?><br>Τηλέφωνο: <?php echo $offer['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?><br>Αντικείμενο: <?php echo $offer['item_id']; ?><br>Ποσότητα: <?php echo $offer['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $offer['load_date'] != '0000-00-00 00:00:00'? $offer['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $offer['rescuer_username'] != 'None'? $offer['rescuer_username'] : '-' ; ?><br><button onclick='takeOffer(<?php echo $offer['id']; ?>)'>Ανάληψη Προσφοράς</button>"
+            );
         <?php endforeach; ?>
 
         // Προσθήκη markers για requests
@@ -163,8 +164,48 @@ if ($requests_result->num_rows > 0) {
                 color: '<?php echo $color; ?>',
                 radius: 8
             }).addTo(map);
-            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Όνομα: <?php echo $request['name']; ?><br>Επώνυμο: <?php echo $request['surname']; ?><br>Τηλέφωνο: <?php echo $request['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?><br>Αντικείμενο: <?php echo $request['item_id']; ?><br>Ποσότητα: <?php echo $request['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $request['load_date'] != '0000-00-00 00:00:00'? $request['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $request['rescuer_username'] != 'None'? $request['rescuer_username'] : '-' ; ?>");
+            requestMarker.bindPopup(
+                "<b>Request ID: <?php echo $request['id']; ?></b><br>Όνομα: <?php echo $request['name']; ?><br>Επώνυμο: <?php echo $request['surname']; ?><br>Τηλέφωνο: <?php echo $request['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?><br>Αντικείμενο: <?php echo $request['item_id']; ?><br>Ποσότητα: <?php echo $request['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $request['load_date'] != '0000-00-00 00:00:00'? $request['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $request['rescuer_username'] != 'None'? $request['rescuer_username'] : '-' ; ?><br><button onclick='takeRequest(<?php echo $request['id']; ?>)'>Ανάληψη Αιτήματος</button>"
+            );
         <?php endforeach; ?>
+
+        function takeOffer(offerId) {
+            $.ajax({
+                url: 'update_request_offer.php',
+                type: 'POST',
+                data: {
+                    action: 'take_offer',
+                    id: offerId,
+                    rescuer_id: <?php echo $vehicles[0]['id']; ?>
+                },
+                success: function(response) {
+                    alert('Η προσφορά αναλήφθηκε επιτυχώς.');
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    alert('Σφάλμα κατά την ανάληψη της προσφοράς.');
+                }
+            });
+        }
+
+        function takeRequest(requestId) {
+            $.ajax({
+                url: 'update_request_offer.php',
+                type: 'POST',
+                data: {
+                    action: 'take_request',
+                    id: requestId,
+                    rescuer_id: <?php echo $vehicles[0]['id']; ?>
+                },
+                success: function(response) {
+                    alert('Το αίτημα αναλήφθηκε επιτυχώς.');
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    alert('Σφάλμα κατά την ανάληψη του αιτήματος.');
+                }
+            });
+        }
     </script>
 </body>
 </html>
