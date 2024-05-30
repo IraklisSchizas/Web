@@ -38,7 +38,10 @@ if (isset($_POST['unload_items'])) {
 
 </head>
 <body>
-    <h1>Cargo Management</h1>
+    <div class="form-container">
+            <p><a href="rescuer_page.php">Πίσω στη σελίδα Διασώστη</a></p>
+            <br><br>            
+<h2>Cargo Management</h2><br>
 
     <?php
     // Έλεγχος αν πατήθηκε το κουμπί φόρτωσης ή εκφόρτωσης
