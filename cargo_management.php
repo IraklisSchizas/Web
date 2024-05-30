@@ -26,27 +26,51 @@ if (isset($_POST['unload_items'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
+meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Διαχείριση Φορτίου</title>
     <link rel="stylesheet" href="css/style.css">
+   
+    
+
 </head>
 <body>
-    <h2>Διαχείριση Φορτίου</h2>
-    <!-- Φόρμα για φόρτωση εμπορευμάτων -->
-    <form action="" method="POST">
-        <label for="load_items">Φόρτωση Εμπορευμάτων:</label>
-        <!-- Εδώ μπορείτε να προσθέσετε λογική για την επιλογή εμπορευμάτων από τη βάση -->
-        <input type="submit" name="load_items" value="Φόρτωση">
-    </form>
-    <!-- Φόρμα για εκφόρτωση εμπορευμάτων -->
-    <form action="" method="POST">
-        <label for="unload_items">Εκφόρτωση Εμπορευμάτων:</label>
-        <!-- Εδώ μπορείτε να προσθέσετε λογική για την εκφόρτωση εμπορευμάτων προς τη βάση -->
-        <input type="submit" name="unload_items" value="Εκφόρτωση">
+    <h2>Cargo Management</h2>
+
+    <?php
+    // Έλεγχος αν πατήθηκε το κουμπί φόρτωσης ή εκφόρτωσης
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST['load'])) {
+            loadItems();
+        } elseif (isset($_POST['unload'])) {
+            unloadItems();
+        }
+    }
+
+    function loadItems() {
+        // Προσθήκη κώδικα για φόρτωση αντικειμένων
+        // Εδώ θα πρέπει να γίνει η λογική για την προσθήκη των αντικειμένων από τη βάση
+        echo "Items loaded successfully.";
+    }
+
+    function unloadItems() {
+        // Προσθήκη κώδικα για εκφόρτωση αντικειμένων
+        // Εδώ θα πρέπει να γίνει η λογική για την αφαίρεση των αντικειμένων από το φορτίο του διασώστη και την προσθήκη τους στη βάση
+        echo "Items unloaded successfully.";
+    }
+    ?>
+
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <label for="load_items">Load Items:</label>
+        <input type="submit" name="load" value="Load">
+
+        <br><br>
+
+        <label for="unload_items">Unload Items:</label>
+        <input type="submit" name="unload" value="Unload">
     </form>
 </body>
 </html>
