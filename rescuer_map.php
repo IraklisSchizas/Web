@@ -73,56 +73,79 @@ if ($requests_result->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Χάρτης Διαχειριστή</title>
 
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- Leaflet CSS and JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Προσθήκη jQuery για το Ajax -->
 
-    <!-- Custom CSS file link -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        #map { height: 600px; width: 100%; }
+        .filters { margin-bottom: 20px; }
+        .filter-group { margin-bottom: 10px; }
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="content">
-            <h3>Χάρτης Διασώστη</h3>
-            <div>
-                <label for="vehicle-status">Φίλτρο Οχημάτων:</label>
-                <select id="vehicle-status">
-                    <option value="all">Όλα</option>
-                    <option value="loaded">Φορτωμένα</option>
-                    <option value="unloaded">Άδεια</option>
-                </select>
-                <label for="offer-status">Φίλτρο Προσφορών:</label>
-                <input type="checkbox" id="offer-with-rescuer" checked> Με Διασώστη
-                <input type="checkbox" id="offer-without-rescuer" checked> Χωρίς Διασώστη
-                <label for="request-status">Φίλτρο Αιτημάτων:</label>
-                <input type="checkbox" id="request-with-rescuer" checked> Με Διασώστη
-                <input type="checkbox" id="request-without-rescuer" checked> Χωρίς Διασώστη
+            <h3 class="my-4">Χάρτης Διασώστη</h3>
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="vehicle-status">Φίλτρο Οχημάτων:</label>
+                    <select id="vehicle-status" class="form-control">
+                        <option value="all">Όλα</option>
+                        <option value="loaded">Φορτωμένα</option>
+                        <option value="unloaded">Άδεια</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Φίλτρο Προσφορών:</label><br>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="offer-with-rescuer" checked>
+                        <label class="form-check-label" for="offer-with-rescuer">Με Διασώστη</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="offer-without-rescuer" checked>
+                        <label class="form-check-label" for="offer-without-rescuer">Χωρίς Διασώστη</label>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Φίλτρο Αιτημάτων:</label><br>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="request-with-rescuer" checked>
+                        <label class="form-check-label" for="request-with-rescuer">Με Διασώστη</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="request-without-rescuer" checked>
+                        <label class="form-check-label" for="request-without-rescuer">Χωρίς Διασώστη</label>
+                    </div>
+                </div>
             </div>
-            <div id="map" style="height: 600px; width: 1000px;"></div>
-            <a href="rescuer_page.php" class="btn">Πίσω στη σελίδα Διασώστη</a>
+            <div id="map"></div>
+            <a href="rescuer_page.php" class="btn btn-primary mt-4">Πίσω στη σελίδα Διασώστη</a>
         </div>
     </div>
 
     <script>
-        // Initialize map
         var map = L.map('map').setView([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Base marker
         var baseMarker = L.circleMarker([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], {
             color: 'orange',
             radius: 10
         }).addTo(map).bindPopup("<b>Βάση</b>");
 
-        // Initialize arrays for markers
         var vehicleMarkers = [];
         var offerMarkers = [];
         var requestMarkers = [];
 
-        // Add vehicle markers
         <?php foreach ($vehicles as $vehicle): ?>
             var vehicleMarker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>], {draggable: true}).addTo(map);
             var status = "<?php echo $vehicle['quantity'] > 0 ? 'φορτωμένο' : 'άδειο'; ?>";
@@ -147,7 +170,6 @@ if ($requests_result->num_rows > 0) {
             vehicleMarkers.push(vehicleMarker);
         <?php endforeach; ?>
 
-        // Add offer markers
         <?php foreach ($offers as $offer): ?>
             var offerMarker = L.circleMarker([<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>], {
                 color: '<?php echo $offer['rescuer_id'] == 0 ? 'green' : 'yellow'; ?>',
@@ -158,11 +180,10 @@ if ($requests_result->num_rows > 0) {
                 offerPopupContent += "<br><button onclick='takeOffer(<?php echo $offer['id']; ?>)'>Ανάληψη Προσφοράς</button>";
             }
             offerMarker.bindPopup(offerPopupContent);
-            offerMarker.rescuerStatus = <?php echo $offer['rescuer_id'] == 0 ? '0' : '1'; ?>;
+            offerMarker.rescuerStatus = "<?php echo $offer['rescuer_id'] == 0 ? '0' : '1'; ?>";
             offerMarkers.push(offerMarker);
         <?php endforeach; ?>
 
-        // Add request markers
         <?php foreach ($requests as $request): ?>
             var requestMarker = L.circleMarker([<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>], {
                 color: '<?php echo $request['rescuer_id'] == 0 ? 'red' : 'purple'; ?>',
@@ -173,11 +194,10 @@ if ($requests_result->num_rows > 0) {
                 requestPopupContent += "<br><button onclick='takeRequest(<?php echo $request['id']; ?>)'>Ανάληψη Αιτήματος</button>";
             }
             requestMarker.bindPopup(requestPopupContent);
-            requestMarker.rescuerStatus = <?php echo $request['rescuer_id'] == 0 ? '0' : '1'; ?>;
+            requestMarker.rescuerStatus = "<?php echo $request['rescuer_id'] == 0 ? '0' : '1'; ?>";
             requestMarkers.push(requestMarker);
         <?php endforeach; ?>
 
-        // Function to take offer
         function takeOffer(offerId) {
             $.ajax({
                 url: 'update_request_offer.php',
@@ -197,7 +217,6 @@ if ($requests_result->num_rows > 0) {
             });
         }
 
-        // Function to take request
         function takeRequest(requestId) {
             $.ajax({
                 url: 'update_request_offer.php',
@@ -217,7 +236,6 @@ if ($requests_result->num_rows > 0) {
             });
         }
 
-        // Filter functionality
         $('#vehicle-status').change(function() {
             var status = $(this).val();
             vehicleMarkers.forEach(function(marker) {
@@ -253,6 +271,8 @@ if ($requests_result->num_rows > 0) {
             });
         });
     </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
