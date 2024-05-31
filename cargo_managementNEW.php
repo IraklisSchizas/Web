@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_name'])) {
 }
 
 $user_name = $_SESSION['user_name'];
-
 // SQL ερώτημα για την τοποθεσία της βάσης
 $base_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = 'admin'");
 $base_query->execute();
@@ -28,7 +27,6 @@ $user_latitude = $user_row['latitude'];
 $user_longitude = $user_row['longitude'];
 
 $distance_from_base = sqrt(pow($base_latitude-$user_latitude,2)+pow($base_latitude-$user_longitude,2));
-
 // Κώδικας για την επιλογή φορτίου από τη βάση
 if (isset($_POST['load_items'])) {
     if ($distance_from_base <= 100) {
@@ -108,9 +106,7 @@ function loadItems() {
              }
         }
     }
-    echo "Items loaded successfully.";
 }
-
 
 function unloadItems() {
     global $conn;
@@ -122,7 +118,9 @@ function unloadItems() {
     if ($cargo_result) {
         while ($row = mysqli_fetch_assoc($cargo_result)) {
             $item_id = $row['item_ids'];
+            $item_name = $row['item_name'];
             $quantity = $row['quantity'];
+            $item_details = $row['item_details'];
 
             // Ενημέρωση της ποσότητας του αντικειμένου στον πίνακα items
             $restore_items_query = "INSERT INTO items (id, quantity) SELECT item_ids, quantity FROM cargo";
