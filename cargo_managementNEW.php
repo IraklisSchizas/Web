@@ -106,10 +106,10 @@ function unloadItems() {
             $quantity = $row['quantity'];
 
             // Ενημέρωση της ποσότητας του αντικειμένου στον πίνακα items
-            $update_query = "UPDATE items SET quantity = quantity + $quantity WHERE id = $item_id";
-            $update_result = mysqli_query($conn, $update_query);
+            $restore_items_query = "INSERT INTO items (id, name, quantity) SELECT item_id, item_name, quantity FROM cargo";
+            $restore_items_result = mysqli_query($conn, $restore_items_query);
 
-            if (!$update_result) {
+            if (!$restore_items_result) {
                 echo "Σφάλμα κατά τη μεταφορά των αντικειμένων πίσω στον πίνακα Items.";
                 return;
             }
