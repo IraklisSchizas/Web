@@ -117,34 +117,43 @@ if (isset($_POST['unload_items'])) {
         }
     }
 
-function loadItems() {
-    global $conn;
-
-    // Επιλέγουμε τα αντικείμενα προς φόρτωση από τη βάση
-    $result = mysqli_query($conn, "SELECT * FROM items WHERE quantity > 0 ");
-    if ($result) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $item_id = $row['id'];
-            $item_quantity = $row['quantity'];
-
-            // Προσθήκη των αντικειμένων και της ποσότητάς τους στον πίνακα "cargo"
+    function loadItems() {
+        global $conn;
+    
+        // Λάβετε το επιλεγμένο αντικείμενο και την ποσότητα από τη φόρμα
+        $selected_item_id = $_POST['item'];
+        $selected_quantity = $_POST['quantity'];
+    
+        // Επιλέξτε το επιλεγμένο αντικείμενο από τον πίνακα "items"
+        $item_query = mysqli_query($conn, "SELECT * FROM items WHERE id = '$selected_item_id' AND quantity >= $selected_quantity");
+    
+        if ($item_query) {
+            $item_row = mysqli_fetch_assoc($item_query);
+            $item_id = $item_row['id'];
+            $item_quantity = $selected_quantity;
+    
+            // Εισάγετε το επιλεγμένο αντικείμενο και την ποσότητά του στον πίνακα "cargo"
             $insert_query = "INSERT INTO cargo (item_ids, quantity) VALUES ('$item_id', '$item_quantity')";
             $insert_result = mysqli_query($conn, $insert_query);
-
+    
             if ($insert_result) {
-                // Αν η εισαγωγή στον πίνακα "cargo" είναι επιτυχής, τότε διαγράψτε τα αντικείμενα από τον πίνακα "Items"
-                $delete_query = "DELETE FROM items WHERE id = '$item_id'";
-                $delete_result = mysqli_query($conn, $delete_query);
-
-                if ($delete_result) {
-                    echo "Items loaded successfully.";
+                // Ενημερώστε την ποσότητα του επιλεγμένου αντικειμένου στον πίνακα "items"
+                $new_quantity = $item_row['quantity'] - $item_quantity;
+                $update_query = "UPDATE items SET quantity = '$new_quantity' WHERE id = '$item_id'";
+                $update_result = mysqli_query($conn, $update_query);
+    
+                if ($update_result) {
+                    echo "Το αντικείμενο φορτώθηκε με επιτυχία.";
                 } else {
-                    echo "Items were not loaded";
+                    echo "Σφάλμα κατά την ενημέρωση της ποσότητας του αντικειμένου.";
                 }
-             }
+            } else {
+                echo "Σφάλμα κατά την φόρτωση του αντικειμένου.";
+            }
+        } else {
+            echo "Το αντικείμενο δεν είναι διαθέσιμο ή η ποσότητα δεν επαρκεί.";
         }
-    }
-}
+    }    
 
 function unloadItems() {
     global $conn;
