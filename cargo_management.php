@@ -49,10 +49,11 @@ if (isset($_POST['unload_items'])) {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST['load_items']) && $distance_from_base <= 100) {
             loadItems();
-        } if (isset($_POST['unload_items']) && $distance_from_base <= 100) {
+        } elseif (isset($_POST['unload_items']) && $distance_from_base <= 100) { {
             unloadItems();
         }
     }
+}
 
     function loadItems() {
         // Προσθήκη κώδικα για φόρτωση αντικειμένων
