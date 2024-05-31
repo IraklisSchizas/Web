@@ -165,12 +165,6 @@ function unloadItems() {
 }
 ?>
 
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-    <label for="load_items">Load Items:</label>
-    <input type="submit" name="load_items" value="Load">
-
-    <br><br>
-
     <label for="unload_items">Unload Items:</label>
     <input type="submit" name="unload_items" value="Unload">
 </form>
