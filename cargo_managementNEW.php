@@ -86,7 +86,6 @@ function loadItems() {
     if ($result) {
         while ($row = mysqli_fetch_assoc($result)) {
             $item_id = $row['id'];
-            $item_name = $row['name'];
             $item_quantity = $row['quantity'];
 
             // Προσθήκη των αντικειμένων και της ποσότητάς τους στον πίνακα "cargo"
