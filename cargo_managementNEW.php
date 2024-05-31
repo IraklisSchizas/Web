@@ -55,12 +55,11 @@ if (isset($_POST['unload_items'])) {
     <?php
     // Έλεγχος αν πατήθηκε το κουμπί φόρτωσης ή εκφόρτωσης
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if (isset($_POST['load_items']))  {
+        if (isset($_POST['load_items']) && $distance_from_base <= 100) {
             loadItems();
-        } elseif (isset($_POST['unload_items'])){
-
-        }   unloadItems();
-        
+        } elseif (isset($_POST['unload_items']) && $distance_from_base <= 100) { 
+            unloadItems();
+        }
     }
 
 function loadItems() {
@@ -80,7 +79,7 @@ function loadItems() {
 
             if ($insert_result) {
                 // Αν η εισαγωγή στον πίνακα "cargo" είναι επιτυχής, τότε διαγράψτε τα αντικείμενα από τον πίνακα "Items"
-                $delete_query = "DELETE FROM items WHERE id = '$item_id'";
+                $delete_query = "DELETE FROM items WHERE id = '$item_ids'";
                 $delete_result = mysqli_query($conn, $delete_query);
 
                 if ($delete_result) {
