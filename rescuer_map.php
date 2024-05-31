@@ -29,7 +29,14 @@ $vehicles = array();
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $vehicles[] = $row;
+        // Split the item_ids into individual items
+        $item_ids = explode(',', $row['item_ids']);
+        foreach ($item_ids as $item_id) {
+            // Create a separate entry for each item_id
+            $vehicle = $row;
+            $vehicle['item_id'] = trim($item_id);
+            $vehicles[] = $vehicle;
+        }
     }
 } else {
     echo "No vehicles found";
@@ -150,7 +157,7 @@ if ($requests_result->num_rows > 0) {
         <?php foreach ($vehicles as $vehicle): ?>
             var vehicleMarker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>], {draggable: true}).addTo(map);
             var status = "<?php echo $vehicle['quantity'] > 0 ? 'φορτωμένο' : 'άδειο'; ?>";
-            vehicleMarker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: " + status);
+            vehicleMarker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_id']; ?><br>Κατάσταση: " + status);
             vehicleMarker.vehicleStatus = "<?php echo $vehicle['quantity'] > 0 ? 'loaded' : 'unloaded'; ?>";
             vehicleMarker.on('dragend', function(e) {
                 var newLatLng = e.target.getLatLng();
