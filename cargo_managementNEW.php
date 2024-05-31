@@ -61,7 +61,6 @@ if (isset($_POST['unload_items'])) {
             unloadItems();
         }
     }
-}
 
 function loadItems() {
     global $conn;
