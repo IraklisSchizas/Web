@@ -106,7 +106,7 @@ function unloadItems() {
     if ($cargo_result) {
         // Προσπέλαση των αποτελεσμάτων και μεταφορά των αντικειμένων πίσω στον πίνακα Items
         while ($row = mysqli_fetch_assoc($cargo_result)) {
-            $item_id = $row['item_ids'];
+            $item_ids = $row['item_ids'];
             $quantity = $row['quantity'];
 
             // Ενημέρωση του πίνακα Items για την αύξηση της ποσότητας του αντικειμένου
