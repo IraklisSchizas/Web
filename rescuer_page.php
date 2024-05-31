@@ -31,7 +31,7 @@ if(!isset($_SESSION['user_name'])){
       <h3>Γειά σου, <span>Διασώστη</span></h3>
       <h1>Καλωσήρθες <span><?php echo $_SESSION['user_name'] ?></span>!</h1>
       <p>αυτή είναι η σελίδα των διασωστών</p>
-      <a href="cargo_managementNEW.php" class="btn">διαχείριση φορτίου</a>
+      <a href="cargo_management.php" class="btn">διαχείριση φορτίου</a>
       <a href="rescuer_map.php" class="btn">προβολή χάρτη & διαχείριση tasks</a>
       <a href="logout.php" class="btn">αποσύνδεση</a>
    </div>
