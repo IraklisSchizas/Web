@@ -57,7 +57,7 @@ if (isset($_POST['unload_items'])) {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST['load_items']))  {
             loadItems();
-        } elseif (isset($_POST['unload_items']){
+        } elseif (isset($_POST['unload_items'])){
 
         }   unloadItems();
         
