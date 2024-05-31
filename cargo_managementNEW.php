@@ -74,12 +74,12 @@ function loadItems() {
             $item_quantity = $row['quantity'];
 
             // Προσθήκη των αντικειμένων και της ποσότητάς τους στον πίνακα "cargo"
-            $insert_query = "INSERT INTO cargo (item_ids, quantity) VALUES ('$item_ids', '$item_quantity')";
+            $insert_query = "INSERT INTO cargo (item_ids, quantity) VALUES ('$item_id', '$item_quantity')";
             $insert_result = mysqli_query($conn, $insert_query);
 
             if ($insert_result) {
                 // Αν η εισαγωγή στον πίνακα "cargo" είναι επιτυχής, τότε διαγράψτε τα αντικείμενα από τον πίνακα "Items"
-                $delete_query = "DELETE FROM items WHERE id = '$item_ids'";
+                $delete_query = "DELETE FROM items WHERE id = '$item_id'";
                 $delete_result = mysqli_query($conn, $delete_query);
 
                 if ($delete_result) {
