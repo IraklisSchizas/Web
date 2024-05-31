@@ -78,12 +78,14 @@ function loadItems($rescuer_id) {
             $cargo_row = $cargo_result->fetch_assoc();
             $item_ids = explode(',', $cargo_row['item_ids']);
             if (in_array($selected_item_id, $item_ids)) {
+                // Αν το αντικείμενο υπάρχει ήδη, ενημερώνουμε την ποσότητα
                 $new_cargo_quantity = $cargo_row['quantity'] + $selected_quantity;
 
                 $update_cargo_query = $conn->prepare("UPDATE cargo SET quantity = ? WHERE rescuer_id = ? AND item_ids = ?");
                 $update_cargo_query->bind_param('iii', $new_cargo_quantity, $rescuer_id, $selected_item_id);
                 $update_cargo_query->execute();
             } else {
+                // Αν το αντικείμενο δεν υπάρχει, προσθέτουμε το item_id
                 $new_item_ids = $cargo_row['item_ids'] . ',' . $selected_item_id;
                 $new_cargo_quantity = $cargo_row['quantity'] + $selected_quantity;
 
@@ -92,6 +94,7 @@ function loadItems($rescuer_id) {
                 $update_cargo_query->execute();
             }
         } else {
+            // Αν δεν υπάρχει εγγραφή για το rescuer_id, δημιουργούμε μία
             $insert_cargo_query = $conn->prepare("INSERT INTO cargo (rescuer_id, item_ids, quantity) VALUES (?, ?, ?)");
             $item_ids = strval($selected_item_id);
             $insert_cargo_query->bind_param('isi', $rescuer_id, $item_ids, $selected_quantity);
@@ -170,83 +173,57 @@ function unloadItems($rescuer_id) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Διαχείριση Φορτίου</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .container {
-            display: flex;
-            justify-content: space-between;
-        }
-        .form-container {
-            width: 48%;
-        }
-        .table-container {
-            margin-top: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="form-container">
-            <h2>Load Items</h2>
-            <form id="load_form" action="" method="post">
-                <label for="item">Select Item to Load:</label>
-                <select name="item" id="item">
-                    <?php
-                        $items_query = mysqli_query($conn, "SELECT * FROM items WHERE quantity > 0");
-                        if ($items_query) {
-                            while ($item_row = mysqli_fetch_assoc($items_query)) {
-                                echo "<option value='" . $item_row['id'] . "'>" . $item_row['name'] . "</option>";
+    <div class="form-container">
+        <form id="initialize_form" action="" method="post">
+            <p><a href="rescuer_page.php">Πίσω στη σελίδα Διασώστη</a></p>
+            <br><br>            
+            <h2>Cargo Management</h2><br>
+            
+            <!-- Form για φόρτωση αντικειμένων -->
+            <label for="item">Select Item to Load:</label>
+            <select name="item" id="item">
+                <?php
+                    $items_query = mysqli_query($conn, "SELECT * FROM items WHERE quantity > 0");
+                    if ($items_query) {
+                        while ($item_row = mysqli_fetch_assoc($items_query)) {
+                            echo "<option value='" . $item_row['id'] . "'>" . $item_row['name'] . "</option>";
+                        }
+                    }
+                ?>
+            </select>
+
+            <label for="quantity">Quantity to Load:</label>
+            <input type="number" id="quantity" name="quantity" min="1" required>
+            <input type="submit" name="load_items" value="Load">
+            
+            <br><br>
+            
+            <!-- Form για εκφόρτωση αντικειμένων -->
+            <label for="unload_item">Select Item to Unload:</label>
+            <select name="unload_item" id="unload_item">
+                <?php
+                    $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = $user_id");
+                    if ($cargo_query) {
+                        while ($cargo_row = mysqli_fetch_assoc($cargo_query)) {
+                            $item_ids = explode(',', $cargo_row['item_ids']);
+                            foreach ($item_ids as $item_id) {
+                                $item_name_query = mysqli_query($conn, "SELECT name FROM items WHERE id = '$item_id'");
+                                $item_name = mysqli_fetch_assoc($item_name_query)['name'];
+                                echo "<option value='" . $item_id . "'>" . $item_name . "</option>";
                             }
                         }
-                    ?>
-                </select>
+                    }
+                ?>
+            </select>
 
-                <label for="quantity">Quantity to Load:</label>
-                <input type="number" id="quantity" name="quantity" min="1" required>
-                <input type="submit" name="load_items" value="Load">
-            </form>
-        </div>
-
-        <div class="form-container">
-            <h2>Unload Items</h2>
-            <form id="unload_form" action="" method="post">
-                <label for="unload_item">Select Item to Unload:</label>
-                <select name="unload_item" id="unload_item">
-                    <?php
-                        $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = $user_id");
-                        if ($cargo_query) {
-                            while ($cargo_row = mysqli_fetch_assoc($cargo_query)) {
-                                $item_ids = explode(',', $cargo_row['item_ids']);
-                                foreach ($item_ids as $item_id) {
-                                    $item_name_query = mysqli_query($conn, "SELECT name FROM items WHERE id = '$item_id'");
-                                    $item_name = mysqli_fetch_assoc($item_name_query)['name'];
-                                    echo "<option value='" . $item_id . "'>" . $item_name . "</option>";
-                                }
-                            }
-                        }
-                    ?>
-                </select>
-
-                <label for="unload_quantity">Quantity to Unload:</label>
-                <input type="number" id="unload_quantity" name="unload_quantity" min="1" required>
-                <input type="submit" name="unload_items" value="Unload">
-            </form>
-        </div>
-    </div>
-
-    <div class="table-container">
-        <h2>Items in Cargo</h2>
-        <table>
+            <label for="unload_quantity">Quantity to Unload:</label>
+            <input type="number" id="unload_quantity" name="unload_quantity" min="1" required>
+            <input type="submit" name="unload_items" value="Unload">
+            <br><br><br>
+            <h2>Cargo Management</h2><br>
+            <table>
             <thead>
                 <tr>
                     <th>Item ID</th>
@@ -274,6 +251,8 @@ function unloadItems($rescuer_id) {
                 ?>
             </tbody>
         </table>
+            
+        </form>
     </div>
 </body>
 </html>
