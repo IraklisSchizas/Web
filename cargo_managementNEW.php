@@ -151,3 +151,16 @@ if ($result) {
         
         echo "Items unloaded successfully.";
     }
+    ?>
+
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <label for="load_items">Load Items:</label>
+        <input type="submit" name="load" value="Load">
+
+        <br><br>
+
+        <label for="unload_items">Unload Items:</label>
+        <input type="submit" name="unload" value="Unload">
+    </form>
+</body>
+</html>
