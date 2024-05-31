@@ -121,7 +121,7 @@ function unloadItems() {
     
 
             // Ενημέρωση της ποσότητας του αντικειμένου στον πίνακα items
-            $restore_items_query = "INSERT INTO items (id, quantity) SELECT item_ids, quantity FROM cargo";
+            $restore_items_query = "INSERT INTO IGNORE items (id, quantity) SELECT item_ids, quantity FROM cargo";
             $restore_items_result = mysqli_query($conn, $restore_items_query);
 
             if (!$restore_items_result) {
