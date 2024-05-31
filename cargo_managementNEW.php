@@ -163,9 +163,29 @@ function unloadItems() {
     }
     
 }
-?>
 
-    <label for="unload_items">Unload Items:</label>
-    <input type="submit" name="unload_items" value="Unload">
+?>
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+
+<label for="unload_item">Select Item to Unload:</label>
+<select name="unload_item" id="unload_item">
+    <?php
+    $cargo_query = mysqli_query($conn, "SELECT * FROM cargo");
+    if ($cargo_query) {
+        while ($cargo_row = mysqli_fetch_assoc($cargo_query)) {
+            $item_id = $cargo_row['item_ids'];
+            $item_name_query = mysqli_query($conn, "SELECT name FROM items WHERE id = '$item_id'");
+            $item_name = mysqli_fetch_assoc($item_name_query)['name'];
+            echo "<option value='" . $item_id . "'>" . $item_name . "</option>";
+        }
+    }
+    ?>
+</select>
+
+<label for="unload_quantity">Quantity to Unload:</label>
+<input type="number" id="unload_quantity" name="unload_quantity" min="1" required>
+
+<input type="submit" name="unload_items" value="Unload">
+
 </form>
 
