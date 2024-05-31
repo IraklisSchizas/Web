@@ -69,32 +69,21 @@ function loadItems($rescuer_id) {
         $update_item_query->bind_param('ii', $new_quantity, $selected_item_id);
         $update_item_query->execute();
 
-        $cargo_query = $conn->prepare("SELECT * FROM cargo WHERE rescuer_id = ?");
-        $cargo_query->bind_param('i', $rescuer_id);
+        $cargo_query = $conn->prepare("SELECT * FROM cargo WHERE rescuer_id = ? AND item_ids = ?");
+        $cargo_query->bind_param('ii', $rescuer_id, $selected_item_id);
         $cargo_query->execute();
         $cargo_result = $cargo_query->get_result();
 
         if ($cargo_result->num_rows > 0) {
             $cargo_row = $cargo_result->fetch_assoc();
-            $item_ids = explode(',', $cargo_row['item_ids']);
-            if (in_array($selected_item_id, $item_ids)) {
-                $new_cargo_quantity = $cargo_row['quantity'] + $selected_quantity;
+            $new_cargo_quantity = $cargo_row['quantity'] + $selected_quantity;
 
-                $update_cargo_query = $conn->prepare("UPDATE cargo SET quantity = ? WHERE rescuer_id = ? AND item_ids = ?");
-                $update_cargo_query->bind_param('iii', $new_cargo_quantity, $rescuer_id, $selected_item_id);
-                $update_cargo_query->execute();
-            } else {
-                $new_item_ids = $cargo_row['item_ids'] . ',' . $selected_item_id;
-                $new_cargo_quantity = $cargo_row['quantity'] + $selected_quantity;
-
-                $update_cargo_query = $conn->prepare("UPDATE cargo SET item_ids = ?, quantity = ? WHERE rescuer_id = ?");
-                $update_cargo_query->bind_param('sii', $new_item_ids, $new_cargo_quantity, $rescuer_id);
-                $update_cargo_query->execute();
-            }
+            $update_cargo_query = $conn->prepare("UPDATE cargo SET quantity = ? WHERE rescuer_id = ? AND item_ids = ?");
+            $update_cargo_query->bind_param('iii', $new_cargo_quantity, $rescuer_id, $selected_item_id);
+            $update_cargo_query->execute();
         } else {
             $insert_cargo_query = $conn->prepare("INSERT INTO cargo (rescuer_id, item_ids, quantity) VALUES (?, ?, ?)");
-            $item_ids = strval($selected_item_id);
-            $insert_cargo_query->bind_param('isi', $rescuer_id, $item_ids, $selected_quantity);
+            $insert_cargo_query->bind_param('iii', $rescuer_id, $selected_item_id, $selected_quantity);
             $insert_cargo_query->execute();
         }
 
@@ -110,54 +99,46 @@ function unloadItems($rescuer_id) {
     $selected_item_id = $_POST['unload_item'];
     $selected_quantity = $_POST['unload_quantity'];
 
-    $cargo_query = $conn->prepare("SELECT * FROM cargo WHERE rescuer_id = ?");
-    $cargo_query->bind_param('i', $rescuer_id);
+    $cargo_query = $conn->prepare("SELECT * FROM cargo WHERE rescuer_id = ? AND item_ids = ?");
+    $cargo_query->bind_param('ii', $rescuer_id, $selected_item_id);
     $cargo_query->execute();
     $cargo_result = $cargo_query->get_result();
 
     if ($cargo_result->num_rows > 0) {
         $cargo_row = $cargo_result->fetch_assoc();
-        $item_ids = explode(',', $cargo_row['item_ids']);
+        $current_quantity = $cargo_row['quantity'];
 
-        if (in_array($selected_item_id, $item_ids)) {
-            $item_index = array_search($selected_item_id, $item_ids);
-            $current_quantity = $cargo_row['quantity'];
+        if ($current_quantity >= $selected_quantity) {
+            $new_cargo_quantity = $current_quantity - $selected_quantity;
 
-            if ($current_quantity >= $selected_quantity) {
-                $new_cargo_quantity = $current_quantity - $selected_quantity;
-
-                if ($new_cargo_quantity == 0) {
-                    unset($item_ids[$item_index]);
-                    $new_item_ids = implode(',', $item_ids);
-                } else {
-                    $new_item_ids = implode(',', $item_ids);
-                }
-
-                $update_cargo_query = $conn->prepare("UPDATE cargo SET item_ids = ?, quantity = ? WHERE rescuer_id = ?");
-                $update_cargo_query->bind_param('sii', $new_item_ids, $new_cargo_quantity, $rescuer_id);
-                $update_cargo_query->execute();
-
-                $item_query = $conn->prepare("SELECT quantity FROM items WHERE id = ?");
-                $item_query->bind_param('i', $selected_item_id);
-                $item_query->execute();
-                $item_result = $item_query->get_result();
-                $item_row = $item_result->fetch_assoc();
-
-                $new_item_quantity = $item_row['quantity'] + $selected_quantity;
-
-                $update_item_query = $conn->prepare("UPDATE items SET quantity = ? WHERE id = ?");
-                $update_item_query->bind_param('ii', $new_item_quantity, $selected_item_id);
-                $update_item_query->execute();
-
-                echo "Το αντικείμενο εκφορτώθηκε με επιτυχία.";
+            if ($new_cargo_quantity == 0) {
+                $delete_cargo_query = $conn->prepare("DELETE FROM cargo WHERE rescuer_id = ? AND item_ids = ?");
+                $delete_cargo_query->bind_param('ii', $rescuer_id, $selected_item_id);
+                $delete_cargo_query->execute();
             } else {
-                echo "Η ποσότητα προς εκφόρτωση είναι μεγαλύτερη από την διαθέσιμη.";
+                $update_cargo_query = $conn->prepare("UPDATE cargo SET quantity = ? WHERE rescuer_id = ? AND item_ids = ?");
+                $update_cargo_query->bind_param('iii', $new_cargo_quantity, $rescuer_id, $selected_item_id);
+                $update_cargo_query->execute();
             }
+
+            $item_query = $conn->prepare("SELECT quantity FROM items WHERE id = ?");
+            $item_query->bind_param('i', $selected_item_id);
+            $item_query->execute();
+            $item_result = $item_query->get_result();
+            $item_row = $item_result->fetch_assoc();
+
+            $new_item_quantity = $item_row['quantity'] + $selected_quantity;
+
+            $update_item_query = $conn->prepare("UPDATE items SET quantity = ? WHERE id = ?");
+            $update_item_query->bind_param('ii', $new_item_quantity, $selected_item_id);
+            $update_item_query->execute();
+
+            echo "Το αντικείμενο εκφορτώθηκε με επιτυχία.";
         } else {
-            echo "Το αντικείμενο δεν υπάρχει στο φορτίο.";
+            echo "Η ποσότητα προς εκφόρτωση είναι μεγαλύτερη από την διαθέσιμη.";
         }
     } else {
-        echo "Δεν υπάρχει φορτίο για αυτόν τον διασώστη.";
+        echo "Το αντικείμενο δεν υπάρχει στο φορτίο.";
     }
 }
 ?>
