@@ -102,7 +102,7 @@ function unloadItems() {
 
     if ($cargo_result) {
         while ($row = mysqli_fetch_assoc($cargo_result)) {
-            $item_id = $row['item_id'];
+            $item_id = $row['item_ids'];
             $quantity = $row['quantity'];
 
             // Ενημέρωση της ποσότητας του αντικειμένου στον πίνακα items
