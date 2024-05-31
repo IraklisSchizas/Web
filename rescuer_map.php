@@ -92,7 +92,7 @@ if ($requests_result->num_rows > 0) {
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container-fluid">  
         <div class="content">
             <h3 class="my-4">Χάρτης Διασώστη</h3>
             <div class="filters">
