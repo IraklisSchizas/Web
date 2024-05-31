@@ -97,16 +97,16 @@ function unloadItems() {
     global $conn;
 
     // Επιλέγουμε τα αντικείμενα που εκφορτώνονται από τον πίνακα cargo
-    $cargo_query = "SELECT * FROM cargo";
+    $cargo_query = "SELECT * FROM cargo WHERE quantity > 0";
     $cargo_result = mysqli_query($conn, $cargo_query);
 
     if ($cargo_result) {
         while ($row = mysqli_fetch_assoc($cargo_result)) {
-            $item_id = $row['item_id'];
+            $item_id = $row['item_ids'];
             $quantity = $row['quantity'];
 
             // Ενημέρωση της ποσότητας του αντικειμένου στον πίνακα items
-            $update_query = "UPDATE items SET quantity = quantity + $quantity WHERE id = $item_id";
+            $update_query = "UPDATE items SET quantity = quantity + $quantity WHERE id = $item_ids";
             $update_result = mysqli_query($conn, $update_query);
 
             if (!$update_result) {
