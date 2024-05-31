@@ -178,7 +178,8 @@ function unloadItems($rescuer_id) {
 <body>
     <div class="container">
         <div class="form-container">
-            <h2>Load Items</h2>
+            <p><a href="rescuer_page.php">Πίσω στη σελίδα Διασώστη</a></p><br>
+            <h2>Load Items</h2><br>
             <form id="load_form" action="" method="post">
                 <label for="item">Select Item to Load:</label>
                 <select name="item" id="item">
