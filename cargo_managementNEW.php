@@ -74,7 +74,7 @@ function loadItems() {
             $item_quantity = $row['quantity'];
 
             // Προσθήκη των αντικειμένων και της ποσότητάς τους στον πίνακα "cargo"
-            $insert_query = "INSERT INTO cargo (item_id, item_name, quantity) VALUES ('$item_id', '$item_name', '$item_quantity')";
+            $insert_query = "INSERT INTO cargo (item_ids, quantity) VALUES ('$item_ids', '$item_quantity')";
             $insert_result = mysqli_query($conn, $insert_query);
 
             if ($insert_result) {
