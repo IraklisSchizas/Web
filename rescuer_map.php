@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_name'])) {
 
 $user_name = $_SESSION['user_name'];
 
-// SQL ερώτημα για να ανοίγει ο χάρτης με κέντρο την τοποθεσία της βάσης
+// SQL query to get the base location coordinates
 $user_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = 'admin'");
 $user_query->execute();
 $user_result = $user_query->get_result();
@@ -85,70 +85,72 @@ if ($requests_result->num_rows > 0) {
     <div class="container">
         <div class="content">
             <h3>Χάρτης Διασώστη</h3>
-            <br>
-            <!-- Leaflet Map Container -->
+            <div>
+                <label for="vehicle-status">Φίλτρο Οχημάτων:</label>
+                <select id="vehicle-status">
+                    <option value="all">Όλα</option>
+                    <option value="loaded">Φορτωμένα</option>
+                    <option value="unloaded">Άδεια</option>
+                </select>
+                <label for="offer-status">Φίλτρο Προσφορών:</label>
+                <input type="checkbox" id="offer-with-rescuer" checked> Με Διασώστη
+                <input type="checkbox" id="offer-without-rescuer" checked> Χωρίς Διασώστη
+                <label for="request-status">Φίλτρο Αιτημάτων:</label>
+                <input type="checkbox" id="request-with-rescuer" checked> Με Διασώστη
+                <input type="checkbox" id="request-without-rescuer" checked> Χωρίς Διασώστη
+            </div>
             <div id="map" style="height: 600px; width: 1000px;"></div>
-            <br>
             <a href="rescuer_page.php" class="btn">Πίσω στη σελίδα Διασώστη</a>
         </div>
     </div>
 
     <script>
-        // Δημιουργία του χάρτη χρησιμοποιώντας τις συντεταγμένες του ενεργού χρήστη
+        // Initialize map
         var map = L.map('map').setView([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], 14);
-
-        // Προσθήκη του βασικού layer από το OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Προσθήκη του marker για τη Βάση
+        // Base marker
         var baseMarker = L.circleMarker([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], {
             color: 'orange',
             radius: 10
-        }).addTo(map);
-        baseMarker.bindPopup("<b>Βάση</b>");
+        }).addTo(map).bindPopup("<b>Βάση</b>");
 
-        // Προσθήκη markers για κάθε όχημα
-        <?php foreach ($vehicles as $vehicle): 
-            $status = ($vehicle['quantity'] > 0) ? "φορτωμένο" : "άδειο";
-        ?>
-            var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>], {draggable: true}).addTo(map);
-            marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: <?php echo $status; ?>");
+        // Initialize arrays for markers
+        var vehicleMarkers = [];
+        var offerMarkers = [];
+        var requestMarkers = [];
 
-            // Event listener για την αποθήκευση της νέας τοποθεσίας με επιβεβαίωση
-            marker.on('dragend', function(e) {
+        // Add vehicle markers
+        <?php foreach ($vehicles as $vehicle): ?>
+            var vehicleMarker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>], {draggable: true}).addTo(map);
+            var status = "<?php echo $vehicle['quantity'] > 0 ? 'φορτωμένο' : 'άδειο'; ?>";
+            vehicleMarker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: " + status);
+            vehicleMarker.vehicleStatus = "<?php echo $vehicle['quantity'] > 0 ? 'loaded' : 'unloaded'; ?>";
+            vehicleMarker.on('dragend', function(e) {
                 var newLatLng = e.target.getLatLng();
                 if (confirm('Είστε σίγουροι πως θέλετε να αλλάξετε την τοποθεσία σας;')) {
-                    $.ajax({
-                        url: 'update_location.php',
-                        type: 'POST',
-                        data: {
-                            latitude: newLatLng.lat,
-                            longitude: newLatLng.lng,
-                            username: '<?php echo $vehicle['username']; ?>'
-                        },
-                        success: function(response) {
-                            alert('Η τοποθεσία ενημερώθηκε επιτυχώς.');
-                        },
-                        error: function(xhr, status, error) {
-                            alert('Σφάλμα κατά την ενημέρωση της τοποθεσίας.');
-                        }
+                    $.post('update_location.php', {
+                        latitude: newLatLng.lat,
+                        longitude: newLatLng.lng,
+                        username: '<?php echo $vehicle['username']; ?>'
+                    }, function(response) {
+                        alert('Η τοποθεσία ενημερώθηκε επιτυχώς.');
+                    }).fail(function() {
+                        alert('Σφάλμα κατά την ενημέρωση της τοποθεσίας.');
                     });
                 } else {
-                    // Αν ο χρήστης ακυρώσει, επαναφέρει τον marker στην αρχική θέση
-                    marker.setLatLng([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>]);
+                    vehicleMarker.setLatLng([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>]);
                 }
             });
-        
+            vehicleMarkers.push(vehicleMarker);
         <?php endforeach; ?>
 
-        // Προσθήκη markers για offers
-        <?php foreach ($offers as $offer): 
-            $color = ($offer['rescuer_id'] == 0) ? 'green' : 'yellow';
-        ?>
+        // Add offer markers
+        <?php foreach ($offers as $offer): ?>
             var offerMarker = L.circleMarker([<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>], {
-                color: '<?php echo $color; ?>',
+                color: '<?php echo $offer['rescuer_id'] == 0 ? 'green' : 'yellow'; ?>',
                 radius: 8
             }).addTo(map);
             var offerPopupContent = "<b>Offer ID: <?php echo $offer['id']; ?></b><br>Όνομα: <?php echo $offer['name']; ?><br>Επώνυμο: <?php echo $offer['surname']; ?><br>Τηλέφωνο: <?php echo $offer['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?><br>Αντικείμενο: <?php echo $offer['item_id']; ?><br>Ποσότητα: <?php echo $offer['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $offer['load_date'] != '0000-00-00 00:00:00'? $offer['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $offer['rescuer_username'] != 'None'? $offer['rescuer_username'] : '-' ; ?>";
@@ -156,14 +158,14 @@ if ($requests_result->num_rows > 0) {
                 offerPopupContent += "<br><button onclick='takeOffer(<?php echo $offer['id']; ?>)'>Ανάληψη Προσφοράς</button>";
             }
             offerMarker.bindPopup(offerPopupContent);
+            offerMarker.rescuerStatus = <?php echo $offer['rescuer_id'] == 0 ? '0' : '1'; ?>;
+            offerMarkers.push(offerMarker);
         <?php endforeach; ?>
 
-        // Προσθήκη markers για requests
-        <?php foreach ($requests as $request): 
-            $color = ($request['rescuer_id'] == 0) ? 'red' : 'purple';
-        ?>
+        // Add request markers
+        <?php foreach ($requests as $request): ?>
             var requestMarker = L.circleMarker([<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>], {
-                color: '<?php echo $color; ?>',
+                color: '<?php echo $request['rescuer_id'] == 0 ? 'red' : 'purple'; ?>',
                 radius: 8
             }).addTo(map);
             var requestPopupContent = "<b>Request ID: <?php echo $request['id']; ?></b><br>Όνομα: <?php echo $request['name']; ?><br>Επώνυμο: <?php echo $request['surname']; ?><br>Τηλέφωνο: <?php echo $request['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?><br>Αντικείμενο: <?php echo $request['item_id']; ?><br>Ποσότητα: <?php echo $request['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $request['load_date'] != '0000-00-00 00:00:00'? $request['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $request['rescuer_username'] != 'None'? $request['rescuer_username'] : '-' ; ?>";
@@ -171,8 +173,11 @@ if ($requests_result->num_rows > 0) {
                 requestPopupContent += "<br><button onclick='takeRequest(<?php echo $request['id']; ?>)'>Ανάληψη Αιτήματος</button>";
             }
             requestMarker.bindPopup(requestPopupContent);
+            requestMarker.rescuerStatus = <?php echo $request['rescuer_id'] == 0 ? '0' : '1'; ?>;
+            requestMarkers.push(requestMarker);
         <?php endforeach; ?>
 
+        // Function to take offer
         function takeOffer(offerId) {
             $.ajax({
                 url: 'update_request_offer.php',
@@ -192,6 +197,7 @@ if ($requests_result->num_rows > 0) {
             });
         }
 
+        // Function to take request
         function takeRequest(requestId) {
             $.ajax({
                 url: 'update_request_offer.php',
@@ -210,6 +216,43 @@ if ($requests_result->num_rows > 0) {
                 }
             });
         }
+
+        // Filter functionality
+        $('#vehicle-status').change(function() {
+            var status = $(this).val();
+            vehicleMarkers.forEach(function(marker) {
+                if (status === 'all' || marker.vehicleStatus === status) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
+        });
+
+        $('#offer-with-rescuer, #offer-without-rescuer').change(function() {
+            var withRescuer = $('#offer-with-rescuer').is(':checked');
+            var withoutRescuer = $('#offer-without-rescuer').is(':checked');
+            offerMarkers.forEach(function(marker) {
+                if ((marker.rescuerStatus === '1' && withRescuer) || (marker.rescuerStatus === '0' && withoutRescuer)) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
+        });
+
+        $('#request-with-rescuer, #request-without-rescuer').change(function() {
+            var withRescuer = $('#request-with-rescuer').is(':checked');
+            var withoutRescuer = $('#request-without-rescuer').is(':checked');
+            requestMarkers.forEach(function(marker) {
+                if ((marker.rescuerStatus === '1' && withRescuer) || (marker.rescuerStatus === '0' && withoutRescuer)) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
+        });
     </script>
 </body>
 </html>
+
