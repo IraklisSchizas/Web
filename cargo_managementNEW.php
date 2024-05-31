@@ -8,6 +8,27 @@ if (!isset($_SESSION['user_name'])) {
     header('location:login.php');
     exit();
 }
+// Έλεγχος αν πατήθηκε το κουμπί φόρτωσης ή εκφόρτωσης
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Κώδικας για την επιλογή φορτίου από τη βάση
+    if (isset($_POST['load_items']) && !isset($_POST['unload_items'])) {
+        if ($distance_from_base <= 100) {
+            loadItems();
+        } else {
+            echo "Δεν μπορείτε να φορτώσετε αντικείμενα. Ο διασώστης είναι εκτός εμβέλειας της βάσης.";
+        }
+    }
+
+    // Κώδικας για την εκφόρτωση φορτίου στη βάση
+    if (isset($_POST['unload_items']) && !isset($_POST['load_items'])) {
+        if ($distance_from_base <= 100) {
+            unloadItems();
+        } else {
+            echo "Δεν μπορείτε να εκφορτώσετε αντικείμενα. Ο διασώστης είναι εκτός εμβέλειας της βάσης.";
+        }
+    }
+}
+
 
 $user_name = $_SESSION['user_name'];
 // SQL ερώτημα για την τοποθεσία της βάσης
@@ -71,25 +92,6 @@ if (isset($_POST['unload_items'])) {
             <select name="item" id="item">
 
 <?php
-// Κώδικας για την επιλογή φορτίου από τη βάση
-if (isset($_POST['load_items']) && !isset($_POST['unload_items'])) {
-    if ($distance_from_base <= 100) {
-        loadItems();
-    } else {
-        echo "Δεν μπορείτε να φορτώσετε αντικείμενα. Ο διασώστης είναι εκτός εμβέλειας της βάσης.";
-    }
-}
-
-// Κώδικας για την εκφόρτωση φορτίου στη βάση
-if (isset($_POST['unload_items']) && !isset($_POST['load_items'])) {
-    if ($distance_from_base <= 100) {
-        unloadItems();
-    } else {
-        echo "Δεν μπορείτε να εκφορτώσετε αντικείμενα. Ο διασώστης είναι εκτός εμβέλειας της βάσης.";
-    }
-}
-
-// Κώδικας για την επιλογή δεδομένων οχημάτων, αιτημάτων, προσφορών, κλπ.
 
     $items_query = mysqli_query($conn, "SELECT * FROM items WHERE quantity > 0");
     if ($items_query) {
@@ -102,7 +104,6 @@ if (isset($_POST['unload_items']) && !isset($_POST['load_items'])) {
 
 <label for="quantity">Quantity:</label>
 <input type="number" id="quantity" name="quantity" min="1" required>
-
 <input type="submit" name="load_items" value="Load">
 
     <?php
