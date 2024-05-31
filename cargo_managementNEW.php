@@ -27,7 +27,7 @@ $user_row = $user_result->fetch_assoc();
 $user_latitude = $user_row['latitude'];
 $user_longitude = $user_row['longitude'];
 
-$distance_from_base = sqrt(pow($base_latitude-$user_latitude)+pow($base_latitude-$user_longitude));
+$distance_from_base = sqrt(pow($base_latitude-$user_latitude,2)+pow($base_latitude-$user_longitude,2));
 
 // Κώδικας για την επιλογή φορτίου από τη βάση
 if (isset($_POST['load_items'])) {
