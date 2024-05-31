@@ -66,7 +66,7 @@ function loadItems() {
     global $conn;
 
     // Επιλέγουμε τα αντικείμενα προς φόρτωση από τη βάση
-    $result = mysqli_query($conn, "SELECT * FROM items");
+    $result = mysqli_query($conn, "SELECT * FROM items WHERE quantity > 0 ");
     if ($result) {
         while ($row = mysqli_fetch_assoc($result)) {
             $item_id = $row['id'];
