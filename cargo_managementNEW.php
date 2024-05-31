@@ -67,6 +67,23 @@ if (isset($_POST['unload_items'])) {
             <p><a href="rescuer_page.php">Πίσω στη σελίδα Διασώστη</a></p>
             <br><br>            
             <h2>Cargo Management</h2><br>
+            <label for="item">Select Item:</label>
+            <select name="item" id="item">
+
+<?php
+    $items_query = mysqli_query($conn, "SELECT * FROM items WHERE quantity > 0");
+    if ($items_query) {
+        while ($item_row = mysqli_fetch_assoc($items_query)) {
+            echo "<option value='" . $item_row['id'] . "'>" . $item_row['name'] . "</option>";
+        }
+    }
+    ?>
+</select>
+
+<label for="quantity">Quantity:</label>
+<input type="number" id="quantity" name="quantity" min="1" required>
+
+<input type="submit" name="load_items" value="Load">
 
     <?php
     // Έλεγχος αν πατήθηκε το κουμπί φόρτωσης ή εκφόρτωσης
@@ -121,7 +138,7 @@ function unloadItems() {
     
             foreach($row as $r){
                 // Ενημέρωση της ποσότητας του αντικειμένου στον πίνακα items
-                $restore_items_query = "UPDATE items SET quantity = '$r['quantity]' ";
+                $restore_items_query = "UPDATE items SET quantity = '{$r['quantity']}' ";
                 $restore_items_result = mysqli_query($conn, $restore_items_query);
 
                 if (!$restore_items_result) {
