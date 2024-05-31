@@ -204,7 +204,7 @@ function unloadItems() {
 </select>
 
 <label for="unload_quantity">Quantity to Unload:</label>
-<input type="number" id="unload_quantity" name="unload_quantity" min="1" required>
+<input type="number" id="unload_quantity" name="unload_quantity" min="0" required>
 
 <input type="submit" name="unload_items" value="Unload">
 
