@@ -118,9 +118,8 @@ function unloadItems() {
     if ($cargo_result) {
         while ($row = mysqli_fetch_assoc($cargo_result)) {
             $item_id = $row['item_ids'];
-            $item_name = $row['item_name'];
             $quantity = $row['quantity'];
-            $item_details = $row['item_details'];
+    
 
             // Ενημέρωση της ποσότητας του αντικειμένου στον πίνακα items
             $restore_items_query = "INSERT INTO items (id, quantity) SELECT item_ids, quantity FROM cargo";
