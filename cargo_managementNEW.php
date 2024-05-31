@@ -10,12 +10,11 @@ if (!isset($_SESSION['user_name'])) {
 }
 
 $user_name = $_SESSION['user_name'];
-$distance_from_base = 50; // Υποθετική απόσταση από τη βάση
 
 // Κώδικας για την επιλογή φορτίου από τη βάση
 if (isset($_POST['load_items'])) {
     if ($distance_from_base <= 100) {
-        loadItemsFromDatabase();
+        loadItems();
     } else {
         echo "Δεν μπορείτε να φορτώσετε αντικείμενα. Ο διασώστης είναι εκτός εμβέλειας της βάσης.";
     }
@@ -24,7 +23,7 @@ if (isset($_POST['load_items'])) {
 // Κώδικας για την εκφόρτωση φορτίου στη βάση
 if (isset($_POST['unload_items'])) {
     if ($distance_from_base <= 100) {
-        unloadItemsToDatabase();
+        unloadItems();
     } else {
         echo "Δεν μπορείτε να εκφορτώσετε αντικείμενα. Ο διασώστης είναι εκτός εμβέλειας της βάσης.";
     }
@@ -64,14 +63,14 @@ if (isset($_POST['unload_items'])) {
     }
 }
 
-function loadItemsFromDatabase() {
+function loadItems() {
     global $conn;
 
 // Επιλέγουμε τα αντικείμενα προς φόρτωση από τη βάση
 $result = mysqli_query($conn, "SELECT * FROM items");
 if ($result) {
  while ($row = mysqli_fetch_assoc($result)) {
-     function loadItemsFromDatabase() {
+     function loadItems() {
          global $conn;
      
          // Επιλέγουμε τα αντικείμενα προς φόρτωση από τη βάση
@@ -109,7 +108,7 @@ if ($result) {
     }
 
     function unloadItems() {
-        function unloadItemsToDatabase() {
+        function unloadItems() {
             // Σύνδεση στη βάση δεδομένων
             global $conn;
         
