@@ -81,16 +81,6 @@ function loadItems() {
                 // Αν η εισαγωγή στον πίνακα "cargo" είναι επιτυχής, τότε διαγράψτε τα αντικείμενα από τον πίνακα "Items"
                 $delete_query = "DELETE FROM items WHERE id = '$item_id'";
                 $delete_result = mysqli_query($conn, $delete_query);
-
-                if ($delete_result) {
-                    echo "Το αντικείμενο '$item_name' φορτώθηκε επιτυχώς.";
-                } else {
-                    echo "Σφάλμα κατά τη διαγραφή του αντικειμένου '$item_name' από τον πίνακα 'Items'.";
-                }
-            } else {
-                echo "Σφάλμα κατά την εισαγωγή του αντικειμένου '$item_name' στον πίνακα 'cargo'.";
-            }
-        }
     }
     echo "Items loaded successfully.";
 }
