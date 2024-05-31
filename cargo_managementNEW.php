@@ -96,22 +96,19 @@ function loadItems() {
 function unloadItems() {
     global $conn;
 
-    // Επιλογή δεδομένων από τον πίνακα cargo
+    // Επιλέγουμε τα αντικείμενα που εκφορτώνονται από τον πίνακα cargo
     $cargo_query = "SELECT * FROM cargo";
     $cargo_result = mysqli_query($conn, $cargo_query);
 
-    // Έλεγχος αν υπάρχουν αποτελέσματα
     if ($cargo_result) {
-        // Προσπέλαση των αποτελεσμάτων και μεταφορά των αντικειμένων πίσω στον πίνακα Items
         while ($row = mysqli_fetch_assoc($cargo_result)) {
-            $item_ids = $row['item_ids'];
+            $item_id = $row['item_id'];
             $quantity = $row['quantity'];
 
-            // Ενημέρωση του πίνακα Items για την αύξηση της ποσότητας του αντικειμένου
-            $update_query = "UPDATE items SET quantity = quantity + $quantity WHERE id = $item_ids";
+            // Ενημέρωση της ποσότητας του αντικειμένου στον πίνακα items
+            $update_query = "UPDATE items SET quantity = quantity + $quantity WHERE id = $item_id";
             $update_result = mysqli_query($conn, $update_query);
 
-            // Έλεγχος επιτυχίας της ενημέρωσης
             if (!$update_result) {
                 echo "Σφάλμα κατά τη μεταφορά των αντικειμένων πίσω στον πίνακα Items.";
                 return;
@@ -124,14 +121,14 @@ function unloadItems() {
 
         // Έλεγχος επιτυχίας της διαγραφής του φορτίου
         if ($clear_cargo_result) {
-            echo "Τα αντικείμενα έχουν εκφορτωθεί επιτυχώς και μεταφέρθηκαν πίσω στον πίνακα Items.";
+            echo "Items unloaded successfully.";
         } else {
-            echo "Σφάλμα κατά τη διαγραφή του φορτίου.";
+            echo "Error during unlooad";
         }
     } else {
         echo "Δεν υπάρχουν αντικείμενα στο φορτίο για εκφόρτωση.";
     }
-    echo "Items unloaded successfully.";
+    
 }
 ?>
 
