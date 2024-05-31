@@ -88,6 +88,7 @@ if ($requests_result->num_rows > 0) {
         #map { height: 600px; width: 100%; }
         .filters { margin-bottom: 20px; }
         .filter-group { margin-bottom: 10px; }
+        .content { max-width: 100%; }
     </style>
 </head>
 <body>
