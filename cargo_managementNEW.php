@@ -84,6 +84,8 @@ function loadItems() {
     }
     echo "Items loaded successfully.";
 }
+    }
+}
 
 function unloadItems() {
     global $conn;
