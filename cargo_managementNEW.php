@@ -53,7 +53,7 @@ if (isset($_POST['unload_items'])) {
             <br><br>            
             <h2>Cargo Management</h2><br>
 
-            <?php
+    <?php
     // Έλεγχος αν πατήθηκε το κουμπί φόρτωσης ή εκφόρτωσης
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST['load_items']) && $distance_from_base <= 100) {
@@ -97,20 +97,80 @@ if (isset($_POST['unload_items'])) {
     $result = mysqli_query($conn, "SELECT * FROM items");
     if ($result) {
         while ($row = mysqli_fetch_assoc($result)) {
-            // Εδώ μπορείτε να προσθέσετε τη λογική για τον έλεγχο διαθεσιμότητας των αντικειμένων
-            // και την προσθήκη τους στο φορτίο του διασώστη (cargo)
-            $item_id = $row['id'];
-            $item_name = $row['name'];
-            $item_quantity = $row['quantity'];
-            // Προσθήκη κώδικα για την προσθήκη των αντικειμένων στο φορτίο (cargo) του διασώστη
-            // Π.χ. ενημέρωση του πίνακα cargo με τα αντικείμενα που θα φορτωθούν
-            echo "Τα αντικείμενα φορτώθηκαν επιτυχώς.";
-        }
+            function loadItemsFromDatabase() {
+                global $conn;
+            
+                // Επιλέγουμε τα αντικείμενα προς φόρτωση από τη βάση
+                $result = mysqli_query($conn, "SELECT * FROM items");
+                if ($result) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $item_id = $row['id'];
+                        $item_name = $row['name'];
+                        $item_quantity = $row['quantity'];
+            
+                        // Προσθήκη των αντικειμένων και της ποσότητάς τους στον πίνακα "cargo"
+                        $insert_query = "INSERT INTO cargo (item_id, item_name, quantity) VALUES ('$item_id', '$item_name', '$item_quantity')";
+                        $insert_result = mysqli_query($conn, $insert_query);
+            
+                        if ($insert_result) {
+                            // Αν η εισαγωγή στον πίνακα "cargo" είναι επιτυχής, τότε διαγράψτε τα αντικείμενα από τον πίνακα "Items"
+                            $delete_query = "DELETE FROM items WHERE id = '$item_id'";
+                            $delete_result = mysqli_query($conn, $delete_query);
+            
+                            if ($delete_result) {
+                                echo "Το αντικείμενο '$item_name' φορτώθηκε επιτυχώς.";
+                            } else {
+                                echo "Σφάλμα κατά τη διαγραφή του αντικειμένου '$item_name' από τον πίνακα 'Items'.";
+                            }
+                        } else {
+                            echo "Σφάλμα κατά την εισαγωγή του αντικειμένου '$item_name' στον πίνακα 'cargo'.";
+                        }
+                    }
+                }
+            }
+            
     }
 }
 
 function unloadItemsToDatabase() {
+    // Σύνδεση στη βάση δεδομένων
     global $conn;
 
-    // Προσθήκη κώδικα για την εκφόρτωση των αντικειμένων από το φορτίο του διασώστη και την ενημέρωση της βάση
+    // Επιλογή δεδομένων από τον πίνακα cargo
+    $cargo_query = "SELECT * FROM cargo";
+    $cargo_result = mysqli_query($conn, $cargo_query);
+
+    // Έλεγχος αν υπάρχουν αποτελέσματα
+    if ($cargo_result) {
+        // Προσπέλαση των αποτελεσμάτων και μεταφορά των αντικειμένων πίσω στον πίνακα Items
+        while ($row = mysqli_fetch_assoc($cargo_result)) {
+            $item_id = $row['item_id'];
+            $quantity = $row['quantity'];
+
+            // Ενημέρωση του πίνακα Items για την αύξηση της ποσότητας του αντικειμένου
+            $update_query = "UPDATE items SET quantity = quantity + $quantity WHERE id = $item_id";
+            $update_result = mysqli_query($conn, $update_query);
+
+            // Έλεγχος επιτυχίας της ενημέρωσης
+            if (!$update_result) {
+                echo "Σφάλμα κατά τη μεταφορά των αντικειμένων πίσω στον πίνακα Items.";
+                return;
+            }
+        }
+
+        // Αφαίρεση όλων των αντικειμένων από το φορτίο του διασώστη
+        $clear_cargo_query = "DELETE FROM cargo";
+        $clear_cargo_result = mysqli_query($conn, $clear_cargo_query);
+
+        // Έλεγχος επιτυχίας της διαγραφής του φορτίου
+        if ($clear_cargo_result) {
+            echo "Τα αντικείμενα έχουν εκφορτωθεί επιτυχώς και μεταφέρθηκαν πίσω στον πίνακα Items.";
+        } else {
+            echo "Σφάλμα κατά τη διαγραφή του φορτίου.";
+        }
+    } else {
+        echo "Δεν υπάρχουν αντικείμενα στο φορτίο για εκφόρτωση.";
+    }
+}
+
 }
