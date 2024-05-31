@@ -14,10 +14,10 @@ $user_name = $_SESSION['user_name'];
 // SQL ερώτημα για την τοποθεσία της βάσης
 $base_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = 'admin'");
 $base_query->execute();
-$base_result = $user_query->get_result();
-$base_row = $user_result->fetch_assoc();
-$base_latitude = $user_row['latitude'];
-$base_longitude = $user_row['longitude'];
+$base_result = $base_query->get_result();
+$base_row = $base_result->fetch_assoc();
+$base_latitude = $base_row['latitude'];
+$base_longitude = $base_row['longitude'];
 
 // SQL ερώτημα για την τοποθεσία του χρήστη
 $user_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = '$user_name'");
