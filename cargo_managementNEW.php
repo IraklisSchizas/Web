@@ -119,15 +119,16 @@ function unloadItems() {
             $item_id = $row['item_ids'];
             $quantity = $row['quantity'];
     
+            foreach($row as $r){
+                // Ενημέρωση της ποσότητας του αντικειμένου στον πίνακα items
+                $restore_items_query = "INSERT IGNORE INTO items (id, quantity) SELECT item_ids, quantity FROM cargo";
+                $restore_items_result = mysqli_query($conn, $restore_items_query);
 
-            // Ενημέρωση της ποσότητας του αντικειμένου στον πίνακα items
-            $restore_items_query = "INSERT IGNORE INTO items (id, quantity) SELECT item_ids, quantity FROM cargo";
-            $restore_items_result = mysqli_query($conn, $restore_items_query);
-
-            if (!$restore_items_result) {
-                echo "Σφάλμα κατά τη μεταφορά των αντικειμένων πίσω στον πίνακα Items.";
-                return;
-            }
+                if (!$restore_items_result) {
+                    echo "Σφάλμα κατά τη μεταφορά των αντικειμένων πίσω στον πίνακα Items.";
+                    return;
+                }
+            }   
         }
 
         // Αφαίρεση όλων των αντικειμένων από το φορτίο του διασώστη
