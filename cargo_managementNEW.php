@@ -55,9 +55,9 @@ if (isset($_POST['unload_items'])) {
     <?php
     // Έλεγχος αν πατήθηκε το κουμπί φόρτωσης ή εκφόρτωσης
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if (isset($_POST['load_items']) && $distance_from_base <= 100) {
+        if (isset($_POST['load_items'])  {
             loadItems();
-        } elseif (isset($_POST['unload_items']) && $distance_from_base <= 100) { 
+        } elseif (isset($_POST['unload_items'])  { 
             unloadItems();
         }
     }
