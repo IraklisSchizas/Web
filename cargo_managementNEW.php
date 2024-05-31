@@ -11,6 +11,24 @@ if (!isset($_SESSION['user_name'])) {
 
 $user_name = $_SESSION['user_name'];
 
+// SQL ερώτημα για την τοποθεσία της βάσης
+$base_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = 'admin'");
+$base_query->execute();
+$base_result = $user_query->get_result();
+$base_row = $user_result->fetch_assoc();
+$base_latitude = $user_row['latitude'];
+$base_longitude = $user_row['longitude'];
+
+// SQL ερώτημα για την τοποθεσία του χρήστη
+$user_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = '$user_name'");
+$user_query->execute();
+$user_result = $user_query->get_result();
+$user_row = $user_result->fetch_assoc();
+$user_latitude = $user_row['latitude'];
+$user_longitude = $user_row['longitude'];
+
+$distance_from_base = sqrt(pow($base_latitude-$user_latitude)+pow($base_latitude-$user_longitude));
+
 // Κώδικας για την επιλογή φορτίου από τη βάση
 if (isset($_POST['load_items'])) {
     if ($distance_from_base <= 100) {
