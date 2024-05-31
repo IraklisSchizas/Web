@@ -10,6 +10,14 @@ if (!isset($_SESSION['user_name'])) {
 }
 $user_name = $_SESSION['user_name'];
 
+// Λήψη του user_id του χρήστη
+$user_query = $conn->prepare("SELECT id FROM users WHERE username = ?");
+$user_query->bind_param('s', $user_name);
+$user_query->execute();
+$user_result = $user_query->get_result();
+$user_row = $user_result->fetch_assoc();
+$user_id = $user_row['id'];
+
 // SQL ερώτημα για την τοποθεσία της βάσης
 $base_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = 'admin'");
 $base_query->execute();
@@ -19,7 +27,8 @@ $base_latitude = $base_row['latitude'];
 $base_longitude = $base_row['longitude'];
 
 // SQL ερώτημα για την τοποθεσία του χρήστη
-$user_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = '$user_name'");
+$user_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = ?");
+$user_query->bind_param('s', $user_name);
 $user_query->execute();
 $user_result = $user_query->get_result();
 $user_row = $user_result->fetch_assoc();
@@ -27,27 +36,110 @@ $user_latitude = $user_row['latitude'];
 $user_longitude = $user_row['longitude'];
 
 $distance_from_base = sqrt(pow($base_latitude-$user_latitude,2)+pow($base_latitude-$user_longitude,2));
+
 // Έλεγχος αν πατήθηκε το κουμπί φόρτωσης ή εκφόρτωσης
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Κώδικας για την επιλογή φορτίου από τη βάση
-    if (isset($_POST['load_items']) && !isset($_POST['unload_items'])) {
-        if ($distance_from_base <= 100) {
-            loadItems();
-        } else {
-            echo "Δεν μπορείτε να φορτώσετε αντικείμενα. Ο διασώστης είναι εκτός εμβέλειας της βάσης.";
+    if ($distance_from_base <= 100) {
+        if (isset($_POST['load_items']) && !isset($_POST['unload_items'])) {
+            loadItems($user_id);
+        } elseif (isset($_POST['unload_items']) && !isset($_POST['load_items'])) {
+            unloadItems($user_id);
         }
-    }
-
-    // Κώδικας για την εκφόρτωση φορτίου στη βάση
-    if (isset($_POST['unload_items']) && !isset($_POST['load_items'])) {
-        if ($distance_from_base <= 100) {
-            unloadItems();
-        } else {
-            echo "Δεν μπορείτε να εκφορτώσετε αντικείμενα. Ο διασώστης είναι εκτός εμβέλειας της βάσης.";
-        }
+    } else {
+        echo "Ο διασώστης είναι εκτός εμβέλειας της βάσης.";
     }
 }
-// Κώδικας επιλογής δεδομένων οχημάτων, αιτημάτων, προσφορών κλπ.
+
+function loadItems($rescuer_id) {
+    global $conn;
+
+    $selected_item_id = $_POST['item'];
+    $selected_quantity = $_POST['quantity'];
+
+    $item_query = $conn->prepare("SELECT * FROM items WHERE id = ? AND quantity >= ?");
+    $item_query->bind_param('ii', $selected_item_id, $selected_quantity);
+    $item_query->execute();
+    $item_result = $item_query->get_result();
+
+    if ($item_result->num_rows > 0) {
+        $item_row = $item_result->fetch_assoc();
+        $new_quantity = $item_row['quantity'] - $selected_quantity;
+
+        $update_item_query = $conn->prepare("UPDATE items SET quantity = ? WHERE id = ?");
+        $update_item_query->bind_param('ii', $new_quantity, $selected_item_id);
+        $update_item_query->execute();
+
+        $cargo_query = $conn->prepare("SELECT * FROM cargo WHERE rescuer_id = ? AND item_ids = ?");
+        $cargo_query->bind_param('ii', $rescuer_id, $selected_item_id);
+        $cargo_query->execute();
+        $cargo_result = $cargo_query->get_result();
+
+        if ($cargo_result->num_rows > 0) {
+            $cargo_row = $cargo_result->fetch_assoc();
+            $new_cargo_quantity = $cargo_row['quantity'] + $selected_quantity;
+
+            $update_cargo_query = $conn->prepare("UPDATE cargo SET quantity = ? WHERE rescuer_id = ? AND item_ids = ?");
+            $update_cargo_query->bind_param('iii', $new_cargo_quantity, $rescuer_id, $selected_item_id);
+            $update_cargo_query->execute();
+        } else {
+            $insert_cargo_query = $conn->prepare("INSERT INTO cargo (rescuer_id, item_ids, quantity) VALUES (?, ?, ?)");
+            $insert_cargo_query->bind_param('iii', $rescuer_id, $selected_item_id, $selected_quantity);
+            $insert_cargo_query->execute();
+        }
+
+        echo "Το αντικείμενο φορτώθηκε με επιτυχία.";
+    } else {
+        echo "Το αντικείμενο δεν είναι διαθέσιμο ή η ποσότητα δεν επαρκεί.";
+    }
+}
+
+function unloadItems($rescuer_id) {
+    global $conn;
+
+    $selected_item_id = $_POST['unload_item'];
+    $selected_quantity = $_POST['unload_quantity'];
+
+    $cargo_query = $conn->prepare("SELECT * FROM cargo WHERE rescuer_id = ? AND item_ids = ?");
+    $cargo_query->bind_param('ii', $rescuer_id, $selected_item_id);
+    $cargo_query->execute();
+    $cargo_result = $cargo_query->get_result();
+
+    if ($cargo_result->num_rows > 0) {
+        $cargo_row = $cargo_result->fetch_assoc();
+
+        if ($cargo_row['quantity'] >= $selected_quantity) {
+            $new_cargo_quantity = $cargo_row['quantity'] - $selected_quantity;
+
+            if ($new_cargo_quantity == 0) {
+                $delete_cargo_query = $conn->prepare("DELETE FROM cargo WHERE rescuer_id = ? AND item_ids = ?");
+                $delete_cargo_query->bind_param('ii', $rescuer_id, $selected_item_id);
+                $delete_cargo_query->execute();
+            } else {
+                $update_cargo_query = $conn->prepare("UPDATE cargo SET quantity = ? WHERE rescuer_id = ? AND item_ids = ?");
+                $update_cargo_query->bind_param('iii', $new_cargo_quantity, $rescuer_id, $selected_item_id);
+                $update_cargo_query->execute();
+            }
+
+            $item_query = $conn->prepare("SELECT quantity FROM items WHERE id = ?");
+            $item_query->bind_param('i', $selected_item_id);
+            $item_query->execute();
+            $item_result = $item_query->get_result();
+            $item_row = $item_result->fetch_assoc();
+
+            $new_item_quantity = $item_row['quantity'] + $selected_quantity;
+
+            $update_item_query = $conn->prepare("UPDATE items SET quantity = ? WHERE id = ?");
+            $update_item_query->bind_param('ii', $new_item_quantity, $selected_item_id);
+            $update_item_query->execute();
+
+            echo "Το αντικείμενο εκφορτώθηκε με επιτυχία.";
+        } else {
+            echo "Η ποσότητα προς εκφόρτωση είναι μεγαλύτερη από την διαθέσιμη.";
+        }
+    } else {
+        echo "Το αντικείμενο δεν υπάρχει στο φορτίο.";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -65,7 +157,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p><a href="rescuer_page.php">Πίσω στη σελίδα Διασώστη</a></p>
             <br><br>            
             <h2>Cargo Management</h2><br>
-            <label for="item">Select Item:</label>
+            
+            <!-- Form για φόρτωση αντικειμένων -->
+            <label for="item">Select Item to Load:</label>
             <select name="item" id="item">
                 <?php
                     $items_query = mysqli_query($conn, "SELECT * FROM items WHERE quantity > 0");
@@ -74,107 +168,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             echo "<option value='" . $item_row['id'] . "'>" . $item_row['name'] . "</option>";
                         }
                     }
-                    ?>
+                ?>
             </select>
 
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" min="1" required>
+            <label for="quantity">Quantity to Load:</label>
+            <input type="number" id="quantity" name="quantity" min="1">
             <input type="submit" name="load_items" value="Load">
-
-            <?php
-                // Έλεγχος αν πατήθηκε το κουμπί φόρτωσης ή εκφόρτωσης
-                if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                    if (isset($_POST['load_items']) && $distance_from_base <= 100) {
-                        loadItems();
-                    } elseif (isset($_POST['unload_items']) && $distance_from_base <= 100) { 
-                        unloadItems();
-                    }
-                }
-
-                function loadItems() {
-                    global $conn;
-                
-                    // Λάβετε το επιλεγμένο αντικείμενο και την ποσότητα από τη φόρμα
-                    $selected_item_id = $_POST['item'];
-                    $selected_quantity = $_POST['quantity'];
-                
-                    // Επιλέξτε το επιλεγμένο αντικείμενο από τον πίνακα "items"
-                    $item_query = mysqli_query($conn, "SELECT * FROM items WHERE id = '$selected_item_id' AND quantity >= $selected_quantity");
-                
-                    if ($item_query) {
-                        $item_row = mysqli_fetch_assoc($item_query);
-                        $item_id = $item_row['id'];
-                        $item_quantity = $selected_quantity;
-                
-                        // Εισάγετε το επιλεγμένο αντικείμενο και την ποσότητά του στον πίνακα "cargo"
-                        $insert_query = "INSERT INTO cargo (item_ids, quantity) VALUES ('$item_id', '$item_quantity')";
-                        $insert_result = mysqli_query($conn, $insert_query);
-                
-                        if ($insert_result) {
-                            // Ενημερώστε την ποσότητα του επιλεγμένου αντικειμένου στον πίνακα "items"
-                            $new_quantity = $item_row['quantity'] - $item_quantity;
-                            $update_query = "UPDATE items SET quantity = '$new_quantity' WHERE id = '$item_id'";
-                            $update_result = mysqli_query($conn, $update_query);
-                
-                            if ($update_result) {
-                                echo "Το αντικείμενο φορτώθηκε με επιτυχία.";
-                            } else {
-                                echo "Σφάλμα κατά την ενημέρωση της ποσότητας του αντικειμένου.";
-                            }
-                        } else {
-                            echo "Σφάλμα κατά την φόρτωση του αντικειμένου.";
-                        }
-                    } else {
-                        echo "Το αντικείμενο δεν είναι διαθέσιμο ή η ποσότητα δεν επαρκεί.";
-                    }
-                }    
-
-                function unloadItems() {
-                    global $conn;
-
-                    // Επιλέγουμε τα αντικείμενα που εκφορτώνονται από τον πίνακα cargo
-                    $cargo_query = "SELECT * FROM cargo";
-                    $cargo_result = mysqli_query($conn, $cargo_query);
-
-                    if ($cargo_result) {
-                        while ($row = mysqli_fetch_assoc($cargo_result)) {
-                            $item_id = $row['item_ids'];
-                            $quantity = $row['quantity'];
-                    
-                            foreach($row as $r){
-                                // Ενημέρωση της ποσότητας του αντικειμένου στον πίνακα items
-                                $restore_items_query = "UPDATE items SET quantity = '{$r['quantity']}' ";
-                                $restore_items_result = mysqli_query($conn, $restore_items_query);
-
-                                if (!$restore_items_result) {
-                                    echo "Σφάλμα κατά τη μεταφορά των αντικειμένων πίσω στον πίνακα Items.";
-                                    return;
-                                }
-                            }   
-                        }
-
-                        // Αφαίρεση όλων των αντικειμένων από το φορτίο του διασώστη
-                        $clear_cargo_query = "DELETE FROM cargo";
-                        $clear_cargo_result = mysqli_query($conn, $clear_cargo_query);
-
-                        // Έλεγχος επιτυχίας της διαγραφής του φορτίου
-                        if ($clear_cargo_result) {
-                            echo "Items unloaded successfully.";
-                        } else {
-                            echo "Error during unlooad";
-                        }
-                    } else {
-                        echo "Δεν υπάρχουν αντικείμενα στο φορτίο για εκφόρτωση.";
-                    }
-                    
-                }
-            ?>
-            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-
-                <label for="unload_item">Select Item to Unload:</label>
-                <select name="unload_item" id="unload_item">
-                    <?php
-                    $cargo_query = mysqli_query($conn, "SELECT * FROM cargo");
+            
+            <br><br>
+            
+            <!-- Form για εκφόρτωση αντικειμένων -->
+            <label for="unload_item">Select Item to Unload:</label>
+            <select name="unload_item" id="unload_item">
+                <?php
+                    $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = $user_id");
                     if ($cargo_query) {
                         while ($cargo_row = mysqli_fetch_assoc($cargo_query)) {
                             $item_id = $cargo_row['item_ids'];
@@ -183,15 +190,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             echo "<option value='" . $item_id . "'>" . $item_name . "</option>";
                         }
                     }
-                    ?>
-                </select>
+                ?>
+            </select>
 
-                <label for="unload_quantity">Quantity to Unload:</label>
-                <input type="number" id="unload_quantity" name="unload_quantity" min="0" required>
-
-                <input type="submit" name="unload_items" value="Unload">
-
-            </form>
+            <label for="unload_quantity">Quantity to Unload:</label>
+            <input type="number" id="unload_quantity" name="unload_quantity" min="1">
+            <input type="submit" name="unload_items" value="Unload">
         </form>
     </div>
 </body>
