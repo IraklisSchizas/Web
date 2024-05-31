@@ -110,7 +110,7 @@ function unloadItems() {
             $quantity = $row['quantity'];
 
             // Ενημέρωση του πίνακα Items για την αύξηση της ποσότητας του αντικειμένου
-            $update_query = "UPDATE items SET quantity = quantity + $quantity WHERE id = $item_id";
+            $update_query = "UPDATE items SET quantity = quantity + $quantity WHERE id = $item_ids";
             $update_result = mysqli_query($conn, $update_query);
 
             // Έλεγχος επιτυχίας της ενημέρωσης
