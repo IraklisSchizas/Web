@@ -111,7 +111,7 @@ function unloadItems() {
     global $conn;
 
     // Επιλέγουμε τα αντικείμενα που εκφορτώνονται από τον πίνακα cargo
-    $cargo_query = "SELECT items_id, quantity FROM cargo";
+    $cargo_query = "SELECT item_ids, quantity FROM cargo";
     $cargo_result = mysqli_query($conn, $cargo_query);
 
     if ($cargo_result) {
