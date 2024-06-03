@@ -129,7 +129,7 @@ if ($tasks_result->num_rows > 0) {
                     </div>
                 </div>
                 <div id="map"></div>
-                <a href="rescuer_page.php" class="btn btn-primary mt-4">Πίσω στη σελίδα Διασώστη</a>
+                <a href="rescuer_page.php" class="btn btn-primary mt-4">Πίσω στη σελίδα Διασώστη</a><br><br>
             </div>
             <div class="col-md-4">
                 <h3 class="my-4">Τρέχοντα Tasks</h3>
