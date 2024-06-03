@@ -26,13 +26,13 @@ $sql = "SELECT u.id, u.username, u.latitude, u.longitude, c.item_ids, c.quantity
 $result = mysqli_query($conn, $sql);
 
 $vehicles = array();
+$rescuer_id = null;
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        // Split the item_ids into individual items
+        $rescuer_id = $row['id'];
         $item_ids = explode(',', $row['item_ids']);
         foreach ($item_ids as $item_id) {
-            // Create a separate entry for each item_id
             $vehicle = $row;
             $vehicle['item_id'] = trim($item_id);
             $vehicles[] = $vehicle;
@@ -43,31 +43,23 @@ if ($result->num_rows > 0) {
     exit();
 }
 
-// SQL queries to get offers and requests, including those with rescuer_id = 0
-$offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, o.load_date, o.rescuer_id, u.latitude, u.longitude, u.name, u.surname, u.phone, IFNULL(re.username, 'None') as rescuer_username
-                 FROM offers o 
-                 JOIN users u ON o.civilian_id = u.id
-                 LEFT JOIN users re ON o.rescuer_id = re.id";
-$requests_query = "SELECT r.id, r.civilian_id, r.date, r.item_id, r.quantity, r.load_date, r.rescuer_id, u.latitude, u.longitude, u.name, u.surname, u.phone, IFNULL(re.username, 'None') as rescuer_username
-                   FROM requests r 
-                   JOIN users u ON r.civilian_id = u.id
-                   LEFT JOIN users re ON r.rescuer_id = re.id";
+// Fetch tasks from offers and requests tables
+$tasks_query = "
+    SELECT 'offer' AS type, o.id, o.civilian_id, o.date, o.item_id, o.quantity, u.name, u.surname, u.phone
+    FROM offers o
+    JOIN users u ON o.civilian_id = u.id
+    WHERE o.rescuer_id = $rescuer_id AND o.rescuer_id = '0'
+    UNION ALL
+    SELECT 'request' AS type, r.id, r.civilian_id, r.date, r.item_id, r.quantity, u.name, u.surname, u.phone
+    FROM requests r
+    JOIN users u ON r.civilian_id = u.id
+    WHERE r.rescuer_id = $rescuer_id AND r.rescuer_id = '0'";
+$tasks_result = mysqli_query($conn, $tasks_query);
 
-$offers_result = mysqli_query($conn, $offers_query);
-$requests_result = mysqli_query($conn, $requests_query);
-
-$offers = array();
-$requests = array();
-
-if ($offers_result->num_rows > 0) {
-    while ($row = $offers_result->fetch_assoc()) {
-        $offers[] = $row;
-    }
-}
-
-if ($requests_result->num_rows > 0) {
-    while ($row = $requests_result->fetch_assoc()) {
-        $requests[] = $row;
+$tasks = array();
+if ($tasks_result->num_rows > 0) {
+    while ($row = $tasks_result->fetch_assoc()) {
+        $tasks[] = $row;
     }
 }
 ?>
@@ -78,7 +70,7 @@ if ($requests_result->num_rows > 0) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Χάρτης Διαχειριστή</title>
+    <title>Χάρτης Διασώστη</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -86,7 +78,7 @@ if ($requests_result->num_rows > 0) {
     <!-- Leaflet CSS and JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Προσθήκη jQuery για το Ajax -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
@@ -96,46 +88,74 @@ if ($requests_result->num_rows > 0) {
         .filters { margin-bottom: 20px; }
         .filter-group { margin-bottom: 10px; }
         .content { max-width: 100%; }
+        .tasks-panel { max-height: 600px; overflow-y: auto; }
     </style>
 </head>
 <body>
     <div class="container-fluid">  
-        <div class="content">
-            <h3 class="my-4">Χάρτης Διασώστη</h3>
-            <div class="filters">
-                <div class="filter-group">
-                    <label for="vehicle-status">Φίλτρο Οχημάτων:</label>
-                    <select id="vehicle-status" class="form-control">
-                        <option value="all">Όλα</option>
-                        <option value="loaded">Φορτωμένα</option>
-                        <option value="unloaded">Άδεια</option>
-                    </select>
+        <div class="content row">
+            <div class="col-md-8">
+                <h3 class="my-4">Χάρτης Διασώστη</h3>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="vehicle-status">Φίλτρο Οχημάτων:</label>
+                        <select id="vehicle-status" class="form-control">
+                            <option value="all">Όλα</option>
+                            <option value="loaded">Φορτωμένα</option>
+                            <option value="unloaded">Άδεια</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Φίλτρο Προσφορών:</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="offer-with-rescuer" checked>
+                            <label class="form-check-label" for="offer-with-rescuer">Με Διασώστη</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="offer-without-rescuer" checked>
+                            <label class="form-check-label" for="offer-without-rescuer">Χωρίς Διασώστη</label>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <label>Φίλτρο Αιτημάτων:</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="request-with-rescuer" checked>
+                            <label class="form-check-label" for="request-with-rescuer">Με Διασώστη</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="request-without-rescuer" checked>
+                            <label class="form-check-label" for="request-without-rescuer">Χωρίς Διασώστη</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="filter-group">
-                    <label>Φίλτρο Προσφορών:</label><br>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="offer-with-rescuer" checked>
-                        <label class="form-check-label" for="offer-with-rescuer">Με Διασώστη</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="offer-without-rescuer" checked>
-                        <label class="form-check-label" for="offer-without-rescuer">Χωρίς Διασώστη</label>
-                    </div>
-                </div>
-                <div class="filter-group">
-                    <label>Φίλτρο Αιτημάτων:</label><br>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="request-with-rescuer" checked>
-                        <label class="form-check-label" for="request-with-rescuer">Με Διασώστη</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="request-without-rescuer" checked>
-                        <label class="form-check-label" for="request-without-rescuer">Χωρίς Διασώστη</label>
-                    </div>
+                <div id="map"></div>
+                <a href="rescuer_page.php" class="btn btn-primary mt-4">Πίσω στη σελίδα Διασώστη</a>
+            </div>
+            <div class="col-md-4">
+                <h3 class="my-4">Τρέχοντα Tasks</h3>
+                <div class="tasks-panel">
+                    <?php if (count($tasks) > 0): ?>
+                        <ul class="list-group">
+                            <?php foreach ($tasks as $task): ?>
+                                <li class="list-group-item">
+                                    <h5>Task ID: <?php echo $task['id']; ?></h5>
+                                    <p>Όνομα: <?php echo $task['name']; ?></p>
+                                    <p>Επώνυμο: <?php echo $task['surname']; ?></p>
+                                    <p>Τηλέφωνο: <?php echo $task['phone']; ?></p>
+                                    <p>Ημερομηνία καταχώρησης: <?php echo $task['date']; ?></p>
+                                    <p>Αντικείμενο: <?php echo $task['item_id']; ?></p>
+                                    <p>Ποσότητα: <?php echo $task['quantity']; ?></p>
+                                    <p>Είδος: <?php echo $task['type']; ?></p>
+                                    <button class="btn btn-success btn-sm" onclick="completeTask(<?php echo $task['id']; ?>, '<?php echo $task['type']; ?>')">Ολοκληρώθηκε</button>
+                                    <button class="btn btn-danger btn-sm" onclick="cancelTask(<?php echo $task['id']; ?>, '<?php echo $task['type']; ?>')">Ακύρωση</button>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p>Δεν υπάρχουν τρέχοντα tasks.</p>
+                    <?php endif; ?>
                 </div>
             </div>
-            <div id="map"></div>
-            <a href="rescuer_page.php" class="btn btn-primary mt-4">Πίσω στη σελίδα Διασώστη</a>
         </div>
     </div>
 
@@ -206,40 +226,48 @@ if ($requests_result->num_rows > 0) {
             requestMarkers.push(requestMarker);
         <?php endforeach; ?>
 
-        function takeOffer(offerId) {
-            $.ajax({
-                url: 'update_request_offer.php',
-                type: 'POST',
-                data: {
-                    action: 'take_offer',
-                    id: offerId,
-                    rescuer_id: <?php echo $vehicles[0]['id']; ?>
-                },
-                success: function(response) {
-                    alert('Η προσφορά αναλήφθηκε επιτυχώς.');
-                    location.reload();
-                },
-                error: function(xhr, status, error) {
-                    alert('Σφάλμα κατά την ανάληψη της προσφοράς.');
-                }
-            });
+        function completeTask(taskId, type) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+                    var rescuerLat = <?php echo $user_latitude; ?>;
+                    var rescuerLng = <?php echo $user_longitude; ?>;
+                    var distance = Math.sqrt(Math.pow(lat - rescuerLat, 2) + Math.pow(lng - rescuerLng, 2)) * 111139; // distance in meters
+
+                    if (distance <= 50) {
+                        $.ajax({
+                            url: 'update_task_status.php',
+                            type: 'POST',
+                            data: { action: 'complete', id: taskId, type: type },
+                            success: function(response) {
+                                alert('Το task ολοκληρώθηκε επιτυχώς.');
+                                location.reload();
+                            },
+                            error: function(xhr, status, error) {
+                                alert('Σφάλμα κατά την ολοκλήρωση του task.');
+                            }
+                        });
+                    } else {
+                        alert('Πρέπει να βρίσκεστε σε απόσταση 50 μέτρων από το task για να το ολοκληρώσετε.');
+                    }
+                });
+            } else {
+                alert('Η γεωγραφική τοποθεσία δεν υποστηρίζεται από τον περιηγητή σας.');
+            }
         }
 
-        function takeRequest(requestId) {
+        function cancelTask(taskId, type) {
             $.ajax({
-                url: 'update_request_offer.php',
+                url: 'update_task_status.php',
                 type: 'POST',
-                data: {
-                    action: 'take_request',
-                    id: requestId,
-                    rescuer_id: <?php echo $vehicles[0]['id']; ?>
-                },
+                data: { action: 'cancel', id: taskId, type: type },
                 success: function(response) {
-                    alert('Το αίτημα αναλήφθηκε επιτυχώς.');
+                    alert('Το task ακυρώθηκε επιτυχώς.');
                     location.reload();
                 },
                 error: function(xhr, status, error) {
-                    alert('Σφάλμα κατά την ανάληψη του αιτήματος.');
+                    alert('Σφάλμα κατά την ακύρωση του task.');
                 }
             });
         }
