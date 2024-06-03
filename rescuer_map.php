@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_name'])) {
 
 $user_name = $_SESSION['user_name'];
 
-// SQL query to get the user location coordinates
+// SQL query to get the base location coordinates
 $user_query = $conn->prepare("SELECT latitude, longitude, id FROM users WHERE username = ?");
 $user_query->bind_param('s', $user_name);
 $user_query->execute();
@@ -21,7 +21,7 @@ $user_longitude = $user_row['longitude'];
 $admin_id = $user_row['id'];
 
 // SQL query to get the base location coordinates
-$admin_query = $conn->prepare("SELECT latitude, longitude, id FROM users WHERE username = 'admin' ");
+$admin_query = $conn->prepare("SELECT latitude, longitude, id FROM users WHERE username = 'admin'");
 $admin_query->execute();
 $admin_result = $admin_query->get_result();
 $admin_row = $admin_result->fetch_assoc();
@@ -208,6 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
                 <div id="map"></div>
+                <a href="rescuer_page.php" class="btn btn-primary mt-4">Πίσω στη σελίδα Διασώστη</a>
             </div>
             <div class="col-md-4">
                 <div class="tasks-panel mt-4">
@@ -253,6 +254,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }).addTo(map);
 
             var userMarker = L.marker([<?= $user_latitude ?>, <?= $user_longitude ?>], { draggable: true }).addTo(map);
+
+            var baseIcon = L.icon({
+                iconUrl: 'icons/base.png',
+                iconSize: [50, 50],
+                iconAnchor: [25, 50],
+                popupAnchor: [0, -50]
+            });
+
+            var baseMarker = L.marker([<?= $admin_latitude ?>, <?= $admin_longitude ?>], { icon: baseIcon }).addTo(map);
+            baseMarker.bindPopup('<b>Βάση</b>');
 
             userMarker.on('dragend', function(event) {
                 var marker = event.target;
@@ -335,7 +346,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             function clearMarkers() {
                 map.eachLayer(function (layer) {
-                    if (layer instanceof L.Marker && layer != userMarker) {
+                    if (layer instanceof L.Marker && layer != userMarker && layer != baseMarker) {
                         map.removeLayer(layer);
                     }
                 });
