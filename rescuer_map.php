@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_name'])) {
 
 $user_name = $_SESSION['user_name'];
 
-// SQL query to get the base location coordinates
+// SQL query to get the user location coordinates
 $user_query = $conn->prepare("SELECT latitude, longitude, id FROM users WHERE username = ?");
 $user_query->bind_param('s', $user_name);
 $user_query->execute();
