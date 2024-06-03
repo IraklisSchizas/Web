@@ -1,4 +1,4 @@
-// Initialize the map
+/*// Initialize the map
 var map = L.map('map').setView([38.24664, 21.734574], 14);
 
 // Add the OpenStreetMap layer
@@ -48,4 +48,4 @@ function fetchVehicles() {
 fetchVehicles();
 
 // Ανανέωση των δεδομένων κάθε 30 δευτερόλεπτα
-setInterval(fetchVehicles, 30000);
+setInterval(fetchVehicles, 30000);*/
