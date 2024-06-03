@@ -10,14 +10,23 @@ if (!isset($_SESSION['user_name'])) {
 
 $user_name = $_SESSION['user_name'];
 
-// SQL query to get the base location coordinates
-$user_query = $conn->prepare("SELECT latitude, longitude, id FROM users WHERE username = 'admin'");
+// SQL query to get the user location coordinates
+$user_query = $conn->prepare("SELECT latitude, longitude, id FROM users WHERE username = ?");
+$user_query->bind_param('s', $user_name);
 $user_query->execute();
 $user_result = $user_query->get_result();
 $user_row = $user_result->fetch_assoc();
 $user_latitude = $user_row['latitude'];
 $user_longitude = $user_row['longitude'];
 $admin_id = $user_row['id'];
+
+// SQL query to get the base location coordinates
+$admin_query = $conn->prepare("SELECT latitude, longitude, id FROM users WHERE username = 'admin' ");
+$admin_query->execute();
+$admin_result = $admin_query->get_result();
+$admin_row = $admin_result->fetch_assoc();
+$admin_latitude = $admin_row['latitude'];
+$admin_longitude = $admin_row['longitude'];
 
 // SQL query to get vehicle data and related cargo information
 $sql = "SELECT u.id, u.username, u.latitude, u.longitude, c.item_ids, c.quantity
@@ -47,13 +56,13 @@ if ($result->num_rows > 0) {
     exit();
 }
 
-// Fetch offers and requests from database
-$offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, u.name, u.surname, u.phone, u.latitude, u.longitude
+// Fetch offers and requests from the database
+$offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, u.name, u.surname, u.phone, u.latitude, u.longitude, i.name AS item_name, o.rescuer_id
                  FROM offers o 
                  JOIN users u ON o.civilian_id = u.id
-                 WHERE o.rescuer_id = ?";
+                 JOIN items i ON o.item_id = i.id
+                 WHERE o.completed = 0";
 $stmt_offers = $conn->prepare($offers_query);
-$stmt_offers->bind_param('i', $rescuer_id);
 $stmt_offers->execute();
 $offers_result = $stmt_offers->get_result();
 
@@ -64,12 +73,12 @@ if ($offers_result->num_rows > 0) {
     }
 }
 
-$requests_query = "SELECT r.id, r.civilian_id, r.date, r.item_id, r.quantity, u.name, u.surname, u.phone, u.latitude, u.longitude
+$requests_query = "SELECT r.id, r.civilian_id, r.date, r.item_id, r.quantity, u.name, u.surname, u.phone, u.latitude, u.longitude, i.name AS item_name, r.rescuer_id
                    FROM requests r
                    JOIN users u ON r.civilian_id = u.id
-                   WHERE r.rescuer_id = ?";
+                   JOIN items i ON r.item_id = i.id
+                   WHERE r.completed = 0";
 $stmt_requests = $conn->prepare($requests_query);
-$stmt_requests->bind_param('i', $rescuer_id);
 $stmt_requests->execute();
 $requests_result = $stmt_requests->get_result();
 
@@ -80,34 +89,65 @@ if ($requests_result->num_rows > 0) {
     }
 }
 
-// Fetch offers and requests from database where rescuer_id != user.id
-$not_offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, u.name, u.surname, u.phone, u.latitude, u.longitude
-                 FROM offers o
-                 JOIN users u ON o.civilian_id = u.id
-                 WHERE o.rescuer_id = '0'";
-$stmt_offers = $conn->prepare($not_offers_query);
-$stmt_offers->execute();
-$not_offers_result = $stmt_offers->get_result();
-
-$not_offers = array();
-if ($not_offers_result->num_rows > 0) {
-    while ($row = $not_offers_result->fetch_assoc()) {
-        $not_offers[] = $row;
-    }
-}
-
-$not_requests_query = "SELECT r.id, r.civilian_id, r.date, r.item_id, r.quantity, u.name, u.surname, u.phone, u.latitude, u.longitude
-                   FROM requests r
-                   JOIN users u ON r.civilian_id = u.id
-                   WHERE r.rescuer_id = '0'";
-$stmt_requests = $conn->prepare($not_requests_query);
-$stmt_requests->execute();
-$not_requests_result = $stmt_requests->get_result();
-
-$not_requests = array();
-if ($not_requests_result->num_rows > 0) {
-    while ($row = $not_requests_result->fetch_assoc()) {
-        $not_requests[] = $row;
+// Handle AJAX requests for updating location and assigning/cancelling/completing rescuer
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['action'])) {
+        if ($_POST['action'] === 'update_location') {
+            $new_latitude = $_POST['latitude'];
+            $new_longitude = $_POST['longitude'];
+            $update_query = $conn->prepare("UPDATE users SET latitude = ?, longitude = ? WHERE id = ?");
+            $update_query->bind_param('ddi', $new_latitude, $new_longitude, $admin_id);
+            if ($update_query->execute()) {
+                echo "Location updated successfully.";
+            } else {
+                echo "Error updating location.";
+            }
+            exit();
+        } elseif ($_POST['action'] === 'assign_rescuer') {
+            $type = $_POST['type'];
+            $id = $_POST['id'];
+            $current_date = date('Y-m-d H:i:s');
+            if ($type === 'offer') {
+                $assign_query = $conn->prepare("UPDATE offers SET rescuer_id = ?, load_date = ? WHERE id = ?");
+                $assign_query->bind_param('isi', $admin_id, $current_date, $id);
+            } else {
+                $assign_query = $conn->prepare("UPDATE requests SET rescuer_id = ?, load_date = ? WHERE id = ?");
+                $assign_query->bind_param('isi', $admin_id, $current_date, $id);
+            }
+            if ($assign_query->execute()) {
+                echo "Rescuer assigned successfully.";
+            } else {
+                echo "Error assigning rescuer.";
+            }
+            exit();
+        } elseif ($_POST['action'] === 'complete_task' || $_POST['action'] === 'cancel_task') {
+            $type = $_POST['type'];
+            $id = $_POST['id'];
+            $rescuer_id = $_POST['action'] === 'cancel_task' ? 0 : $admin_id;
+            $current_date = date('Y-m-d H:i:s');
+            if ($_POST['action'] === 'complete_task') {
+                if ($type === 'offer') {
+                    $update_query = $conn->prepare("UPDATE offers SET completed = 1, complete_date = ? WHERE id = ?");
+                    $update_query->bind_param('si', $current_date, $id);
+                } else {
+                    $update_query = $conn->prepare("UPDATE requests SET completed = 1, complete_date = ? WHERE id = ?");
+                    $update_query->bind_param('si', $current_date, $id);
+                }
+            } else {
+                if ($type === 'offer') {
+                    $update_query = $conn->prepare("UPDATE offers SET rescuer_id = ? WHERE id = ?");
+                } else {
+                    $update_query = $conn->prepare("UPDATE requests SET rescuer_id = ? WHERE id = ?");
+                }
+                $update_query->bind_param('ii', $rescuer_id, $id);
+            }
+            if ($update_query->execute()) {
+                echo "Task updated successfully.";
+            } else {
+                echo "Error updating task.";
+            }
+            exit();
+        }
     }
 }
 ?>
@@ -142,16 +182,8 @@ if ($not_requests_result->num_rows > 0) {
     <div class="container-fluid">  
         <div class="content row">
             <div class="col-md-8">
-            <h3 class="my-4">Χάρτης Διασώστη</h3>
-            <div class="filters">
-                <div class="filter-group">
-                    <label for="vehicle-status">Φίλτρο Οχημάτων:</label>
-                    <select id="vehicle-status" class="form-control">
-                        <option value="all">Όλα</option>
-                        <option value="loaded">Φορτωμένα</option>
-                        <option value="unloaded">Άδεια</option>
-                    </select>
-                </div>
+                <h3 class="my-4">Χάρτης Διασώστη</h3>
+                <div class="filters">
                     <div class="filter-group">
                         <label>Φίλτρο Προσφορών:</label><br>
                         <div class="form-check form-check-inline">
@@ -176,155 +208,152 @@ if ($not_requests_result->num_rows > 0) {
                     </div>
                 </div>
                 <div id="map"></div>
-                <a href="rescuer_page.php" class="btn btn-primary mt-4">Πίσω στη σελίδα Διασώστη</a><br><br>
             </div>
             <div class="col-md-4">
-                <h3 class="my-4">Τρέχοντα Offers</h3>
-                <div class="tasks-panel">
-                    <?php if (count($offers) > 0): ?>
+                <div class="tasks-panel mt-4">
+                    <h5>Φορτωμένα Tasks:</h5>
+                    <?php if (!empty($offers) || !empty($requests)): ?>
                         <ul class="list-group">
                             <?php foreach ($offers as $offer): ?>
-                                <li class="list-group-item">
-                                    <h5>Offer ID: <?php echo $offer['id']; ?></h5>
-                                    <p>Όνομα: <?php echo $offer['name']; ?></p>
-                                    <p>Επώνυμο: <?php echo $offer['surname']; ?></p>
-                                    <p>Τηλέφωνο: <?php echo $offer['phone']; ?></p>
-                                    <p>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?></p>
-                                    <p>Αντικείμενο: <?php echo $offer['item_id']; ?></p>
-                                    <p>Ποσότητα: <?php echo $offer['quantity']; ?></p>
-                                    <button class="btn btn-success btn-sm" onclick="completeOffer(<?php echo $offer['id']; ?>)">Ολοκληρώθηκε</button>
-                                    <button class="btn btn-danger btn-sm" onclick="cancelOffer(<?php echo $offer['id']; ?>)">Ακύρωση</button>
-                                </li>
+                                <?php if ($offer['rescuer_id'] == $rescuer_id): ?>
+                                    <li class="list-group-item">
+                                        <b>Offer:</b> <?= $offer['item_name'] ?><br>
+                                        <b>Όνομα:</b> <?= $offer['name'] ?> <?= $offer['surname'] ?><br>
+                                        <b>Τηλέφωνο:</b> <?= $offer['phone'] ?><br>
+                                        <button class="btn btn-success complete-btn" data-type="offer" data-id="<?= $offer['id'] ?>">Ολοκλήρωση</button>
+                                        <button class="btn btn-danger cancel-btn" data-type="offer" data-id="<?= $offer['id'] ?>">Ακύρωση</button>
+                                    </li>
+                                <?php endif; ?>
                             <?php endforeach; ?>
-                        </ul>
-                    <?php else: ?>
-                        <p>Δεν υπάρχουν τρέχοντα offers.</p>
-                    <?php endif; ?>
-                </div>
-                <h3 class="my-4">Τρέχοντα Requests</h3>
-                <div class="tasks-panel">
-                    <?php if (count($requests) > 0): ?>
-                        <ul class="list-group">
                             <?php foreach ($requests as $request): ?>
-                                <li class="list-group-item">
-                                    <h5>Request ID: <?php echo $request['id']; ?></h5>
-                                    <p>Όνομα: <?php echo $request['name']; ?></p>
-                                    <p>Επώνυμο: <?php echo $request['surname']; ?></p>
-                                    <p>Τηλέφωνο: <?php echo $request['phone']; ?></p>
-                                    <p>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?></p>
-                                    <p>Αντικείμενο: <?php echo $request['item_id']; ?></p>
-                                    <p>Ποσότητα: <?php echo $request['quantity']; ?></p>
-                                    <button class="btn btn-success btn-sm" onclick="completeRequest(<?php echo $request['id']; ?>)">Ολοκληρώθηκε</button>
-                                    <button class="btn btn-danger btn-sm" onclick="cancelRequest(<?php echo $request['id']; ?>)">Ακύρωση</button>
-                                </li>
+                                <?php if ($request['rescuer_id'] == $rescuer_id): ?>
+                                    <li class="list-group-item">
+                                        <b>Request:</b> <?= $request['item_name'] ?><br>
+                                        <b>Όνομα:</b> <?= $request['name'] ?> <?= $request['surname'] ?><br>
+                                        <b>Τηλέφωνο:</b> <?= $request['phone'] ?><br>
+                                        <button class="btn btn-success complete-btn" data-type="request" data-id="<?= $request['id'] ?>">Ολοκλήρωση</button>
+                                        <button class="btn btn-danger cancel-btn" data-type="request" data-id="<?= $request['id'] ?>">Ακύρωση</button>
+                                    </li>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         </ul>
                     <?php else: ?>
-                        <p>Δεν υπάρχουν τρέχοντα requests.</p>
+                        <p>No tasks assigned to this rescuer.</p>
                     <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
     <script>
-        // Initialize the map
-        var map = L.map('map').setView([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], 13);
+        document.addEventListener("DOMContentLoaded", function() {
+            var map = L.map('map').setView([<?= $user_latitude ?>, <?= $user_longitude ?>], 13);
 
-        // Add OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-        }).addTo(map);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
 
-        // Add vehicle markers
-        <?php foreach ($vehicles as $vehicle): ?>
-        var vehicleMarker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>]).addTo(map)
-            .bindPopup('<b>Όχημα:</b> <?php echo $vehicle['username']; ?><br><b>Αντικείμενο:</b> <?php echo $vehicle['item_id']; ?><br><b>Ποσότητα:</b> <?php echo $vehicle['quantity']; ?>');
-        <?php endforeach; ?>
+            var userMarker = L.marker([<?= $user_latitude ?>, <?= $user_longitude ?>], { draggable: true }).addTo(map);
 
-        // Add offer markers
-        <?php foreach ($offers as $offer): ?>
-        var offerMarker = L.marker([<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>], { icon: L.icon({ iconUrl: 'images/offer-icon.png', iconSize: [35, 35], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] }) }).addTo(map)
-            .bindPopup('<b>Offer:</b> <?php echo $offer['id']; ?><br><b>Όνομα:</b> <?php echo $offer['name']; ?><br><b>Αντικείμενο:</b> <?php echo $offer['item_id']; ?><br><b>Ποσότητα:</b> <?php echo $offer['quantity']; ?>');
-        <?php endforeach; ?>
+            userMarker.on('dragend', function(event) {
+                var marker = event.target;
+                var position = marker.getLatLng();
+                updateUserLocation(position.lat, position.lng);
+            });
 
-        // Add request markers
-        <?php foreach ($requests as $request): ?>
-        var requestMarker = L.marker([<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>], { icon: L.icon({ iconUrl: 'images/request-icon.png', iconSize: [35, 35], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] }) }).addTo(map)
-            .bindPopup('<b>Request:</b> <?php echo $request['id']; ?><br><b>Όνομα:</b> <?php echo $request['name']; ?><br><b>Αντικείμενο:</b> <?php echo $request['item_id']; ?><br><b>Ποσότητα:</b> <?php echo $request['quantity']; ?>');
-        <?php endforeach; ?>
-
-        // Add not offer markers
-        <?php foreach ($not_offers as $not_offer): ?>
-        var not_offerMarker = L.marker([<?php echo $not_offer['latitude']; ?>, <?php echo $not_offer['longitude']; ?>], { icon: L.icon({ iconUrl: 'images/not-offer-icon.png', iconSize: [35, 35], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] }) }).addTo(map)
-            .bindPopup('<b>Offer:</b> <?php echo $not_offer['id']; ?><br><b>Όνομα:</b> <?php echo $not_offer['name']; ?><br><b>Αντικείμενο:</b> <?php echo $not_offer['item_id']; ?><br><b>Ποσότητα:</b> <?php echo $not_offer['quantity']; ?>');
-        <?php endforeach; ?>
-
-        // Add not request markers
-        <?php foreach ($not_requests as $not_request): ?>
-        var not_requestMarker = L.marker([<?php echo $not_request['latitude']; ?>, <?php echo $not_request['longitude']; ?>], { icon: L.icon({ iconUrl: 'images/not-request-icon.png', iconSize: [35, 35], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] }) }).addTo(map)
-            .bindPopup('<b>Request:</b> <?php echo $not_request['id']; ?><br><b>Όνομα:</b> <?php echo $not_request['name']; ?><br><b>Αντικείμενο:</b> <?php echo $not_request['item_id']; ?><br><b>Ποσότητα:</b> <?php echo $not_request['quantity']; ?>');
-        <?php endforeach; ?>
-    
-    function completeOffer(offerId) {
-        $.ajax({
-            url: 'actions.php',
-            type: 'POST',
-            data: { action: 'completeOffer', offerId: offerId },
-            success: function(response) {
-                if(response == 'success') {
-                    location.reload();
-                } else {
-                    alert('Error completing offer');
-                }
+            function updateUserLocation(latitude, longitude) {
+                $.post('rescuer_map.php', { action: 'update_location', latitude: latitude, longitude: longitude }, function(response) {
+                    console.log(response);
+                });
             }
-        });
-    }
 
-    function cancelOffer(offerId) {
-        $.ajax({
-            url: 'actions.php',
-            type: 'POST',
-            data: { action: 'cancelOffer', offerId: offerId },
-            success: function(response) {
-                if(response == 'success') {
+            $(".complete-btn, .cancel-btn").on("click", function() {
+                var type = $(this).data("type");
+                var id = $(this).data("id");
+                var action = $(this).hasClass("complete-btn") ? "complete_task" : "cancel_task";
+                $.post('rescuer_map.php', { action: action, type: type, id: id }, function(response) {
+                    console.log(response);
                     location.reload();
-                } else {
-                    alert('Error cancelling offer');
-                }
-            }
-        });
-    }
+                });
+            });
 
-    function completeRequest(requestId) {
-        $.ajax({
-            url: 'actions.php',
-            type: 'POST',
-            data: { action: 'completeRequest', requestId: requestId },
-            success: function(response) {
-                if(response == 'success') {
-                    location.reload();
-                } else {
-                    alert('Error completing request');
-                }
-            }
-        });
-    }
+            var assignedOfferIcon = L.icon({
+                iconUrl: 'icons/assigned_offer.png',
+                iconSize: [35, 35],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
 
-    function cancelRequest(requestId) {
-        $.ajax({
-            url: 'actions.php',
-            type: 'POST',
-            data: { action: 'cancelRequest', requestId: requestId },
-            success: function(response) {
-                if(response == 'success') {
-                    location.reload();
-                } else {
-                    alert('Error cancelling request');
-                }
-            }
-        });
-    }
-</script>
+            var unassignedOfferIcon = L.icon({
+                iconUrl: 'icons/unassigned_offer.png',
+                iconSize: [35, 35],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
 
+            var assignedRequestIcon = L.icon({
+                iconUrl: 'icons/assigned_request.png',
+                iconSize: [35, 35],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            var unassignedRequestIcon = L.icon({
+                iconUrl: 'icons/unassigned_request.png',
+                iconSize: [35, 35],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            function loadMarkers() {
+                clearMarkers();
+
+                var showOfferWithRescuer = $('#offer-with-rescuer').prop('checked');
+                var showOfferWithoutRescuer = $('#offer-without-rescuer').prop('checked');
+                var showRequestWithRescuer = $('#request-with-rescuer').prop('checked');
+                var showRequestWithoutRescuer = $('#request-without-rescuer').prop('checked');
+
+                $.each(<?= json_encode($offers) ?>, function(index, offer) {
+                    if ((offer.rescuer_id != 0 && showOfferWithRescuer) || (offer.rescuer_id == 0 && showOfferWithoutRescuer)) {
+                        var icon = offer.rescuer_id == 0 ? unassignedOfferIcon : assignedOfferIcon;
+                        var marker = L.marker([offer.latitude, offer.longitude], { icon: icon }).addTo(map);
+                        marker.bindPopup('<b>Προσφορά</b><br>Όνομα: ' + offer.name + ' ' + offer.surname + '<br>Τηλέφωνο: ' + offer.phone + '<br>Αντικείμενο: ' + offer.item_name + '<br>Ποσότητα: ' + offer.quantity + '<br><button onclick="assignRescuer(\'offer\', ' + offer.id + ')">Ανάθεση</button>');
+                    }
+                });
+
+                $.each(<?= json_encode($requests) ?>, function(index, request) {
+                    if ((request.rescuer_id != 0 && showRequestWithRescuer) || (request.rescuer_id == 0 && showRequestWithoutRescuer)) {
+                        var icon = request.rescuer_id == 0 ? unassignedRequestIcon : assignedRequestIcon;
+                        var marker = L.marker([request.latitude, request.longitude], { icon: icon }).addTo(map);
+                        marker.bindPopup('<b>Αίτημα</b><br>Όνομα: ' + request.name + ' ' + request.surname + '<br>Τηλέφωνο: ' + request.phone + '<br>Αντικείμενο: ' + request.item_name + '<br>Ποσότητα: ' + request.quantity + '<br><button onclick="assignRescuer(\'request\', ' + request.id + ')">Ανάθεση</button>');
+                    }
+                });
+            }
+
+            function clearMarkers() {
+                map.eachLayer(function (layer) {
+                    if (layer instanceof L.Marker && layer != userMarker) {
+                        map.removeLayer(layer);
+                    }
+                });
+            }
+
+            loadMarkers();
+
+            $('#offer-with-rescuer, #offer-without-rescuer, #request-with-rescuer, #request-without-rescuer').change(function() {
+                loadMarkers();
+            });
+        });
+
+        function assignRescuer(type, id) {
+            $.post('rescuer_map.php', { action: 'assign_rescuer', type: type, id: id }, function(response) {
+                console.log(response);
+                location.reload();
+            });
+        }
+    </script>
 </body>
 </html>
