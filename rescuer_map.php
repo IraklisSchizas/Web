@@ -92,7 +92,7 @@ if ($tasks_result->num_rows > 0) {
     </style>
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid">  
         <div class="content row">
             <div class="col-md-8">
                 <h3 class="my-4">Χάρτης Διασώστη</h3>
