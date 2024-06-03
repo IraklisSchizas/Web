@@ -79,6 +79,37 @@ if ($requests_result->num_rows > 0) {
         $requests[] = $row;
     }
 }
+
+// Fetch offers and requests from database where rescuer_id != user.id
+$not_offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, u.name, u.surname, u.phone, u.latitude, u.longitude
+                 FROM offers o
+                 JOIN users u ON o.civilian_id = u.id
+                 WHERE o.rescuer_id = '0'";
+$stmt_offers = $conn->prepare($not_offers_query);
+$stmt_offers->execute();
+$not_offers_result = $stmt_offers->get_result();
+
+$not_offers = array();
+if ($not_offers_result->num_rows > 0) {
+    while ($row = $not_offers_result->fetch_assoc()) {
+        $not_offers[] = $row;
+    }
+}
+
+$not_requests_query = "SELECT r.id, r.civilian_id, r.date, r.item_id, r.quantity, u.name, u.surname, u.phone, u.latitude, u.longitude
+                   FROM requests r
+                   JOIN users u ON r.civilian_id = u.id
+                   WHERE r.rescuer_id = '0'";
+$stmt_requests = $conn->prepare($not_requests_query);
+$stmt_requests->execute();
+$not_requests_result = $stmt_requests->get_result();
+
+$not_requests = array();
+if ($not_requests_result->num_rows > 0) {
+    while ($row = $not_requests_result->fetch_assoc()) {
+        $not_requests[] = $row;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="el">
@@ -220,6 +251,18 @@ if ($requests_result->num_rows > 0) {
         <?php foreach ($requests as $request): ?>
         var requestMarker = L.marker([<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>], { icon: L.icon({ iconUrl: 'images/request-icon.png', iconSize: [35, 35], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] }) }).addTo(map)
             .bindPopup('<b>Request:</b> <?php echo $request['id']; ?><br><b>Όνομα:</b> <?php echo $request['name']; ?><br><b>Αντικείμενο:</b> <?php echo $request['item_id']; ?><br><b>Ποσότητα:</b> <?php echo $request['quantity']; ?>');
+        <?php endforeach; ?>
+
+        // Add not offer markers
+        <?php foreach ($not_offers as $not_offer): ?>
+        var not_offerMarker = L.marker([<?php echo $not_offer['latitude']; ?>, <?php echo $not_offer['longitude']; ?>], { icon: L.icon({ iconUrl: 'images/not-offer-icon.png', iconSize: [35, 35], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] }) }).addTo(map)
+            .bindPopup('<b>Offer:</b> <?php echo $not_offer['id']; ?><br><b>Όνομα:</b> <?php echo $not_offer['name']; ?><br><b>Αντικείμενο:</b> <?php echo $not_offer['item_id']; ?><br><b>Ποσότητα:</b> <?php echo $not_offer['quantity']; ?>');
+        <?php endforeach; ?>
+
+        // Add not request markers
+        <?php foreach ($not_requests as $not_request): ?>
+        var not_requestMarker = L.marker([<?php echo $not_request['latitude']; ?>, <?php echo $not_request['longitude']; ?>], { icon: L.icon({ iconUrl: 'images/not-request-icon.png', iconSize: [35, 35], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] }) }).addTo(map)
+            .bindPopup('<b>Request:</b> <?php echo $not_request['id']; ?><br><b>Όνομα:</b> <?php echo $not_request['name']; ?><br><b>Αντικείμενο:</b> <?php echo $not_request['item_id']; ?><br><b>Ποσότητα:</b> <?php echo $not_request['quantity']; ?>');
         <?php endforeach; ?>
     
     function completeOffer(offerId) {
