@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Εξυπηρετητής: 127.0.0.1
--- Χρόνος δημιουργίας: 27 Μάη 2024 στις 18:38:42
+-- Χρόνος δημιουργίας: 03 Ιουν 2024 στις 23:34:55
 -- Έκδοση διακομιστή: 10.4.32-MariaDB
 -- Έκδοση PHP: 8.2.12
 
@@ -40,10 +40,10 @@ CREATE TABLE `announcements` (
 --
 
 INSERT INTO `announcements` (`id`, `title`, `details`, `date`, `item_ids`) VALUES
-(4, 'pros oloys', 'Plolu shmantiko mhnyma paidia oti kalytero', '2024-05-21 16:22:54.000000', '16,17'),
-(6, 'abc', 'defg', '2024-05-25 17:46:04.000000', '17'),
-(10, 'dd', 'ddsds', '2024-05-25 18:01:56.000000', '16,17,18,19,20,24,56,71,84,85,91,101,108,116'),
-(11, 'vdffd', 'dfdfdf', '2024-05-25 18:06:07.000000', '18');
+(4, 'pros oloys', 'Plolu shmantiko mhnyma paidia oti kalytero', '2024-05-21 16:22:54', '16,17'),
+(6, 'abc', 'defg', '2024-05-25 17:46:04', '17'),
+(10, 'dd', 'ddsds', '2024-05-25 18:01:56', '16,17,18,19,20,24,56,71,84,85,91,101,108,116'),
+(11, 'vdffd', 'dfdfdf', '2024-05-25 18:06:07', '18');
 
 -- --------------------------------------------------------
 
@@ -57,6 +57,14 @@ CREATE TABLE `cargo` (
   `item_ids` varchar(255) NOT NULL,
   `quantity` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Άδειασμα δεδομένων του πίνακα `cargo`
+--
+
+INSERT INTO `cargo` (`id`, `rescuer_id`, `item_ids`, `quantity`) VALUES
+(5, 2, '17', 60),
+(7, 2, '16', 2);
 
 -- --------------------------------------------------------
 
@@ -137,11 +145,11 @@ CREATE TABLE `items` (
 --
 
 INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
-(16, 'Water', 6, '[{\"detail_name\":\"volume\",\"detail_value\":\"1.5l\"},{\"detail_name\":\"pack size\",\"detail_value\":\"6\"}]', 0),
-(17, 'Orange juice', 6, '[{\"detail_name\":\"volume\",\"detail_value\":\"250ml\"},{\"detail_name\":\"pack size\",\"detail_value\":\"12\"}]', 0),
+(16, 'Water', 6, '[{\"detail_name\":\"Volume\",\"detail_value\":\"1.5l\"},{\"detail_name\":\"Pack size\",\"detail_value\":\"6\"}]', 13),
+(17, 'Orange', 6, '[{\"detail_name\":\"Volume\",\"detail_value\":\"250ml\"},{\"detail_name\":\"Pack size\",\"detail_value\":\"12\"}]', 74),
 (18, 'Sardines', 5, '[{\"detail_name\":\"brand\",\"detail_value\":\"Trata\"},{\"detail_name\":\"weight\",\"detail_value\":\"200g\"}]', 0),
 (19, 'Canned corn', 5, '[{\"detail_name\":\"weight\",\"detail_value\":\"500g\"}]', 0),
-(20, 'Bread', 5, '[{\"detail_name\":\"weight\",\"detail_value\":\"1kg\"},{\"detail_name\":\"type\",\"detail_value\":\"white\"}]', 0),
+(20, 'Bread', 5, '[{\"detail_name\":\"Weight\",\"detail_value\":\"1kg\"},{\"detail_name\":\"Type\",\"detail_value\":\"white\"}]', 0),
 (21, 'Chocolate', 5, '[{\"detail_name\":\"weight\",\"detail_value\":\"100g\"},{\"detail_name\":\"type\",\"detail_value\":\"milk chocolate\"},{\"detail_name\":\"brand\",\"detail_value\":\"ION\"}]', 0),
 (22, 'Men Sneakers', 7, '[{\"detail_name\":\"size\",\"detail_value\":\"44\"}]', 0),
 (23, 'Test Product', 9, '[{\"detail_name\":\"weight\",\"detail_value\":\"500g\"},{\"detail_name\":\"pack size\",\"detail_value\":\"12\"},{\"detail_name\":\"expiry date\",\"detail_value\":\"13\\/12\\/1978\"}]', 0),
@@ -401,23 +409,18 @@ CREATE TABLE `offers` (
   `item_id` varchar(255) NOT NULL,
   `quantity` int(255) NOT NULL,
   `load_date` datetime NOT NULL,
-  `rescuer_id` int(255) NOT NULL
+  `rescuer_id` int(255) NOT NULL,
+  `completed` int(1) NOT NULL,
+  `complete_date` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Άδειασμα δεδομένων του πίνακα `offers`
 --
 
-INSERT INTO `offers` (`id`, `civilian_id`, `date`, `item_id`, `quantity`, `load_date`, `rescuer_id`) VALUES
-(1, 3, '2024-05-25 19:29:19.000000', '17', 2, '0000-00-00 00:00:00.000000', 0),
-(2, 3, '2024-05-27 12:23:11.000000', '17', 12, '0000-00-00 00:00:00.000000', 0),
-(3, 3, '2024-05-27 12:23:25.000000', '17', 4, '0000-00-00 00:00:00.000000', 0),
-(4, 3, '2024-05-27 16:26:12.000000', '20', 1, '0000-00-00 00:00:00.000000', 0),
-(5, 3, '2024-05-27 16:30:21.000000', '16,17', 2, '0000-00-00 00:00:00.000000', 0),
-(6, 3, '2024-05-27 16:35:38.000000', '18', 1, '0000-00-00 00:00:00.000000', 0),
-(7, 3, '2024-05-27 16:37:27.000000', '16,17,18,19,20', 2, '0000-00-00 00:00:00.000000', 0),
-(8, 3, '2024-05-27 16:45:48.000000', '85,91,108', 6, '0000-00-00 00:00:00.000000', 0),
-(9, 3, '2024-05-27 18:21:01.000000', '18,19,108', 11, '0000-00-00 00:00:00.000000', 0);
+INSERT INTO `offers` (`id`, `civilian_id`, `date`, `item_id`, `quantity`, `load_date`, `rescuer_id`, `completed`, `complete_date`) VALUES
+(1, 6, '2024-05-25 19:29:19', '17', 2, '2024-06-03 23:32:28', 2, 0, '0000-00-00 00:00:00'),
+(13, 3, '2024-06-03 16:39:18', '16', 3, '2024-06-03 22:11:32', 0, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -432,18 +435,17 @@ CREATE TABLE `requests` (
   `item_id` varchar(255) NOT NULL,
   `quantity` int(255) NOT NULL,
   `load_date` datetime NOT NULL,
-  `rescuer_id` int(255) NOT NULL
+  `rescuer_id` int(255) NOT NULL,
+  `completed` int(1) NOT NULL,
+  `complete_date` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Άδειασμα δεδομένων του πίνακα `requests`
 --
 
-INSERT INTO `requests` (`id`, `civilian_id`, `date`, `item_id`, `quantity`, `load_date`, `rescuer_id`) VALUES
-(1, 3, '2024-05-25 19:28:01', '17', 12, '0000-00-00 00:00:00.000000', 0),
-(5, 3, '2024-05-27 16:42:46', '29', 4, '0000-00-00 00:00:00.000000', 0),
-(6, 3, '2024-05-27 16:51:38', '17', 1, '0000-00-00 00:00:00.000000', 0),
-(7, 3, '2024-05-27 18:33:45', '17,19', 12, '0000-00-00 00:00:00.000000', 0);
+INSERT INTO `requests` (`id`, `civilian_id`, `date`, `item_id`, `quantity`, `load_date`, `rescuer_id`, `completed`, `complete_date`) VALUES
+(9, 3, '2024-06-03 17:24:25', '20', 4, '2024-06-03 23:12:50', 0, 0, '2024-06-03 21:17:57');
 
 -- --------------------------------------------------------
 
@@ -469,10 +471,11 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `name`, `surname`, `phone`, `latitude`, `longitude`, `password`, `user_type`) VALUES
 (1, 'admin', 'Admin', 'Adminas', 6912345678, '38.246279', '21.735030', '21232f297a57a5a743894a0e4a801fc3', 'admin'),
-(2, 'r1', 'r1', 'r1', 1234567890, '38.243924', '21.729517', '202cb962ac59075b964b07152d234b70', 'rescuer'),
+(2, 'r1', 'r1', 'r1', 1234567890, '38.24694357455419', '21.73662197444646', '202cb962ac59075b964b07152d234b70', 'rescuer'),
 (3, 'c1', 'Civi', 'Lian', 2610123456, '38.220588', '21.731126', '202cb962ac59075b964b07152d234b70', 'civilian'),
 (4, 'r2', 'r2', 'r2', 6912324458, '38.241835', '21.744357', '202cb962ac59075b964b07152d234b70', 'rescuer'),
-(5, 'r3', 'r3', 'r3', 6912345678, '38.255442', '21.741126', '202cb962ac59075b964b07152d234b70', 'rescuer');
+(5, 'r3', 'r3', 'r3', 6912345678, '38.255442', '21.741126', '202cb962ac59075b964b07152d234b70', 'rescuer'),
+(6, 'c2', 'Paul', 'Itis', 6998765432, '38.242468', '21.734958', '202cb962ac59075b964b07152d234b70', 'civilian');
 
 --
 -- Ευρετήρια για άχρηστους πίνακες
@@ -534,25 +537,25 @@ ALTER TABLE `announcements`
 -- AUTO_INCREMENT για πίνακα `cargo`
 --
 ALTER TABLE `cargo`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT για πίνακα `offers`
 --
 ALTER TABLE `offers`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT για πίνακα `requests`
 --
 ALTER TABLE `requests`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT για πίνακα `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
