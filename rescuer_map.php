@@ -10,8 +10,8 @@ if (!isset($_SESSION['user_name'])) {
 
 $user_name = $_SESSION['user_name'];
 
-// SQL query to get the base location coordinates
-$user_query = $conn->prepare("SELECT latitude, longitude, id FROM users WHERE username = 'admin'");
+// SQL ερώτημα για να ανοίγει ο χάρτης με κέντρο την τοποθεσία της βάσης
+$user_query = $conn->prepare("SELECT latitude, longitude FROM users WHERE username = 'admin'");
 $user_query->execute();
 $user_result = $user_query->get_result();
 $user_row = $user_result->fetch_assoc();
@@ -19,7 +19,7 @@ $user_latitude = $user_row['latitude'];
 $user_longitude = $user_row['longitude'];
 $admin_id = $user_row['id'];
 
-// SQL query to get vehicle data and related cargo information
+// SQL ερώτημα για να λαμβάνει τις πληροφορίες των οχημάτων και του αντίστοιχου φορτίου
 $sql = "SELECT u.id, u.username, u.latitude, u.longitude, c.item_ids, c.quantity
         FROM users u
         LEFT JOIN cargo c ON u.id = c.rescuer_id
@@ -47,9 +47,9 @@ if ($result->num_rows > 0) {
     exit();
 }
 
-// Fetch offers and requests from database
-$offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, u.name, u.surname, u.phone, u.latitude, u.longitude
-                 FROM offers o
+// SQL ερωτήματα για να λαμβάνει τις προσφορές και τα αιτήματα για rescuer_id = 0
+$offers_query = "SELECT o.id, o.civilian_id, o.date, o.item_id, o.quantity, o.load_date, o.rescuer_id, u.latitude, u.longitude, u.name, u.surname, u.phone, IFNULL(re.username, 'None') as rescuer_username
+                 FROM offers o 
                  JOIN users u ON o.civilian_id = u.id
                  WHERE o.rescuer_id = ?";
 $stmt_offers = $conn->prepare($offers_query);
@@ -140,17 +140,24 @@ if ($not_requests_result->num_rows > 0) {
 </head>
 <body>
     <div class="container-fluid">  
-        <div class="content row">
-            <div class="col-md-8">
-                <h3 class="my-4">Χάρτης Διασώστη</h3>
-                <div class="filters">
-                    <div class="filter-group">
-                        <label for="vehicle-status">Φίλτρο Οχημάτων:</label>
-                        <select id="vehicle-status" class="form-control">
-                            <option value="all">Όλα</option>
-                            <option value="loaded">Φορτωμένα</option>
-                            <option value="unloaded">Άδεια</option>
-                        </select>
+        <div class="content">
+            <h3 class="my-4">Χάρτης Διασώστη</h3>
+ 
+            
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="vehicle-status">Φίλτρο Οχημάτων:</label>
+                    <select id="vehicle-status" class="form-control">
+                        <option value="all">Όλα</option>
+                        <option value="loaded">Φορτωμένα</option>
+                        <option value="unloaded">Άδεια</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Φίλτρο Προσφορών:</label><br>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="offer-with-rescuer" checked>
+                        <label class="form-check-label" for="offer-with-rescuer">Με Διασώστη</label>
                     </div>
                     <div class="filter-group">
                         <label>Φίλτρο Προσφορών:</label><br>
@@ -227,18 +234,53 @@ if ($not_requests_result->num_rows > 0) {
         </div>
     </div>
     <script>
-        // Initialize the map
-        var map = L.map('map').setView([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], 13);
 
-        // Add OpenStreetMap tiles
+        // Δημιουργία του χάρτη χρησιμοποιώντας τις συντεταγμένες του ενεργού χρήστη
+        var map = L.map('map').setView([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], 14);
+
+        // Προσθήκη του βασικού layer από το OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
         }).addTo(map);
 
-        // Add vehicle markers
+        // Προσθήκη του marker για τη Βάση
+        var baseMarker = L.circleMarker([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], {
+            color: 'orange',
+            radius: 10
+        }).addTo(map).bindPopup("<b>Βάση</b>");
+
+        // Ορισμός μεταβλητών για τα markers των οχημάτων , των προσφορών και των αιτημάτων
+        var vehicleMarkers = [];
+        var offerMarkers = [];
+        var requestMarkers = [];
+
+        // Προσθήκη markers για κάθε όχημα
         <?php foreach ($vehicles as $vehicle): ?>
-        var vehicleMarker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>]).addTo(map)
-            .bindPopup('<b>Όχημα:</b> <?php echo $vehicle['username']; ?><br><b>Αντικείμενο:</b> <?php echo $vehicle['item_id']; ?><br><b>Ποσότητα:</b> <?php echo $vehicle['quantity']; ?>');
+            var vehicleMarker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>], {draggable: true}).addTo(map);
+            var status = "<?php echo $vehicle['quantity'] > 0 ? 'φορτωμένο' : 'άδειο'; ?>";
+            vehicleMarker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: " + status);
+            vehicleMarker.vehicleStatus = "<?php echo $vehicle['quantity'] > 0 ? 'loaded' : 'unloaded'; ?>";
+
+            // Αποθήκευση νέας τοποθεσίας με επιβεβαίωση
+            vehicleMarker.on('dragend', function(e) {
+                var newLatLng = e.target.getLatLng();
+                if (confirm('Είστε σίγουροι πως θέλετε να αλλάξετε την τοποθεσία σας;')) {
+                    $.post('update_location.php', {
+                        latitude: newLatLng.lat,
+                        longitude: newLatLng.lng,
+                        username: '<?php echo $vehicle['username']; ?>'
+                    }, function(response) {
+                        alert('Η τοποθεσία ενημερώθηκε επιτυχώς.');
+                    }).fail(function() {
+                        alert('Σφάλμα κατά την ενημέρωση της τοποθεσίας.');
+                    });
+                } else {
+                
+                    // SQL ερώτημα για να ανοίγει ο χάρτης με κέντρο την τοποθεσία της βάσης
+                    vehicleMarker.setLatLng([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>]);
+                }
+            });
+            vehicleMarkers.push(vehicleMarker);
         <?php endforeach; ?>
 
         // Add offer markers
