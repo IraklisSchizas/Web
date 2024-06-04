@@ -193,8 +193,8 @@ function unloadItems($rescuer_id) {
     <div class="container">
         <div class="form-container">
             <form id="load_form" action="" method="post">
-                <h2>Load Items</h2><br>
-                <label for="item">Select Item to Load:</label>
+                <h2>Φόρτωση Αντικειμένου</h2><br>
+                <label for="item">Επιλέξτε Αντικείμενο για φόρτωση:</label>
                 <select name="item" id="item">
                     <?php
                         $items_query = mysqli_query($conn, "SELECT * FROM items WHERE quantity > 0");
@@ -206,16 +206,16 @@ function unloadItems($rescuer_id) {
                     ?>
                 </select>
 
-                <label for="quantity">Quantity to Load:</label>
+                <label for="quantity">Ποσότητα για φόρτωση:</label>
                 <input type="number" id="quantity" name="quantity" min="1" required>
-                <input type="submit" name="load_items" value="Load">
+                <input type="submit" name="load_items" value="Φόρτωση">
             </form>
         </div>
 
         <div class="form-container">
             <form id="unload_form" action="" method="post">
-                <h2>Unload Items</h2><br>
-                <label for="unload_item">Select Item to Unload:</label>
+                <h2>Εκφόρτωση Αντικειμένου</h2><br>
+                <label for="unload_item">Επιλέξτε Αντικείμενο για εκφόρτωση:</label>
                 <select name="unload_item" id="unload_item">
                     <?php
                         $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = $user_id");
@@ -232,21 +232,20 @@ function unloadItems($rescuer_id) {
                     ?>
                 </select>
 
-                <label for="unload_quantity">Quantity to Unload:</label>
+                <label for="unload_quantity">Ποσότητα για εκφόρτωση:</label>
                 <input type="number" id="unload_quantity" name="unload_quantity" min="1" required>
-                <input type="submit" name="unload_items" value="Unload">
+                <input type="submit" name="unload_items" value="Εκφόρτωση">
             </form>
         </div>
     </div>
 
     <div class="table-container">
-        <h2>Items in Cargo</h2>
+        <h2>Αντικείμενα στο Φορτίο</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Item ID</th>
-                    <th>Item Name</th>
-                    <th>Quantity</th>
+                    <th>Όνομα Αντικειμένου</th>
+                    <th>Ποσότητα</th>
                 </tr>
             </thead>
             <tbody>
@@ -259,7 +258,6 @@ function unloadItems($rescuer_id) {
                                 $item_name_query = mysqli_query($conn, "SELECT name FROM items WHERE id = '$item_id'");
                                 $item_name = mysqli_fetch_assoc($item_name_query)['name'];
                                 echo "<tr>";
-                                echo "<td>" . $item_id . "</td>";
                                 echo "<td>" . $item_name . "</td>";
                                 echo "<td>" . $cargo_row['quantity'] . "</td>";
                                 echo "</tr>";
