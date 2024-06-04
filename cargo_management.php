@@ -154,6 +154,7 @@ function unloadItems($rescuer_id) {
     <style>
         html {
             background: #efefef; /* Light grey */
+            text-align: center;
         }
         .container {
             display: flex;
@@ -163,8 +164,8 @@ function unloadItems($rescuer_id) {
             width: 48%;
         }
         .table-container {
-            margin-top: -20px;
-            margin-left: 40px;
+            margin-top: 20px;
+            width: 100%;
         }
         table {
             width: 100%;
@@ -175,24 +176,24 @@ function unloadItems($rescuer_id) {
             border: 0.0625rem solid #ddd;
             text-align: left;
         }
-        th, td {
-            text-align: left;
-            padding: 0.625rem;
-            border: 0.0625rem solid #ddd;
-            text-align: left;
-        }
         .table-container h2 {
-            text-align: center;
             padding-bottom: 20px;
+        }
+        .rtrn-btn {
+            color: #4CAF50;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            font-size: 1.25rem;
         }
     </style>
 </head>
 <body>
+    <br><br>
+    <p><a class="rtrn-btn" href="rescuer_page.php">Πίσω στη σελίδα Διασώστη</a></p><br>
     <div class="container">
         <div class="form-container">
-            <p><a href="rescuer_page.php">Πίσω στη σελίδα Διασώστη</a></p><br>
-            <h2>Load Items</h2><br>
             <form id="load_form" action="" method="post">
+                <h2>Load Items</h2><br>
                 <label for="item">Select Item to Load:</label>
                 <select name="item" id="item">
                     <?php
@@ -212,8 +213,8 @@ function unloadItems($rescuer_id) {
         </div>
 
         <div class="form-container">
-            <h2>Unload Items</h2>
             <form id="unload_form" action="" method="post">
+                <h2>Unload Items</h2><br>
                 <label for="unload_item">Select Item to Unload:</label>
                 <select name="unload_item" id="unload_item">
                     <?php
@@ -239,37 +240,35 @@ function unloadItems($rescuer_id) {
     </div>
 
     <div class="table-container">
-        <form>
-            <h2>Items in Cargo</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Item ID</th>
-                        <th>Item Name</th>
-                        <th>Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = $user_id");
-                        if ($cargo_query) {
-                            while ($cargo_row = mysqli_fetch_assoc($cargo_query)) {
-                                $item_ids = explode(',', $cargo_row['item_ids']);
-                                foreach ($item_ids as $item_id) {
-                                    $item_name_query = mysqli_query($conn, "SELECT name FROM items WHERE id = '$item_id'");
-                                    $item_name = mysqli_fetch_assoc($item_name_query)['name'];
-                                    echo "<tr>";
-                                    echo "<td>" . $item_id . "</td>";
-                                    echo "<td>" . $item_name . "</td>";
-                                    echo "<td>" . $cargo_row['quantity'] . "</td>";
-                                    echo "</tr>";
-                                }
+        <h2>Items in Cargo</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = $user_id");
+                    if ($cargo_query) {
+                        while ($cargo_row = mysqli_fetch_assoc($cargo_query)) {
+                            $item_ids = explode(',', $cargo_row['item_ids']);
+                            foreach ($item_ids as $item_id) {
+                                $item_name_query = mysqli_query($conn, "SELECT name FROM items WHERE id = '$item_id'");
+                                $item_name = mysqli_fetch_assoc($item_name_query)['name'];
+                                echo "<tr>";
+                                echo "<td>" . $item_id . "</td>";
+                                echo "<td>" . $item_name . "</td>";
+                                echo "<td>" . $cargo_row['quantity'] . "</td>";
+                                echo "</tr>";
                             }
                         }
-                    ?>
-                </tbody>
-            </table><br><br><br>
-        </form>
+                    }
+                ?>
+            </tbody>
+        </table><br><br><br>
     </div>
 </body>
 </html>
