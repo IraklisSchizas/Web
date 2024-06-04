@@ -135,9 +135,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             } else {
                 if ($type === 'offer') {
-                    $update_query = $conn->prepare("UPDATE offers SET rescuer_id = ? WHERE id = ?");
+                    $update_query = $conn->prepare("UPDATE offers SET load_date = '0000-00-00 00:00:000', rescuer_id = ? WHERE id = ?");
                 } else {
-                    $update_query = $conn->prepare("UPDATE requests SET rescuer_id = ? WHERE id = ?");
+                    $update_query = $conn->prepare("UPDATE requests SET load_date = '0000-00-00 00:00:000', rescuer_id = ? WHERE id = ?");
                 }
                 $update_query->bind_param('ii', $rescuer_id, $id);
             }
@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
                 <div id="map"></div>
-                <a href="rescuer_page.php" class="btn btn-primary mt-4">Πίσω στη σελίδα Διασώστη</a>
+                <a href="rescuer_page.php" class="btn btn-primary mt-4">Πίσω στη σελίδα Διασώστη</a><br><br>
             </div>
             <div class="col-md-4">
                 <div class="tasks-panel mt-4">
