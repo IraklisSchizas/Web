@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Εξυπηρετητής: 127.0.0.1
--- Χρόνος δημιουργίας: 03 Ιουν 2024 στις 23:34:55
+-- Χρόνος δημιουργίας: 04 Ιουν 2024 στις 15:25:19
 -- Έκδοση διακομιστή: 10.4.32-MariaDB
 -- Έκδοση PHP: 8.2.12
 
@@ -411,7 +411,7 @@ CREATE TABLE `offers` (
   `load_date` datetime NOT NULL,
   `rescuer_id` int(255) NOT NULL,
   `completed` int(1) NOT NULL,
-  `complete_date` datetime DEFAULT NULL
+  `complete_date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -419,8 +419,8 @@ CREATE TABLE `offers` (
 --
 
 INSERT INTO `offers` (`id`, `civilian_id`, `date`, `item_id`, `quantity`, `load_date`, `rescuer_id`, `completed`, `complete_date`) VALUES
-(1, 6, '2024-05-25 19:29:19', '17', 2, '2024-06-03 23:32:28', 2, 0, '0000-00-00 00:00:00'),
-(13, 3, '2024-06-03 16:39:18', '16', 3, '2024-06-03 22:11:32', 0, 0, NULL);
+(1, 6, '2024-05-25 19:29:19', '17', 2, '0000-00-00 00:00:00', 0, 0, '0000-00-00 00:00:00'),
+(13, 3, '2024-06-03 16:39:18', '16', 3, '0000-00-00 00:00:00', 0, 0, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -437,7 +437,7 @@ CREATE TABLE `requests` (
   `load_date` datetime NOT NULL,
   `rescuer_id` int(255) NOT NULL,
   `completed` int(1) NOT NULL,
-  `complete_date` datetime DEFAULT NULL
+  `complete_date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -445,7 +445,7 @@ CREATE TABLE `requests` (
 --
 
 INSERT INTO `requests` (`id`, `civilian_id`, `date`, `item_id`, `quantity`, `load_date`, `rescuer_id`, `completed`, `complete_date`) VALUES
-(9, 3, '2024-06-03 17:24:25', '20', 4, '2024-06-03 23:12:50', 0, 0, '2024-06-03 21:17:57');
+(9, 3, '2024-06-03 17:24:25', '20', 4, '0000-00-00 00:00:00', 0, 0, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
