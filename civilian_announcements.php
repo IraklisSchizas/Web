@@ -96,6 +96,8 @@ $civilian_id = $row['id'];
                         <th scope="col">Ημερομηνία</th>
                         <th scope="col">Έγινε Δεκτό</th>
                         <th scope="col">Ημερομηνία αποδοχής</th>
+                        <th scope="col">Ολοκληρώθηκε</th>
+                        <th scope="col">Ημερομηνία ολοκλήρωσης</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -117,6 +119,8 @@ $civilian_id = $row['id'];
                                 $itemResult = $itemStmt->get_result();
                                 $itemRow = $itemResult->fetch_assoc();
                                 $itemNames[] = $itemRow['name'];
+                                $completed = $row['completed'] != 0 ? 'Ναι' : 'Όχι';
+                                $complete_date = $row['complete_date'] !='0000-00-00 00:00:00'? $row['complete_date'] : '-';
                             }
                             $itemNamesString = implode(', ', $itemNames);
                             $accepted = $row['rescuer_id'] != 0 ? 'Ναι' : 'Όχι';
@@ -127,6 +131,8 @@ $civilian_id = $row['id'];
                                 <td>' . htmlspecialchars($row['date']) . '</td>
                                 <td>' . htmlspecialchars($accepted) . '</td>
                                 <td>' . htmlspecialchars($load_date) . '</td>
+                                <td>' . htmlspecialchars($completed) . '</td>
+                                <td>' . htmlspecialchars($complete_date) . '</td>
                             </tr>';
                         }
                     }
