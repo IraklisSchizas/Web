@@ -152,6 +152,9 @@ function unloadItems($rescuer_id) {
     <title>Διαχείριση Φορτίου</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        html {
+            background: #efefef; /* Light grey */
+        }
         .container {
             display: flex;
             justify-content: space-between;
@@ -160,18 +163,27 @@ function unloadItems($rescuer_id) {
             width: 48%;
         }
         .table-container {
-            margin-top: 20px;
+            margin-top: -20px;
+            margin-left: 40px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
         }
         table, th, td {
-            border: 1px solid black;
+            padding: 0.625rem;
+            border: 0.0625rem solid #ddd;
+            text-align: left;
         }
         th, td {
-            padding: 8px;
             text-align: left;
+            padding: 0.625rem;
+            border: 0.0625rem solid #ddd;
+            text-align: left;
+        }
+        .table-container h2 {
+            text-align: center;
+            padding-bottom: 20px;
         }
     </style>
 </head>
@@ -227,35 +239,37 @@ function unloadItems($rescuer_id) {
     </div>
 
     <div class="table-container">
-        <h2>Items in Cargo</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Item ID</th>
-                    <th>Item Name</th>
-                    <th>Quantity</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                    $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = $user_id");
-                    if ($cargo_query) {
-                        while ($cargo_row = mysqli_fetch_assoc($cargo_query)) {
-                            $item_ids = explode(',', $cargo_row['item_ids']);
-                            foreach ($item_ids as $item_id) {
-                                $item_name_query = mysqli_query($conn, "SELECT name FROM items WHERE id = '$item_id'");
-                                $item_name = mysqli_fetch_assoc($item_name_query)['name'];
-                                echo "<tr>";
-                                echo "<td>" . $item_id . "</td>";
-                                echo "<td>" . $item_name . "</td>";
-                                echo "<td>" . $cargo_row['quantity'] . "</td>";
-                                echo "</tr>";
+        <form>
+            <h2>Items in Cargo</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item ID</th>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = $user_id");
+                        if ($cargo_query) {
+                            while ($cargo_row = mysqli_fetch_assoc($cargo_query)) {
+                                $item_ids = explode(',', $cargo_row['item_ids']);
+                                foreach ($item_ids as $item_id) {
+                                    $item_name_query = mysqli_query($conn, "SELECT name FROM items WHERE id = '$item_id'");
+                                    $item_name = mysqli_fetch_assoc($item_name_query)['name'];
+                                    echo "<tr>";
+                                    echo "<td>" . $item_id . "</td>";
+                                    echo "<td>" . $item_name . "</td>";
+                                    echo "<td>" . $cargo_row['quantity'] . "</td>";
+                                    echo "</tr>";
+                                }
                             }
                         }
-                    }
-                ?>
-            </tbody>
-        </table>
+                    ?>
+                </tbody>
+            </table><br><br><br>
+        </form>
     </div>
 </body>
 </html>
