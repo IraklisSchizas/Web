@@ -212,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="col-md-4">
                 <div class="tasks-panel mt-4">
-                    <h5>Φορτωμένα Tasks:</h5>
+                    <h5>Τα Tasks που έχω αναλάβει:</h5>
                     <?php if (!empty($offers) || !empty($requests)): ?>
                         <ul class="list-group">
                             <?php foreach ($offers as $offer): ?>
