@@ -108,7 +108,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update_query = $conn->prepare("UPDATE users SET latitude = ?, longitude = ? WHERE id = ?");
             $update_query->bind_param('ddi', $new_latitude, $new_longitude, $admin_id);
             if ($update_query->execute()) {
-                echo "Location updated successfully.";
+                header('Location: rescuer_map.php');
+                exit();
             } else {
                 echo "Error updating location.";
             }
@@ -291,6 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             function updateUserLocation(latitude, longitude) {
                 $.post('rescuer_map.php', { action: 'update_location', latitude: latitude, longitude: longitude }, function(response) {
                     console.log(response);
+                    window.location.href = 'rescuer_map.php';
                 });
             }
 
