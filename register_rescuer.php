@@ -78,7 +78,7 @@ if(isset($_POST['submit'])){
       <input type="text" name="longitude" id="longitude" required placeholder="Γεωγραφικό Μήκος">
       <input type="password" name="password" required placeholder="Κωδικός πρόσβασης">
       <input type="password" name="cpassword" required placeholder="Επιβεβαίωση Κωδικού">
-      <input type="submit" name="submit" value="Εγγραφή Διασώστη" class="form-btn">
+      <input type="submit" name="submit" value="Εγγραφή Διασώστη" class="form-btn"><br>
       <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p>
    </form>
 
