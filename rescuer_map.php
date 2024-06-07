@@ -99,6 +99,16 @@ function haversine($lat1, $lon1, $lat2, $lon2) {
     return $earth_radius * $c;
 }
 
+// Function to count active assignments for the rescuer
+function count_active_assignments($conn, $rescuer_id) {
+    $count_query = $conn->prepare("SELECT COUNT(*) as count FROM (SELECT id FROM offers WHERE rescuer_id = ? AND completed = 0 UNION ALL SELECT id FROM requests WHERE rescuer_id = ? AND completed = 0) as active_tasks");
+    $count_query->bind_param('ii', $rescuer_id, $rescuer_id);
+    $count_query->execute();
+    $result = $count_query->get_result();
+    $row = $result->fetch_assoc();
+    return $row['count'];
+}
+
 // Handle AJAX requests for updating location and assigning/cancelling/completing rescuer
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
@@ -118,17 +128,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $type = $_POST['type'];
             $id = $_POST['id'];
             $current_date = date('Y-m-d H:i:s');
-            if ($type === 'offer') {
-                $assign_query = $conn->prepare("UPDATE offers SET rescuer_id = ?, load_date = ? WHERE id = ?");
-                $assign_query->bind_param('isi', $admin_id, $current_date, $id);
+            $active_assignments = count_active_assignments($conn, $admin_id);
+            if ($active_assignments < 4) {
+                if ($type === 'offer') {
+                    $assign_query = $conn->prepare("UPDATE offers SET rescuer_id = ?, load_date = ? WHERE id = ?");
+                    $assign_query->bind_param('isi', $admin_id, $current_date, $id);
+                } else {
+                    $assign_query = $conn->prepare("UPDATE requests SET rescuer_id = ?, load_date = ? WHERE id = ?");
+                    $assign_query->bind_param('isi', $admin_id, $current_date, $id);
+                }
+                if ($assign_query->execute()) {
+                    echo "Rescuer assigned successfully.";
+                } else {
+                    echo "Error assigning rescuer.";
+                }
             } else {
-                $assign_query = $conn->prepare("UPDATE requests SET rescuer_id = ?, load_date = ? WHERE id = ?");
-                $assign_query->bind_param('isi', $admin_id, $current_date, $id);
-            }
-            if ($assign_query->execute()) {
-                echo "Rescuer assigned successfully.";
-            } else {
-                echo "Error assigning rescuer.";
+                echo "Error: Rescuer can only handle up to 4 assignments at a time.";
             }
             exit();
         } elseif ($_POST['action'] === 'complete_task' || $_POST['action'] === 'cancel_task') {
