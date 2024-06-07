@@ -87,6 +87,17 @@ if ($requests_result->num_rows > 0) {
         <div class="content">
             <h3>Χάρτης Διαχειριστή</h3>
             <br>
+            <!-- Φίλτρα -->
+            <div>
+                <input type="checkbox" id="toggleRequestsPending" checked> Αιτήματα Εκκρεμή
+                <input type="checkbox" id="toggleRequestsAssigned" checked> Αιτήματα Αναληφθέντα
+                <input type="checkbox" id="toggleOffersPending" checked> Προσφορές Εκκρεμή
+                <input type="checkbox" id="toggleOffersAssigned" checked> Προσφορές Αναληφθείσες
+                <input type="checkbox" id="toggleVehiclesActive" checked> Οχήματα με ενεργά tasks
+                <input type="checkbox" id="toggleVehiclesInactive" checked> Οχήματα χωρίς ενεργά tasks
+                <input type="checkbox" id="toggleLines" checked> Ευθείες Γραμμές
+            </div>
+            <br>
             <!-- Leaflet Map Container -->
             <div id="map" style="height: 600px; width: 1000px;"></div>
             <br>
@@ -95,15 +106,12 @@ if ($requests_result->num_rows > 0) {
     </div>
 
     <script>
-        // Δημιουργία του χάρτη χρησιμοποιώντας τις συντεταγμένες του ενεργού χρήστη
         var map = L.map('map').setView([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], 14);
 
-        // Προσθήκη του βασικού layer από το OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Προσθήκη του marker για τη Βάση και καθορισμός του ως draggable και με πορτοκαλί χρώμα
         var baseMarker = L.marker([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>], {
             draggable: true,
             icon: L.divIcon({
@@ -113,7 +121,6 @@ if ($requests_result->num_rows > 0) {
         }).addTo(map);
         baseMarker.bindPopup("<b>Βάση</b>");
 
-        // Event listener για την αποθήκευση της νέας τοποθεσίας της βάσης με επιβεβαίωση
         baseMarker.on('dragend', function(e) {
             var newLatLng = e.target.getLatLng();
             if (confirm('Είστε σίγουροι πως θέλετε να αλλάξετε την τοποθεσία σας;')) {
@@ -133,41 +140,173 @@ if ($requests_result->num_rows > 0) {
                     }
                 });
             } else {
-                // Αν ο χρήστης ακυρώσει, επαναφέρει τον marker στην αρχική θέση
                 baseMarker.setLatLng([<?php echo $user_latitude; ?>, <?php echo $user_longitude; ?>]);
             }
         });
 
-        // Προσθήκη markers για κάθε όχημα
+        // Δημιουργία και προσθήκη των markers στον χάρτη
+        var vehicleMarkers = [];
+        var offerMarkers = [];
+        var requestMarkers = [];
+
         <?php foreach ($vehicles as $vehicle): 
             $status = ($vehicle['quantity'] > 0) ? "φορτωμένο" : "άδειο";
+            $statusClass = ($vehicle['quantity'] > 0) ? "active" : "inactive";
         ?>
-            var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>]).addTo(map);
+            var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>], {
+                className: 'vehicle-marker <?php echo $statusClass; ?>'
+            }).addTo(map);
             marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: <?php echo $status; ?>");
-        
+            vehicleMarkers.push(marker);
         <?php endforeach; ?>
 
-        // Προσθήκη markers για offers
         <?php foreach ($offers as $offer): 
             $color = ($offer['rescuer_id'] == 0) ? 'green' : 'yellow';
+            $statusClass = ($offer['rescuer_id'] == 0) ? "pending" : "assigned";
         ?>
             var offerMarker = L.circleMarker([<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>], {
                 color: '<?php echo $color; ?>',
-                radius: 8
+                radius: 8,
+                className: 'offer-marker <?php echo $statusClass; ?>'
             }).addTo(map);
             offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Όνομα: <?php echo $offer['name']; ?><br>Επώνυμο: <?php echo $offer['surname']; ?><br>Τηλέφωνο: <?php echo $offer['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?><br>Αντικείμενο: <?php echo $offer['item_id']; ?><br>Ποσότητα: <?php echo $offer['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $offer['load_date'] != '0000-00-00 00:00:00'? $offer['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $offer['rescuer_username'] != 'None'? $offer['rescuer_username'] : '-' ; ?>");
+            offerMarkers.push(offerMarker);
         <?php endforeach; ?>
 
-        // Προσθήκη markers για requests
         <?php foreach ($requests as $request): 
             $color = ($request['rescuer_id'] == 0) ? 'red' : 'purple';
+            $statusClass = ($request['rescuer_id'] == 0) ? "pending" : "assigned";
         ?>
             var requestMarker = L.circleMarker([<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>], {
                 color: '<?php echo $color; ?>',
-                radius: 8
+                radius: 8,
+                className: 'request-marker <?php echo $statusClass; ?>'
             }).addTo(map);
             requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Όνομα: <?php echo $request['name']; ?><br>Επώνυμο: <?php echo $request['surname']; ?><br>Τηλέφωνο: <?php echo $request['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?><br>Αντικείμενο: <?php echo $request['item_id']; ?><br>Ποσότητα: <?php echo $request['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $request['load_date'] != '0000-00-00 00:00:00'? $request['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $request['rescuer_username'] != 'None'? $request['rescuer_username'] : '-' ; ?>");
+            requestMarkers.push(requestMarker);
         <?php endforeach; ?>
+
+        // Λειτουργίες φίλτρων
+        $('#toggleRequestsPending').change(function() {
+            if (this.checked) {
+                requestMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('pending')) {
+                        marker.addTo(map);
+                    }
+                });
+            } else {
+                requestMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('pending')) {
+                        map.removeLayer(marker);
+                    }
+                });
+            }
+        });
+
+        $('#toggleRequestsAssigned').change(function() {
+            if (this.checked) {
+                requestMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('assigned')) {
+                        marker.addTo(map);
+                    }
+                });
+            } else {
+                requestMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('assigned')) {
+                        map.removeLayer(marker);
+                    }
+                });
+            }
+        });
+
+        $('#toggleOffersPending').change(function() {
+            if (this.checked) {
+                offerMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('pending')) {
+                        marker.addTo(map);
+                    }
+                });
+            } else {
+                offerMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('pending')) {
+                        map.removeLayer(marker);
+                    }
+                });
+            }
+        });
+
+        $('#toggleOffersAssigned').change(function() {
+            if (this.checked) {
+                offerMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('assigned')) {
+                        marker.addTo(map);
+                    }
+                });
+            } else {
+                offerMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('assigned')) {
+                        map.removeLayer(marker);
+                    }
+                });
+            }
+        });
+
+        $('#toggleVehiclesActive').change(function() {
+            if (this.checked) {
+                vehicleMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('active')) {
+                        marker.addTo(map);
+                    }
+                });
+            } else {
+                vehicleMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('active')) {
+                        map.removeLayer(marker);
+                    }
+                });
+            }
+        });
+
+        $('#toggleVehiclesInactive').change(function() {
+            if (this.checked) {
+                vehicleMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('inactive')) {
+                        marker.addTo(map);
+                    }
+                });
+            } else {
+                vehicleMarkers.forEach(function(marker) {
+                    if (marker.options.className.includes('inactive')) {
+                        map.removeLayer(marker);
+                    }
+                });
+            }
+        });
+
+        // Προσθήκη γραμμών (πορείας)
+        var lines = [];
+        <?php foreach ($offers as $offer): 
+            if ($offer['rescuer_id'] != 0):
+                $rescuer = $conn->query("SELECT latitude, longitude FROM users WHERE id = {$offer['rescuer_id']}")->fetch_assoc();
+        ?>
+            var line = L.polyline([
+                [<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>],
+                [<?php echo $rescuer['latitude']; ?>, <?php echo $rescuer['longitude']; ?>]
+            ], {color: 'blue'}).addTo(map);
+            lines.push(line);
+        <?php endif; endforeach; ?>
+
+        $('#toggleLines').change(function() {
+            if (this.checked) {
+                lines.forEach(function(line) {
+                    line.addTo(map);
+                });
+            } else {
+                lines.forEach(function(line) {
+                    map.removeLayer(line);
+                });
+            }
+        });
     </script>
 </body>
 </html>
