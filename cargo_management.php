@@ -35,20 +35,23 @@ $user_row = $user_result->fetch_assoc();
 $user_latitude = $user_row['latitude'];
 $user_longitude = $user_row['longitude'];
 
-$distance_from_base = sqrt(pow($base_latitude - $user_latitude, 2) + pow($base_longitude - $user_longitude, 2));
+// Υπολογισμός της απόστασης χρησιμοποιώντας τον τύπο Haversine
+$earth_radius = 6371000; // Ακτίνα της γης σε μέτρα
 
-// Έλεγχος αν πατήθηκε το κουμπί φόρτωσης ή εκφόρτωσης
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if ($distance_from_base <= 100) {
-        if (isset($_POST['load_items']) && !isset($_POST['unload_items'])) {
-            loadItems($user_id);
-        } elseif (isset($_POST['unload_items']) && !isset($_POST['load_items'])) {
-            unloadItems($user_id);
-        }
-    } else {
-        echo "Ο διασώστης είναι εκτός εμβέλειας της βάσης.";
-    }
-}
+// Μετατροπή των συντεταγμένων από μοίρες σε ακτίνια
+$lat_from = deg2rad($base_latitude);
+$lon_from = deg2rad($base_longitude);
+$lat_to = deg2rad($user_latitude);
+$lon_to = deg2rad($user_longitude);
+
+// Υπολογισμός της διαφοράς
+$lat_diff = $lat_to - $lat_from;
+$lon_diff = $lon_to - $lon_from;
+
+// Υπολογισμός της απόστασης χρησιμοποιώντας τον τύπο Haversine
+$a = sin($lat_diff / 2) * sin($lat_diff / 2) + cos($lat_from) * cos($lat_to) * sin($lon_diff / 2) * sin($lon_diff / 2);
+$c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+$distance_from_base = $earth_radius * $c;
 
 function loadItems($rescuer_id) {
     global $conn;
@@ -190,54 +193,58 @@ function unloadItems($rescuer_id) {
 <body>
     <br><br>
     <p><a class="rtrn-btn" href="rescuer_page.php">Πίσω στη σελίδα Διασώστη</a></p><br>
-    <div class="container">
-        <div class="form-container">
-            <form id="load_form" action="" method="post">
-                <h2>Φόρτωση Αντικειμένου</h2><br>
-                <label for="item">Επιλέξτε Αντικείμενο για φόρτωση:</label>
-                <select name="item" id="item">
-                    <?php
-                        $items_query = mysqli_query($conn, "SELECT * FROM items WHERE quantity > 0");
-                        if ($items_query) {
-                            while ($item_row = mysqli_fetch_assoc($items_query)) {
-                                echo "<option value='" . $item_row['id'] . "'>" . $item_row['name'] . "</option>";
-                            }
-                        }
-                    ?>
-                </select>
-
-                <label for="quantity">Ποσότητα για φόρτωση:</label>
-                <input type="number" id="quantity" name="quantity" min="1" required>
-                <input type="submit" name="load_items" value="Φόρτωση">
-            </form>
-        </div>
-
-        <div class="form-container">
-            <form id="unload_form" action="" method="post">
-                <h2>Εκφόρτωση Αντικειμένου</h2><br>
-                <label for="unload_item">Επιλέξτε Αντικείμενο για εκφόρτωση:</label>
-                <select name="unload_item" id="unload_item">
-                    <?php
-                        $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = $user_id");
-                        if ($cargo_query) {
-                            while ($cargo_row = mysqli_fetch_assoc($cargo_query)) {
-                                $item_ids = explode(',', $cargo_row['item_ids']);
-                                foreach ($item_ids as $item_id) {
-                                    $item_name_query = mysqli_query($conn, "SELECT name FROM items WHERE id = '$item_id'");
-                                    $item_name = mysqli_fetch_assoc($item_name_query)['name'];
-                                    echo "<option value='" . $item_id . "'>" . $item_name . "</option>";
+    <?php if ($distance_from_base <= 100): ?>
+        <div class="container">
+            <div class="form-container">
+                <form id="load_form" action="" method="post">
+                    <h2>Φόρτωση Αντικειμένου</h2><br>
+                    <label for="item">Επιλέξτε Αντικείμενο για φόρτωση:</label>
+                    <select name="item" id="item">
+                        <?php
+                            $items_query = mysqli_query($conn, "SELECT * FROM items WHERE quantity > 0");
+                            if ($items_query) {
+                                while ($item_row = mysqli_fetch_assoc($items_query)) {
+                                    echo "<option value='" . $item_row['id'] . "'>" . $item_row['name'] . "</option>";
                                 }
                             }
-                        }
-                    ?>
-                </select>
+                        ?>
+                    </select>
 
-                <label for="unload_quantity">Ποσότητα για εκφόρτωση:</label>
-                <input type="number" id="unload_quantity" name="unload_quantity" min="1" required>
-                <input type="submit" name="unload_items" value="Εκφόρτωση">
-            </form>
+                    <label for="quantity">Ποσότητα για φόρτωση:</label>
+                    <input type="number" id="quantity" name="quantity" min="1" required>
+                    <input type="submit" name="load_items" value="Φόρτωση">
+                </form>
+            </div>
+
+            <div class="form-container">
+                <form id="unload_form" action="" method="post">
+                    <h2>Εκφόρτωση Αντικειμένου</h2><br>
+                    <label for="unload_item">Επιλέξτε Αντικείμενο για εκφόρτωση:</label>
+                    <select name="unload_item" id="unload_item">
+                        <?php
+                            $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = $user_id");
+                            if ($cargo_query) {
+                                while ($cargo_row = mysqli_fetch_assoc($cargo_query)) {
+                                    $item_ids = explode(',', $cargo_row['item_ids']);
+                                    foreach ($item_ids as $item_id) {
+                                        $item_name_query = mysqli_query($conn, "SELECT name FROM items WHERE id = '$item_id'");
+                                        $item_name = mysqli_fetch_assoc($item_name_query)['name'];
+                                        echo "<option value='" . $item_id . "'>" . $item_name . "</option>";
+                                    }
+                                }
+                            }
+                        ?>
+                    </select>
+
+                    <label for="unload_quantity">Ποσότητα για εκφόρτωση:</label>
+                    <input type="number" id="unload_quantity" name="unload_quantity" min="1" required>
+                    <input type="submit" name="unload_items" value="Εκφόρτωση">
+                </form>
+            </div>
         </div>
-    </div>
+    <?php else: ?>
+        <p><h3>Ο διασώστης είναι εκτός εμβέλειας της βάσης, για φόρτωση ή εκφόρτωση αντικειμένων.</h3></p>
+    <?php endif; ?>
 
     <div class="table-container">
         <h2>Αντικείμενα στο Φορτίο</h2>
