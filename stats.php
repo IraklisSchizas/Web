@@ -24,6 +24,9 @@ if (!isset($_SESSION['user_name'])) {
 
 </head>
 <body>
-
+    <div class="form-container">
+        <form action="" method="post">
+            <br>
+            <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p><br><br>
 </body>
 </html>
