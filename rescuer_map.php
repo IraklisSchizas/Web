@@ -206,6 +206,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label class="form-check-label" for="request-without-rescuer">Χωρίς Διασώστη</label>
                         </div>
                     </div>
+                    <div class="filter-group">
+                        <label>Φίλτρο Γραμμών:</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="toggle-lines" checked>
+                            <label class="form-check-label" for="toggle-lines">Γραμμές Ανάληψης</label>
+                        </div>
+                    </div>
                 </div>
                 <div id="map"></div>
                 <a href="rescuer_page.php" class="btn btn-primary mt-4">Πίσω στη σελίδα Διασώστη</a><br><br>
@@ -319,6 +326,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 shadowSize: [41, 41]
             });
 
+            var offerMarkers = [];
+            var requestMarkers = [];
+            var lines = [];
+
             function loadMarkers() {
                 clearMarkers();
 
@@ -326,12 +337,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 var showOfferWithoutRescuer = $('#offer-without-rescuer').prop('checked');
                 var showRequestWithRescuer = $('#request-with-rescuer').prop('checked');
                 var showRequestWithoutRescuer = $('#request-without-rescuer').prop('checked');
+                var showLines = $('#toggle-lines').prop('checked');
 
                 $.each(<?= json_encode($offers) ?>, function(index, offer) {
                     if ((offer.rescuer_id != 0 && showOfferWithRescuer) || (offer.rescuer_id == 0 && showOfferWithoutRescuer)) {
                         var icon = offer.rescuer_id == 0 ? unassignedOfferIcon : assignedOfferIcon;
                         var marker = L.marker([offer.latitude, offer.longitude], { icon: icon }).addTo(map);
                         marker.bindPopup('<b>Προσφορά</b><br>Όνομα: ' + offer.name + ' ' + offer.surname + '<br>Τηλέφωνο: ' + offer.phone + '<br>Αντικείμενο: ' + offer.item_name + '<br>Ποσότητα: ' + offer.quantity + '<br><button onclick="assignRescuer(\'offer\', ' + offer.id + ')">Ανάθεση</button>');
+                        offerMarkers.push(marker);
+
+                        if (showLines && offer.rescuer_id != 0 && offer.rescuer_id == <?= $rescuer_id ?>) {
+                            var line = L.polyline([
+                                [<?= $user_latitude ?>, <?= $user_longitude ?>],
+                                [offer.latitude, offer.longitude]
+                            ], {color: 'blue'}).addTo(map);
+                            lines.push(line);
+                        }
                     }
                 });
 
@@ -340,6 +361,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         var icon = request.rescuer_id == 0 ? unassignedRequestIcon : assignedRequestIcon;
                         var marker = L.marker([request.latitude, request.longitude], { icon: icon }).addTo(map);
                         marker.bindPopup('<b>Αίτημα</b><br>Όνομα: ' + request.name + ' ' + request.surname + '<br>Τηλέφωνο: ' + request.phone + '<br>Αντικείμενο: ' + request.item_name + '<br>Ποσότητα: ' + request.quantity + '<br><button onclick="assignRescuer(\'request\', ' + request.id + ')">Ανάθεση</button>');
+                        requestMarkers.push(marker);
+
+                        if (showLines && request.rescuer_id != 0 && request.rescuer_id == <?= $rescuer_id ?>) {
+                            var line = L.polyline([
+                                [<?= $user_latitude ?>, <?= $user_longitude ?>],
+                                [request.latitude, request.longitude]
+                            ], {color: 'blue'}).addTo(map);
+                            lines.push(line);
+                        }
                     }
                 });
             }
@@ -350,11 +380,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         map.removeLayer(layer);
                     }
                 });
+
+                lines.forEach(function(line) {
+                    map.removeLayer(line);
+                });
+                lines = [];
             }
 
             loadMarkers();
 
-            $('#offer-with-rescuer, #offer-without-rescuer, #request-with-rescuer, #request-without-rescuer').change(function() {
+            $('#offer-with-rescuer, #offer-without-rescuer, #request-with-rescuer, #request-without-rescuer, #toggle-lines').change(function() {
                 loadMarkers();
             });
         });
