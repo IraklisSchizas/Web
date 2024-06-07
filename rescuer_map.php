@@ -89,6 +89,16 @@ if ($requests_result->num_rows > 0) {
     }
 }
 
+// Function to calculate distance between two coordinates in meters
+function haversine($lat1, $lon1, $lat2, $lon2) {
+    $earth_radius = 6371000; // Earth radius in meters
+    $dLat = deg2rad($lat2 - $lat1);
+    $dLon = deg2rad($lon2 - $lon1);
+    $a = sin($dLat/2) * sin($dLat/2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon/2) * sin($dLon/2);
+    $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+    return $earth_radius * $c;
+}
+
 // Handle AJAX requests for updating location and assigning/cancelling/completing rescuer
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
@@ -343,7 +353,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if ((offer.rescuer_id != 0 && showOfferWithRescuer) || (offer.rescuer_id == 0 && showOfferWithoutRescuer)) {
                         var icon = offer.rescuer_id == 0 ? unassignedOfferIcon : assignedOfferIcon;
                         var marker = L.marker([offer.latitude, offer.longitude], { icon: icon }).addTo(map);
-                        marker.bindPopup('<b>Προσφορά</b><br>Όνομα: ' + offer.name + ' ' + offer.surname + '<br>Τηλέφωνο: ' + offer.phone + '<br>Αντικείμενο: ' + offer.item_name + '<br>Ποσότητα: ' + offer.quantity + '<br><button onclick="assignRescuer(\'offer\', ' + offer.id + ')">Ανάθεση</button>');
+                        var distance = haversine(<?= $user_latitude ?>, <?= $user_longitude ?>, offer.latitude, offer.longitude);
+                        var buttonHTML = distance < 50 ? '<br><button onclick="assignRescuer(\'offer\', ' + offer.id + ')">Ανάθεση</button>' : '';
+                        marker.bindPopup('<b>Προσφορά</b><br>Όνομα: ' + offer.name + ' ' + offer.surname + '<br>Τηλέφωνο: ' + offer.phone + '<br>Αντικείμενο: ' + offer.item_name + '<br>Ποσότητα: ' + offer.quantity + buttonHTML);
                         offerMarkers.push(marker);
 
                         if (showLines && offer.rescuer_id != 0 && offer.rescuer_id == <?= $rescuer_id ?>) {
@@ -360,7 +372,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if ((request.rescuer_id != 0 && showRequestWithRescuer) || (request.rescuer_id == 0 && showRequestWithoutRescuer)) {
                         var icon = request.rescuer_id == 0 ? unassignedRequestIcon : assignedRequestIcon;
                         var marker = L.marker([request.latitude, request.longitude], { icon: icon }).addTo(map);
-                        marker.bindPopup('<b>Αίτημα</b><br>Όνομα: ' + request.name + ' ' + request.surname + '<br>Τηλέφωνο: ' + request.phone + '<br>Αντικείμενο: ' + request.item_name + '<br>Ποσότητα: ' + request.quantity + '<br><button onclick="assignRescuer(\'request\', ' + request.id + ')">Ανάθεση</button>');
+                        var distance = haversine(<?= $user_latitude ?>, <?= $user_longitude ?>, request.latitude, request.longitude);
+                        var buttonHTML = distance < 50 ? '<br><button onclick="assignRescuer(\'request\', ' + request.id + ')">Ανάθεση</button>' : '';
+                        marker.bindPopup('<b>Αίτημα</b><br>Όνομα: ' + request.name + ' ' + request.surname + '<br>Τηλέφωνο: ' + request.phone + '<br>Αντικείμενο: ' + request.item_name + '<br>Ποσότητα: ' + request.quantity + buttonHTML);
                         requestMarkers.push(marker);
 
                         if (showLines && request.rescuer_id != 0 && request.rescuer_id == <?= $rescuer_id ?>) {
@@ -385,6 +399,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     map.removeLayer(line);
                 });
                 lines = [];
+            }
+
+            function haversine(lat1, lon1, lat2, lon2) {
+                var earth_radius = 6371000; // Earth radius in meters
+                var dLat = (lat2 - lat1) * Math.PI / 180;
+                var dLon = (lon2 - lon1) * Math.PI / 180;
+                var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return earth_radius * c;
             }
 
             loadMarkers();
