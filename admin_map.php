@@ -148,6 +148,7 @@ if ($requests_result->num_rows > 0) {
         var vehicleMarkers = [];
         var offerMarkers = [];
         var requestMarkers = [];
+        var lines = [];
 
         <?php foreach ($vehicles as $vehicle): 
             $status = ($vehicle['quantity'] > 0) ? "φορτωμένο" : "άδειο";
@@ -171,6 +172,17 @@ if ($requests_result->num_rows > 0) {
             }).addTo(map);
             offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Όνομα: <?php echo $offer['name']; ?><br>Επώνυμο: <?php echo $offer['surname']; ?><br>Τηλέφωνο: <?php echo $offer['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?><br>Αντικείμενο: <?php echo $offer['item_id']; ?><br>Ποσότητα: <?php echo $offer['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $offer['load_date'] != '0000-00-00 00:00:00'? $offer['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $offer['rescuer_username'] != 'None'? $offer['rescuer_username'] : '-' ; ?>");
             offerMarkers.push(offerMarker);
+
+            <?php if ($offer['rescuer_id'] != 0): ?>
+                <?php
+                    $rescuer = $conn->query("SELECT latitude, longitude FROM users WHERE id = {$offer['rescuer_id']}")->fetch_assoc();
+                ?>
+                var line = L.polyline([
+                    [<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>],
+                    [<?php echo $rescuer['latitude']; ?>, <?php echo $rescuer['longitude']; ?>]
+                ], {color: 'blue'}).addTo(map);
+                lines.push(line);
+            <?php endif; ?>
         <?php endforeach; ?>
 
         <?php foreach ($requests as $request): 
@@ -184,6 +196,17 @@ if ($requests_result->num_rows > 0) {
             }).addTo(map);
             requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Όνομα: <?php echo $request['name']; ?><br>Επώνυμο: <?php echo $request['surname']; ?><br>Τηλέφωνο: <?php echo $request['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?><br>Αντικείμενο: <?php echo $request['item_id']; ?><br>Ποσότητα: <?php echo $request['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $request['load_date'] != '0000-00-00 00:00:00'? $request['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $request['rescuer_username'] != 'None'? $request['rescuer_username'] : '-' ; ?>");
             requestMarkers.push(requestMarker);
+
+            <?php if ($request['rescuer_id'] != 0): ?>
+                <?php
+                    $rescuer = $conn->query("SELECT latitude, longitude FROM users WHERE id = {$request['rescuer_id']}")->fetch_assoc();
+                ?>
+                var line = L.polyline([
+                    [<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>],
+                    [<?php echo $rescuer['latitude']; ?>, <?php echo $rescuer['longitude']; ?>]
+                ], {color: 'blue'}).addTo(map);
+                lines.push(line);
+            <?php endif; ?>
         <?php endforeach; ?>
 
         // Λειτουργίες φίλτρων
@@ -282,19 +305,6 @@ if ($requests_result->num_rows > 0) {
                 });
             }
         });
-
-        // Προσθήκη γραμμών (πορείας)
-        var lines = [];
-        <?php foreach ($offers as $offer): 
-            if ($offer['rescuer_id'] != 0):
-                $rescuer = $conn->query("SELECT latitude, longitude FROM users WHERE id = {$offer['rescuer_id']}")->fetch_assoc();
-        ?>
-            var line = L.polyline([
-                [<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>],
-                [<?php echo $rescuer['latitude']; ?>, <?php echo $rescuer['longitude']; ?>]
-            ], {color: 'blue'}).addTo(map);
-            lines.push(line);
-        <?php endif; endforeach; ?>
 
         $('#toggleLines').change(function() {
             if (this.checked) {
