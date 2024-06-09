@@ -72,13 +72,12 @@ if(isset($_POST['submit'])){
       <input type="text" name="longitude" id="longitude" required placeholder="Γεωγραφικό Μήκος" readonly>
       <input type="password" name="password" required placeholder="Κωδικός πρόσβασης">
       <input type="password" name="cpassword" required placeholder="Επιβεβαίωση Κωδικού">
-      <input type="submit" name="submit" value="Εγγραφή" class="form-btn">
+      <input type="submit" name="submit" value="Εγγραφή" class="form-btn"><br>
       <p>Έχετε ήδη λογαριασμό; <a href="login.php">Σύνδεση</a></p>
    </form>
 
 </div>
 
-<script src="main.js"></script>
-
+<script src="javascript/main.js"></script>
 </body>
 </html>

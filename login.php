@@ -73,7 +73,7 @@ if(isset($_POST['submit'])){
       ?>
       <input type="text" name="username" required placeholder="Όνομα Χρήστη">
       <input type="password" name="password" required placeholder="Κωδικός Πρόσβασης">
-      <input type="submit" name="submit" value="Σύνδεση" class="form-btn">
+      <input type="submit" name="submit" value="Σύνδεση" class="form-btn"><br>
       <p>Δεν έχετε λογαριασμό; <a href="register_form.php">Εγγραφείτε</a></p>
    </form>
 

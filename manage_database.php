@@ -145,12 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['initialize'])) {
             </table>
         </form>
     </div>
-    <script>
-        function confirmInitialization() {
-            if (confirm("Είστε σίγουροι πως θέλετε να πραγματοποιήσετε Αρχικοποίηση;")) {
-                document.getElementById('initialize_form').submit();
-            }
-        }
-    </script>
+    <script src="javascript/main.js" defer></script>
 </body>
 </html>

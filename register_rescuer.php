@@ -84,7 +84,7 @@ if(isset($_POST['submit'])){
 
 </div>
 
-<script src="main.js"></script>
+<script src="javascript/main.js"></script>
 
 </body>
 </html>
