@@ -26,17 +26,17 @@ if(isset($_POST['submit'])){
 
       if($row['user_type'] == 'admin'){
 
-        $_SESSION['user_name'] = $row['name'];
+        $_SESSION['user_name'] = $row['username'];
         header('location:admin_page.php');
 
       }elseif($row['user_type'] == 'rescuer'){
 
-         $_SESSION['user_name'] = $row['name'];
+         $_SESSION['user_name'] = $row['username'];
          header('location:rescuer_page.php');
 
       }elseif($row['user_type'] == 'civilian'){
 
-         $_SESSION['user_name'] = $row['name'];
+         $_SESSION['user_name'] = $row['username'];
          header('location:civilian_page.php');
 
       }     
