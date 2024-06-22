@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_name'])) {
 
 $civilian_name = $_SESSION['user_name'];
 // Χρήση προετοιμασμένων δηλώσεων για ασφάλεια
-$stmt = $conn->prepare("SELECT * FROM users WHERE name = ?");
+$stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
 $stmt->bind_param("s", $civilian_name);
 $stmt->execute();
 $result = $stmt->get_result();
