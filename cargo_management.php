@@ -257,7 +257,7 @@ function unloadItems($rescuer_id) {
             </thead>
             <tbody>
                 <?php
-                    $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = $user_id");
+                    $cargo_query = mysqli_query($conn, "SELECT * FROM cargo WHERE rescuer_id = '$user_id'");
                     if ($cargo_query) {
                         while ($cargo_row = mysqli_fetch_assoc($cargo_query)) {
                             $item_ids = explode(',', $cargo_row['item_ids']);
