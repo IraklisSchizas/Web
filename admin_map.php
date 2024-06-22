@@ -26,11 +26,23 @@ $sql = "SELECT u.id, u.username, u.latitude, u.longitude, c.item_ids, c.quantity
         WHERE u.user_type='rescuer'";
 $result = mysqli_query($conn, $sql);
 
-$vehicles = array();
+$active_vehicles = array();
+$inactive_vehicles = array();
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $vehicles[] = $row;
+        // Check if the vehicle has any active tasks (offers or requests)
+        $vehicle_id = $row['id'];
+        $active_tasks_query = "SELECT COUNT(*) as active_tasks
+                               FROM (SELECT id FROM offers WHERE rescuer_id = $vehicle_id UNION ALL SELECT id FROM requests WHERE rescuer_id = $vehicle_id) as tasks";
+        $active_tasks_result = mysqli_query($conn, $active_tasks_query);
+        $active_tasks_row = $active_tasks_result->fetch_assoc();
+        
+        if ($active_tasks_row['active_tasks'] > 0) {
+            $active_vehicles[] = $row;
+        } else {
+            $inactive_vehicles[] = $row;
+        }
     }
 } else {
     echo "No vehicles found";
@@ -141,71 +153,129 @@ if ($requests_result->num_rows > 0) {
             }
         });
 
-        // Δημιουργία και προσθήκη των markers στον χάρτη
-        var vehicleMarkers = [];
+        var activeVehicleMarkers = [];
+        var inactiveVehicleMarkers = [];
         var offerMarkers = [];
         var requestMarkers = [];
         var lines = [];
 
-        <?php foreach ($vehicles as $vehicle): 
-            $status = ($vehicle['quantity'] > 0) ? "φορτωμένο" : "άδειο";
-            $statusClass = ($vehicle['quantity'] > 0) ? "active" : "inactive";
-        ?>
-            var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>], {
-                className: 'vehicle-marker <?php echo $statusClass; ?>'
-            }).addTo(map);
-            marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: <?php echo $status; ?>");
-            vehicleMarkers.push(marker);
-        <?php endforeach; ?>
+        function loadMarkers() {
+            clearMarkers();
 
-        <?php foreach ($offers as $offer): 
-            $color = ($offer['rescuer_id'] == 0) ? 'green' : 'yellow';
-            $statusClass = ($offer['rescuer_id'] == 0) ? "pending" : "assigned";
-        ?>
-            var offerMarker = L.circleMarker([<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>], {
-                color: '<?php echo $color; ?>',
-                radius: 8,
-                className: 'offer-marker <?php echo $statusClass; ?>'
-            }).addTo(map);
-            offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Όνομα: <?php echo $offer['name']; ?><br>Επώνυμο: <?php echo $offer['surname']; ?><br>Τηλέφωνο: <?php echo $offer['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?><br>Αντικείμενο: <?php echo $offer['item_id']; ?><br>Ποσότητα: <?php echo $offer['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $offer['load_date'] != '0000-00-00 00:00:00'? $offer['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $offer['rescuer_username'] != 'None'? $offer['rescuer_username'] : '-' ; ?>");
-            offerMarkers.push(offerMarker);
+            var showVehiclesActive = $('#toggleVehiclesActive').prop('checked');
+            var showVehiclesInactive = $('#toggleVehiclesInactive').prop('checked');
+            var showRequestsPending = $('#toggleRequestsPending').prop('checked');
+            var showRequestsAssigned = $('#toggleRequestsAssigned').prop('checked');
+            var showOffersPending = $('#toggleOffersPending').prop('checked');
+            var showOffersAssigned = $('#toggleOffersAssigned').prop('checked');
+            var showLines = $('#toggleLines').prop('checked');
 
-            <?php if ($offer['rescuer_id'] != 0): ?>
-                <?php
-                    $rescuer = $conn->query("SELECT latitude, longitude FROM users WHERE id = {$offer['rescuer_id']}")->fetch_assoc();
-                ?>
-                var line = L.polyline([
-                    [<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>],
-                    [<?php echo $rescuer['latitude']; ?>, <?php echo $rescuer['longitude']; ?>]
-                ], {color: 'blue'}).addTo(map);
-                lines.push(line);
-            <?php endif; ?>
-        <?php endforeach; ?>
+            <?php foreach ($active_vehicles as $vehicle): ?>
+                if (showVehiclesActive) {
+                    var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>], {
+                        className: 'vehicle-marker active'
+                    }).addTo(map);
+                    marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: ενεργό");
+                    activeVehicleMarkers.push(marker);
+                }
+            <?php endforeach; ?>
 
-        <?php foreach ($requests as $request): 
-            $color = ($request['rescuer_id'] == 0) ? 'red' : 'purple';
-            $statusClass = ($request['rescuer_id'] == 0) ? "pending" : "assigned";
-        ?>
-            var requestMarker = L.circleMarker([<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>], {
-                color: '<?php echo $color; ?>',
-                radius: 8,
-                className: 'request-marker <?php echo $statusClass; ?>'
-            }).addTo(map);
-            requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Όνομα: <?php echo $request['name']; ?><br>Επώνυμο: <?php echo $request['surname']; ?><br>Τηλέφωνο: <?php echo $request['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?><br>Αντικείμενο: <?php echo $request['item_id']; ?><br>Ποσότητα: <?php echo $request['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $request['load_date'] != '0000-00-00 00:00:00'? $request['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $request['rescuer_username'] != 'None'? $request['rescuer_username'] : '-' ; ?>");
-            requestMarkers.push(requestMarker);
+            <?php foreach ($inactive_vehicles as $vehicle): ?>
+                if (showVehiclesInactive) {
+                    var marker = L.marker([<?php echo $vehicle['latitude']; ?>, <?php echo $vehicle['longitude']; ?>], {
+                        className: 'vehicle-marker inactive'
+                    }).addTo(map);
+                    marker.bindPopup("<b><?php echo $vehicle['username']; ?></b><br>Φορτίο: <?php echo $vehicle['item_ids']; ?><br>Κατάσταση: ανενεργό");
+                    inactiveVehicleMarkers.push(marker);
+                }
+            <?php endforeach; ?>
 
-            <?php if ($request['rescuer_id'] != 0): ?>
-                <?php
-                    $rescuer = $conn->query("SELECT latitude, longitude FROM users WHERE id = {$request['rescuer_id']}")->fetch_assoc();
-                ?>
-                var line = L.polyline([
-                    [<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>],
-                    [<?php echo $rescuer['latitude']; ?>, <?php echo $rescuer['longitude']; ?>]
-                ], {color: 'blue'}).addTo(map);
-                lines.push(line);
-            <?php endif; ?>
-        <?php endforeach; ?>
+            <?php foreach ($offers as $offer): 
+                $color = ($offer['rescuer_id'] == 0) ? 'green' : 'yellow';
+                $statusClass = ($offer['rescuer_id'] == 0) ? "pending" : "assigned";
+            ?>
+                if ((showOffersPending && '<?php echo $statusClass; ?>' == 'pending') || (showOffersAssigned && '<?php echo $statusClass; ?>' == 'assigned')) {
+                    var offerMarker = L.circleMarker([<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>], {
+                        color: '<?php echo $color; ?>',
+                        radius: 8,
+                        className: 'offer-marker <?php echo $statusClass; ?>'
+                    }).addTo(map);
+                    offerMarker.bindPopup("<b>Offer ID: <?php echo $offer['id']; ?></b><br>Όνομα: <?php echo $offer['name']; ?><br>Επώνυμο: <?php echo $offer['surname']; ?><br>Τηλέφωνο: <?php echo $offer['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $offer['date']; ?><br>Αντικείμενο: <?php echo $offer['item_id']; ?><br>Ποσότητα: <?php echo $offer['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $offer['load_date'] != '0000-00-00 00:00:00'? $offer['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $offer['rescuer_username'] != 'None'? $offer['rescuer_username'] : '-' ; ?>");
+                    offerMarkers.push(offerMarker);
 
+                    <?php if ($offer['rescuer_id'] != 0): ?>
+                        <?php
+                            $rescuer = $conn->query("SELECT latitude, longitude FROM users WHERE id = {$offer['rescuer_id']}")->fetch_assoc();
+                        ?>
+                        if (showLines) {
+                            var line = L.polyline([
+                                [<?php echo $offer['latitude']; ?>, <?php echo $offer['longitude']; ?>],
+                                [<?php echo $rescuer['latitude']; ?>, <?php echo $rescuer['longitude']; ?>]
+                            ], {color: 'blue'}).addTo(map);
+                            lines.push(line);
+                        }
+                    <?php endif; ?>
+                }
+            <?php endforeach; ?>
+
+            <?php foreach ($requests as $request): 
+                $color = ($request['rescuer_id'] == 0) ? 'red' : 'purple';
+                $statusClass = ($request['rescuer_id'] == 0) ? "pending" : "assigned";
+            ?>
+                if ((showRequestsPending && '<?php echo $statusClass; ?>' == 'pending') || (showRequestsAssigned && '<?php echo $statusClass; ?>' == 'assigned')) {
+                    var requestMarker = L.circleMarker([<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>], {
+                        color: '<?php echo $color; ?>',
+                        radius: 8,
+                        className: 'request-marker <?php echo $statusClass; ?>'
+                    }).addTo(map);
+                    requestMarker.bindPopup("<b>Request ID: <?php echo $request['id']; ?></b><br>Όνομα: <?php echo $request['name']; ?><br>Επώνυμο: <?php echo $request['surname']; ?><br>Τηλέφωνο: <?php echo $request['phone']; ?><br>Ημερομηνία καταχώρησης: <?php echo $request['date']; ?><br>Αντικείμενο: <?php echo $request['item_id']; ?><br>Ποσότητα: <?php echo $request['quantity']; ?><br>Ημερομηνία ανάληψης: <?php echo $request['load_date'] != '0000-00-00 00:00:00'? $request['load_date'] : '-' ; ?><br>Διασώστης: <?php echo $request['rescuer_username'] != 'None'? $request['rescuer_username'] : '-' ; ?>");
+                    requestMarkers.push(requestMarker);
+
+                    <?php if ($request['rescuer_id'] != 0): ?>
+                        <?php
+                            $rescuer = $conn->query("SELECT latitude, longitude FROM users WHERE id = {$request['rescuer_id']}")->fetch_assoc();
+                        ?>
+                        if (showLines) {
+                            var line = L.polyline([
+                                [<?php echo $request['latitude']; ?>, <?php echo $request['longitude']; ?>],
+                                [<?php echo $rescuer['latitude']; ?>, <?php echo $rescuer['longitude']; ?>]
+                            ], {color: 'blue'}).addTo(map);
+                            lines.push(line);
+                        }
+                    <?php endif; ?>
+                }
+            <?php endforeach; ?>
+        }
+
+        function clearMarkers() {
+            activeVehicleMarkers.forEach(function(marker) {
+                map.removeLayer(marker);
+            });
+            inactiveVehicleMarkers.forEach(function(marker) {
+                map.removeLayer(marker);
+            });
+            offerMarkers.forEach(function(marker) {
+                map.removeLayer(marker);
+            });
+            requestMarkers.forEach(function(marker) {
+                map.removeLayer(marker);
+            });
+            lines.forEach(function(line) {
+                map.removeLayer(line);
+            });
+
+            activeVehicleMarkers = [];
+            inactiveVehicleMarkers = [];
+            offerMarkers = [];
+            requestMarkers = [];
+            lines = [];
+        }
+
+        loadMarkers();
+
+        $('#toggleRequestsPending, #toggleRequestsAssigned, #toggleOffersPending, #toggleOffersAssigned, #toggleVehiclesActive, #toggleVehiclesInactive, #toggleLines').change(function() {
+            loadMarkers();
+        });
     </script>
 </body>
 </html>
