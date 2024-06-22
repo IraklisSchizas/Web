@@ -7,7 +7,12 @@ session_start();
 if(!isset($_SESSION['user_name'])){
    header('location:login.php');
 }
-
+$query = $conn->prepare("SELECT name FROM users WHERE username = ?");
+$query->bind_param('s', $_SESSION['user_name']);
+$query->execute();
+$result = $query->get_result();
+$user_row = $result->fetch_assoc();
+$name = $user_row['name'];
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +33,7 @@ if(!isset($_SESSION['user_name'])){
 
    <div class="content">
       <h3>Γειά σου, <span>admin</span></h3>
-      <h1>Καλωσήρθες <span><?php echo $_SESSION['user_name'] ?></span>!</h1>
+      <h1>Καλωσήρθες <span><?php echo $name ?></span>!</h1>
       <p>αυτή είναι η σελίδα του διαχειριστή</p>
       <a href="register_rescuer.php" class="btn">Εγγραφή Διασώστη</a>
       <a href="manage_database.php" class="btn">Διαχείρηση Βάσης</a>
