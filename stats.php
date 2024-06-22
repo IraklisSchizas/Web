@@ -8,11 +8,9 @@ if (!isset($_SESSION['user_name'])) {
     exit();
 }
 
-// Σύνδεση με την βάση δεδομένων και λήψη δεδομένων για το γράφημα
 function getData($conn, $startDate, $endDate) {
     $data = [];
 
-    // Αιτήματα
     $query = "SELECT COUNT(*) AS count FROM requests WHERE date BETWEEN '$startDate' AND '$endDate'";
     $result = mysqli_query($conn, $query);
     $data['new_requests'] = mysqli_fetch_assoc($result)['count'];
@@ -21,7 +19,6 @@ function getData($conn, $startDate, $endDate) {
     $result = mysqli_query($conn, $query);
     $data['completed_requests'] = mysqli_fetch_assoc($result)['count'];
 
-    // Προσφορές
     $query = "SELECT COUNT(*) AS count FROM offers WHERE date BETWEEN '$startDate' AND '$endDate'";
     $result = mysqli_query($conn, $query);
     $data['new_offers'] = mysqli_fetch_assoc($result)['count'];
@@ -47,16 +44,11 @@ $data = getData($conn, $startDate, $endDate);
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Στατιστικά</title>
 
-   <!-- custom css file link  -->
    <link rel="stylesheet" href="css/style.css">
-
-   <!-- Chart.js -->
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   <!-- jQuery για date picker -->
    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
 </head>
 <body>
     <div class="form-container">
@@ -69,7 +61,6 @@ $data = getData($conn, $startDate, $endDate);
             <button class="form-btn" type="submit">Εμφάνιση</button>
             <p><a href="admin_page.php">Πίσω στη σελίδα Διαχειριστή</a></p><br><br>
 
-            <!-- Canvas για το γράφημα -->
             <canvas id="statsChart"></canvas>
         </form>
         <br>
@@ -112,7 +103,10 @@ $data = getData($conn, $startDate, $endDate);
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1  // Εμφανίζει μόνο ακέραιες τιμές
+                    }
                 }
             }
         }
