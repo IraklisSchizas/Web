@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Εξυπηρετητής: 127.0.0.1
--- Χρόνος δημιουργίας: 22 Ιουν 2024 στις 17:22:25
+-- Χρόνος δημιουργίας: 22 Ιουν 2024 στις 17:35:52
 -- Έκδοση διακομιστή: 10.4.32-MariaDB
 -- Έκδοση PHP: 8.2.12
 
@@ -145,11 +145,11 @@ CREATE TABLE `items` (
 --
 
 INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
-(16, 'Water', 6, '[{\"detail_name\":\"Volume\",\"detail_value\":\"1.5l\"},{\"detail_name\":\"Pack size\",\"detail_value\":\"6\"}]', 11),
-(17, 'Orange', 6, '[{\"detail_name\":\"Volume\",\"detail_value\":\"250ml\"},{\"detail_name\":\"Pack size\",\"detail_value\":\"12\"}]', 74),
+(16, 'Water', 6, '[{\"detail_name\":\"Volume\",\"detail_value\":\"1.5l\"},{\"detail_name\":\"Pack size\",\"detail_value\":\"6\"}]', 100),
+(17, 'Orange', 6, '[{\"detail_name\":\"Volume\",\"detail_value\":\"250ml\"},{\"detail_name\":\"Pack size\",\"detail_value\":\"12\"}]', 14),
 (18, 'Sardines', 5, '[{\"detail_name\":\"brand\",\"detail_value\":\"Trata\"},{\"detail_name\":\"weight\",\"detail_value\":\"200g\"}]', 0),
 (19, 'Canned corn', 5, '[{\"detail_name\":\"weight\",\"detail_value\":\"500g\"}]', 0),
-(20, 'Bread', 5, '[{\"detail_name\":\"Weight\",\"detail_value\":\"1kg\"},{\"detail_name\":\"Type\",\"detail_value\":\"white\"}]', 0),
+(20, 'Bread', 5, '[{\"detail_name\":\"Weight\",\"detail_value\":\"1kg\"},{\"detail_name\":\"Type\",\"detail_value\":\"white\"}]', 51),
 (21, 'Chocolate', 5, '[{\"detail_name\":\"weight\",\"detail_value\":\"100g\"},{\"detail_name\":\"type\",\"detail_value\":\"milk chocolate\"},{\"detail_name\":\"brand\",\"detail_value\":\"ION\"}]', 0),
 (22, 'Men Sneakers', 7, '[{\"detail_name\":\"size\",\"detail_value\":\"44\"}]', 0),
 (23, 'Test Product', 9, '[{\"detail_name\":\"weight\",\"detail_value\":\"500g\"},{\"detail_name\":\"pack size\",\"detail_value\":\"12\"},{\"detail_name\":\"expiry date\",\"detail_value\":\"13\\/12\\/1978\"}]', 0),
@@ -161,9 +161,9 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 (30, 'Bandages', 16, '[{\"detail_name\":\"\",\"detail_value\":\"25 pcs\"}]', 0),
 (31, 'Disposable gloves', 16, '[{\"detail_name\":\"\",\"detail_value\":\"100 pcs\"}]', 0),
 (32, 'Gauze', 16, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
-(33, 'Antiseptic', 16, '[{\"detail_name\":\"\",\"detail_value\":\"250ml\"}]', 0),
-(34, 'First Aid Kit', 16, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
-(35, 'Painkillers', 16, '[{\"detail_name\":\"volume\",\"detail_value\":\"200mg\"}]', 0),
+(33, 'Antiseptic', 16, '[]', 85),
+(34, 'First', 16, '[]', 120),
+(35, 'Painkillers', 16, '[{\"detail_name\":\"Volume\",\"detail_value\":\"200mg\"}]', 90),
 (36, 'Blanket', 7, '[{\"detail_name\":\"size\",\"detail_value\":\"50x60\"}]', 0),
 (37, 'Fakes', 5, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (38, 'Menstrual Pads', 21, '[{\"detail_name\":\"stock\",\"detail_value\":\"500\"},{\"detail_name\":\"size\",\"detail_value\":\"3\"},{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
@@ -175,7 +175,7 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 (44, 'Vitamin C', 16, '[{\"detail_name\":\"stock\",\"detail_value\":\"200\"}]', 0),
 (45, 'Multivitamines', 16, '[{\"detail_name\":\"stock\",\"detail_value\":\"200\"}]', 0),
 (46, 'Paracetamol', 16, '[{\"detail_name\":\"stock\",\"detail_value\":\"2000\"},{\"detail_name\":\"dosage\",\"detail_value\":\"500mg\"}]', 0),
-(47, 'Ibuprofen', 16, '[{\"detail_name\":\"stock \",\"detail_value\":\"10\"},{\"detail_name\":\"dosage\",\"detail_value\":\"200mg\"}]', 0),
+(47, 'Ibuprofen', 16, '[{\"detail_name\":\"Stock\",\"detail_value\":\"10\"},{\"detail_name\":\"Dosage\",\"detail_value\":\"200mg\"}]', 37),
 (48, '', 10, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (49, '', 10, '[{\"detail_name\":\"\",\"detail_value\":\"\"},{\"detail_name\":\"\",\"detail_value\":\"\"},{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (50, '', 10, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
@@ -194,7 +194,7 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 (63, 'Flashlight', 23, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (64, 'Duct tape', 23, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (65, 'Underwear', 7, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
-(66, 'Socks', 7, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
+(66, 'Socks', 7, '[]', 43),
 (67, 'Warm Jacket', 7, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (68, 'Raincoat', 7, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (69, 'Gloves', 7, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
@@ -245,7 +245,7 @@ INSERT INTO `items` (`id`, `name`, `category`, `details`, `quantity`) VALUES
 (114, 'Thermometer', 16, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (115, 'Rice', 5, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (116, 'Bread', 5, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
-(117, 'Towels', 22, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
+(117, 'Towels', 22, '[]', 28),
 (118, 'Wet Wipes', 22, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (119, 'Fire Extinguisher', 23, '[{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
 (120, 'Fruits', 5, '[{\"detail_name\":\"\",\"detail_value\":\"\"},{\"detail_name\":\"\",\"detail_value\":\"\"}]', 0),
@@ -420,7 +420,7 @@ CREATE TABLE `offers` (
 
 INSERT INTO `offers` (`id`, `civilian_id`, `date`, `item_id`, `quantity`, `load_date`, `rescuer_id`, `completed`, `complete_date`) VALUES
 (1, 6, '2024-05-25 19:29:19', '17', 2, '2024-06-07 19:11:05', 2, 0, '0000-00-00 00:00:00'),
-(13, 3, '2024-06-03 16:39:18', '16', 3, '0000-00-00 00:00:00', 0, 0, '0000-00-00 00:00:00');
+(13, 7, '2024-06-03 16:39:18', '16', 3, '0000-00-00 00:00:00', 0, 0, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -447,7 +447,8 @@ CREATE TABLE `requests` (
 INSERT INTO `requests` (`id`, `civilian_id`, `date`, `item_id`, `quantity`, `load_date`, `rescuer_id`, `completed`, `complete_date`) VALUES
 (9, 3, '2024-06-03 17:24:25', '20', 3, '2024-06-07 19:11:41', 2, 0, '0000-00-00 00:00:00'),
 (10, 3, '2024-06-07 19:06:46', '47', 2, '2024-06-07 19:11:37', 2, 0, '0000-00-00 00:00:00'),
-(11, 3, '2024-06-07 19:06:54', '66,117', 3, '2024-06-07 19:08:46', 2, 0, '0000-00-00 00:00:00');
+(11, 9, '2024-06-07 19:06:54', '66,117', 3, '2024-06-07 19:08:46', 2, 0, '0000-00-00 00:00:00'),
+(12, 8, '2024-06-22 17:27:55', '34,35', 2, '0000-00-00 00:00:00', 0, 0, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -554,7 +555,7 @@ ALTER TABLE `offers`
 -- AUTO_INCREMENT για πίνακα `requests`
 --
 ALTER TABLE `requests`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT για πίνακα `users`
